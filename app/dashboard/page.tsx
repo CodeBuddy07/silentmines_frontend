@@ -43,22 +43,31 @@ export default function AddProductPage() {
         data.append("prices", form.prices)
         form.images.forEach((img) => data.append("images", img))
         if (form.video) data.append("video", form.video)
-
-        // Submit `data` to API route
+        // Submit `data` to API
     }
 
     return (
-        <Tabs defaultValue="add" className="p-6">
-            <TabsList className="mb-6">
-                <TabsTrigger value="add">Add Product</TabsTrigger>
-                <TabsTrigger value="view">All Products</TabsTrigger>
+        <Tabs defaultValue="add" className="p-6 text-white">
+            <TabsList className="mb-6 bg-[#0f1b0f]/60 border border-muted/30 backdrop-blur-md">
+                <TabsTrigger
+                    value="add"
+                    className="data-[state=active]:bg-green-400 data-[state=active]:text-black text-white"
+                >
+                    Add Product
+                </TabsTrigger>
+                <TabsTrigger
+                    value="view"
+                    className="data-[state=active]:bg-green-400 data-[state=active]:text-black text-white"
+                >
+                    All Products
+                </TabsTrigger>
             </TabsList>
 
             <TabsContent value="add">
-                <Card className=" bg-white/10 backdrop-blur-lg border text-white border-muted/40">
+                <Card className="bg-[#0f1b0f] text-white border border-muted/30 shadow-xl">
                     <CardHeader>
-                        <CardTitle className="text-xl font-semibold">
-                            New Product
+                        <CardTitle className="text-xl font-semibold text-white">
+                            Add Product
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -67,6 +76,7 @@ export default function AddProductPage() {
                                 <Label htmlFor="name">Product Name</Label>
                                 <Input
                                     id="name"
+                                    className="bg-[#1a2a1a] border-muted/30"
                                     placeholder="Enter product name"
                                     value={form.name}
                                     onChange={(e) =>
@@ -79,6 +89,7 @@ export default function AddProductPage() {
                                 <Label htmlFor="description">Description</Label>
                                 <Textarea
                                     id="description"
+                                    className="bg-[#1a2a1a] border-muted/30"
                                     placeholder="Detailed product description"
                                     value={form.description}
                                     onChange={(e) =>
@@ -91,6 +102,7 @@ export default function AddProductPage() {
                                 <Label htmlFor="prices">Price Tiers</Label>
                                 <Input
                                     id="prices"
+                                    className="bg-[#1a2a1a] border-muted/30"
                                     placeholder="e.g. 3.5g: $30, 7g: $55"
                                     value={form.prices}
                                     onChange={(e) =>
@@ -101,7 +113,7 @@ export default function AddProductPage() {
 
                             <div className="space-y-2">
                                 <Label htmlFor="images">Upload Images</Label>
-                                <label className="inline-block px-4 py-2 bg-gray-800 text-white rounded cursor-pointer w-full">
+                                <label className="inline-block px-4 py-2 bg-[#1a2a1a] text-white border border-muted/30 rounded cursor-pointer w-full text-center hover:bg-[#243524] transition">
                                     Choose Images
                                     <input
                                         id="images"
@@ -112,7 +124,6 @@ export default function AddProductPage() {
                                         className="hidden"
                                     />
                                 </label>
-
                                 {form.images.length > 0 && (
                                     <div className="flex gap-3 flex-wrap mt-2">
                                         {form.images.map((img, i) => (
@@ -120,7 +131,7 @@ export default function AddProductPage() {
                                                 key={i}
                                                 src={URL.createObjectURL(img)}
                                                 alt={`preview-${i}`}
-                                                className="w-24 h-24 object-cover rounded border"
+                                                className="w-24 h-24 object-cover rounded border border-muted/20"
                                             />
                                         ))}
                                     </div>
@@ -129,7 +140,7 @@ export default function AddProductPage() {
 
                             <div className="space-y-2">
                                 <Label htmlFor="video">Upload Video</Label>
-                                <label className="inline-block px-4 py-2 bg-gray-800 text-white rounded cursor-pointer w-full">
+                                <label className="inline-block px-4 py-2 bg-[#1a2a1a] text-white border border-muted/30 rounded cursor-pointer w-full text-center hover:bg-[#243524] transition">
                                     Choose Video
                                     <input
                                         id="video"
@@ -139,17 +150,20 @@ export default function AddProductPage() {
                                         className="hidden"
                                     />
                                 </label>
-
                                 {form.video && (
-                                    <video controls className="w-full max-w-xs mt-2 rounded border">
+                                    <video
+                                        controls
+                                        className="w-full max-w-xs h-[200px] mt-2 rounded border border-muted/20"
+                                    >
                                         <source src={URL.createObjectURL(form.video)} />
                                     </video>
                                 )}
                             </div>
 
-
-
-                            <Button type="submit" className="w-full">
+                            <Button
+                                type="submit"
+                                className="w-full bg-green-700 hover:bg-green-600 text-white"
+                            >
                                 Save Product
                             </Button>
                         </form>
