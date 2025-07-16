@@ -1,6 +1,7 @@
+import { Sidebar } from "@/components/sidebar";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-
+import backgroundImage from "@/public/space.webp"; // keep this import for webpack
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,17 +20,25 @@ export const metadata: Metadata = {
 
 export default function DashboardLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <h1>sdjsk</h1>
-        {children}
-      </body>
-    </html>
+    <div
+      className="flex h-screen bg-[url('/space.webp')] bg-repeat bg-cover"
+      style={{
+        backgroundRepeat: "repeat",
+        backgroundImage: "url('/space.webp')",
+        backgroundSize: "auto",
+      }}
+    >
+      <Sidebar />
+      <div className="flex-1 flex flex-col overflow-hidden bg-transparent">
+        {/* <Header /> */}
+        <main className="flex-1 overflow-y-auto p-6 bg-transparent text-white">
+          {children}
+        </main>
+      </div>
+    </div>
   );
 }
