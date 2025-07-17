@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Menu, X, PlusCircleIcon, AlignEndVertical, LogOut } from "lucide-react"
+import { Menu, X, PlusCircleIcon, AlignEndVertical, LogOut, MegaphoneIcon, CannabisIcon } from "lucide-react"
 import { toast } from "sonner"
 
 const navigationItems = [
@@ -21,19 +21,30 @@ const navigationItems = [
     href: "/dashboard/category",
     icon: AlignEndVertical,
   },
-]
+  {
+    id: "promotion",
+    label: "Promotion",
+    href: "/dashboard/promotion",
+    icon: CannabisIcon,
+  },
+  {
+    id: "announcement",
+    label: "Announcement",
+    href: "/dashboard/announcement",
+    icon: MegaphoneIcon,
+  },
+];
 
 interface SidebarProps {
   className?: string
 }
 
 export function Sidebar({ className }: SidebarProps) {
-  const pathname = usePathname()
-  const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const pathname = usePathname();
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const handleLogout = () => {
     toast.success("Logged out successfully!")
-    window.location.href = "/log-in"
   }
 
   return (

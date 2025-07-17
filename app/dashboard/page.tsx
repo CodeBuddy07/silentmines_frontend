@@ -13,12 +13,14 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import AllProducts from "@/components/dashboard/allProducts/allProducts"
+import Header from "@/components/dashboard/header/header"
 
 export default function AddProductPage() {
     const [form, setForm] = useState({
         name: "",
         description: "",
         prices: "",
+        unit: "",
         images: [] as File[],
         video: null as File | null,
     })
@@ -47,7 +49,8 @@ export default function AddProductPage() {
     }
 
     return (
-        <Tabs defaultValue="add" className="p-6 text-white">
+        <Tabs defaultValue="add" className="lg:p-6 pt-8 text-white">
+            <Header title="Add Product" subTitle="Create and manage your products" />
             <TabsList className="mb-6 bg-[#0f1b0f]/60 border border-muted/30 backdrop-blur-md">
                 <TabsTrigger
                     value="add"
@@ -65,11 +68,6 @@ export default function AddProductPage() {
 
             <TabsContent value="add">
                 <Card className="bg-[#0f1b0f] text-white border border-muted/30 shadow-xl">
-                    <CardHeader>
-                        <CardTitle className="text-xl font-semibold text-white">
-                            Add Product
-                        </CardTitle>
-                    </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="space-y-2">
@@ -99,14 +97,27 @@ export default function AddProductPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="prices">Price Tiers</Label>
+                                <Label htmlFor="prices">Price</Label>
                                 <Input
                                     id="prices"
                                     className="bg-[#1a2a1a] border-muted/30"
-                                    placeholder="e.g. 3.5g: $30, 7g: $55"
+                                    placeholder="Price"
                                     value={form.prices}
                                     onChange={(e) =>
                                         setForm({ ...form, prices: e.target.value })
+                                    }
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="unit">Unit</Label>
+                                <Input
+                                    id="unit"
+                                    className="bg-[#1a2a1a] border-muted/30"
+                                    placeholder="e.g. 3.5g, 7g"
+                                    value={form.unit}
+                                    onChange={(e) =>
+                                        setForm({ ...form, unit: e.target.value })
                                     }
                                 />
                             </div>

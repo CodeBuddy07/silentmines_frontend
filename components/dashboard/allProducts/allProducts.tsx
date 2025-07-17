@@ -37,7 +37,7 @@ const AllProducts = () => {
     }, []);
 
     return (
-        <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {products.map((product) => (
                 <div key={product.id} className="bg-[#0f1b0f] border border-muted/30 rounded-lg p-4 shadow hover:shadow-green-500/30 transition">
                     <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
