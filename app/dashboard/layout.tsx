@@ -1,3 +1,4 @@
+
 import { Sidebar } from "@/components/sidebar"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
@@ -13,6 +14,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 })
 
+
+import type { Metadata } from "next";
+
+
+
 export const metadata: Metadata = {
   title: "Dr. Green Thumb | Dashboard",
   description: "Admin Dashboard for Product Management",
@@ -24,6 +30,7 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
+
     <div className="relative flex h-screen overflow-hidden">
       {/* Background Image */}
       <div
@@ -45,4 +52,13 @@ export default function DashboardLayout({
       </div>
     </div>
   )
+
+    <html lang="en">
+      <body>
+        <h1>sdjsk</h1>
+        {children}
+      </body>
+    </html>
+  );
+
 }
