@@ -121,3 +121,39 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@layer utilities {
+  .marquee-container {
+    overflow: hidden;
+    position: relative;
+  }
+
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    min-width: 200%;
+    animation: marquee-scroll 60s linear infinite;
+    will-change: transform;
+    transition: animation-duration 2s cubic-bezier(0.77, 0, 0.175, 1);
+  }
+
+  .slow .marquee-content {
+    animation-duration: 90s !important;
+  }
+
+  .text-neon {
+    color: #00ff99;
+    text-shadow: 0 0 5px #00ff99, 0 0 10px #00ff99, 0 0 15px #00ff99;
+  }
+}
+
+
