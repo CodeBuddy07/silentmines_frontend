@@ -13,7 +13,7 @@ const Header = () => {
 
     return (
         <div className='w-full bg-black min-h-screen flex flex-col items-center justify-center '>
-            <h1 data-aos="fade-up" className='text-7xl' style={{ fontFamily: "var(--font-planet-cosmos)" }} >The Space Station*</h1>
+            <h1 data-aos="fade-up" className='text-7xl' style={{ fontFamily: "var(--font-planet-cosmos)" }} >DR. Green Thumb*</h1>
             <h2 data-aos="fade-up" className='text-2xl font bold text-shadow-lg text-shadow-white'>WHOLE SITE  ON SALE  UP TO $300 OFF</h2>
         </div>
     );

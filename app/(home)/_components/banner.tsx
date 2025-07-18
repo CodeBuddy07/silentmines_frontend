@@ -11,8 +11,12 @@ const Banner = () => {
                         High Quality <span className="text-white">Weed</span> That&apos;s Out of This World.
                     </h1>
 
-                    <Button variant="outline" className="rounded-full border-white text-white bg-transparent hover:bg-white hover:text-black">
-                        Shop Now &gt;
+                    <Button
+                        variant="outline"
+                        className="relative rounded-full overflow-hidden mt-6 border-white bg-transparent hover:text-black hover:bg-transparent text-white group cursor-pointer"
+                    >
+                        <span className="absolute inset-0 bg-white translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0" />
+                        <span className="relative z-10 px-2 pr-4 py-2">Shop Now  <span className='group-hover:translate-x-3 translate-x-1 absolute transition-transform duration-500 ease-out'> &gt; </span></span>
                     </Button>
 
 
