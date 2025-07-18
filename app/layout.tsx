@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 
-export const planetCosmos = localFont({
+const planetCosmos = localFont({
   src: "../public/fonts/PLANK___.ttf",
   display: "swap",
   variable: "--font-planet-cosmos",
