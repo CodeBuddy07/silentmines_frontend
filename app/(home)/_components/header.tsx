@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import ParticlesBackground from '@/components/shared/ParticlesBackground';
 
 const Header = () => {
     useEffect(() => {
@@ -13,32 +14,36 @@ const Header = () => {
     }, []);
 
     return (
-        <div className="w-full bg-black min-h-screen flex flex-col items-center justify-center px-4 text-center">
-            <h1
-                data-aos="fade-up"
-                className="text-4xl sm:text-6xl md:text-7xl text-white"
-                style={{ fontFamily: 'var(--font-planet-cosmos)' }}
-            >
-                DR. Green Thumb*
-            </h1>
-            <div className='relative inline-block'>
-                <h2
+        <div className="relative">
+            <ParticlesBackground />
+            <div className="w-full bg-black/40 backdrop-blur-xs min-h-screen flex flex-col items-center justify-center px-4 text-center " >
+                <h1
                     data-aos="fade-up"
-                    className="absolute inset-0 text-lg sm:text-xl md:text-2xl font-semibold text-white blur-[6px] opacity-80 z-0"
-                    aria-hidden="true"
+                    className="text-4xl sm:text-6xl md:text-7xl text-white"
+                    style={{ fontFamily: 'var(--font-planet-cosmos)' }}
                 >
-                    WHOLE SITE ON SALE — UP TO $300 OFF
-                </h2>
+                    DR. Green Thumb*
+                </h1>
+                <div className='relative inline-block'>
+                    <h2
+                        data-aos="fade-up"
+                        className="absolute inset-0 text-lg sm:text-xl md:text-2xl font-semibold text-white blur-[6px] opacity-80 z-0"
+                        aria-hidden="true"
+                    >
+                        WHOLE SITE ON SALE — UP TO $300 OFF
+                    </h2>
 
-                {/* Main visible text */}
-                <h2
-                    data-aos="fade-up"
-                    className="relative text-lg sm:text-xl md:text-2xl font-semibold text-white z-10"
-                >
-                    WHOLE SITE ON SALE — UP TO $300 OFF
-                </h2>
+                    {/* Main visible text */}
+                    <h2
+                        data-aos="fade-up"
+                        className="relative text-lg sm:text-xl md:text-2xl font-semibold text-white z-10"
+                    >
+                        WHOLE SITE ON SALE — UP TO $300 OFF
+                    </h2>
+                </div>
             </div>
         </div>
+
     );
 };
 
