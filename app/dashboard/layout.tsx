@@ -15,7 +15,6 @@ const geistMono = Geist_Mono({
 })
 
 
-import type { Metadata } from "next";
 
 
 
@@ -52,13 +51,4 @@ export default function DashboardLayout({
       </div>
     </div>
   )
-
-    <html lang="en">
-      <body>
-        <h1>sdjsk</h1>
-        {children}
-      </body>
-    </html>
-  );
-
 }
