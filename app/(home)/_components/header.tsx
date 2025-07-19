@@ -16,7 +16,7 @@ const Header = () => {
     return (
         <div className="relative">
             <ParticlesBackground />
-            <div className="w-full bg-black/40 backdrop-blur-xs min-h-screen flex flex-col items-center justify-center px-4 text-center " >
+            <div className="w-full bg-black/30 backdrop-blur-[3px] min-h-screen flex flex-col items-center justify-center px-4 text-center " >
                 <h1
                     data-aos="fade-up"
                     className="text-4xl sm:text-6xl md:text-7xl text-white"

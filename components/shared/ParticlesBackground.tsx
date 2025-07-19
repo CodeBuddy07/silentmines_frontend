@@ -28,5 +28,5 @@ export default function ParticlesBackground() {
     };
   }, []);
 
-  return <div id="particles-js" className="absolute top-0 left-0 w-screen h-screen bg-black" />;
+  return <div id="particles-js" className="absolute top-0 left-0 w-full h-full bg-black" />;
 }

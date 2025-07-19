@@ -8,7 +8,7 @@ export const MarqueeStrip = () => {
   return (
     <div
       className="bg-black py-5 relative overflow-hidden border-b border-gray-700"
-      onMouseEnter={() => setIsHovered(true)}
+      onMouseEnter={() => setIsHovered(false)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Gradient edges */}
