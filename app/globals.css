@@ -143,7 +143,7 @@
     min-width: 200%;
     animation: marquee-scroll 60s linear infinite;
     will-change: transform;
-    transition: animation-duration 2s cubic-bezier(0.77, 0, 0.175, 1);
+    transition: animation-duration 0.5s ease;
   }
 
   .slow .marquee-content {
