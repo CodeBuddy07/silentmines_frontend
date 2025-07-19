@@ -1,22 +1,6 @@
 
 import { Sidebar } from "@/components/sidebar"
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
-import backgroundImage from "@/public/space.webp" // keep this import for webpack
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-})
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-})
-
-
-
-
 
 export const metadata: Metadata = {
   title: "Dr. Green Thumb | Dashboard",
@@ -51,4 +35,3 @@ export default function DashboardLayout({
       </div>
     </div>
   )
-}

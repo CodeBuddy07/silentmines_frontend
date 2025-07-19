@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 
-export const planetCosmos = localFont({
+const planetCosmos = localFont({
   src: "../public/fonts/PLANK___.ttf",
   display: "swap",
   variable: "--font-planet-cosmos",
@@ -34,9 +34,11 @@ export default function RootLayout({
   
   
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${planetCosmos.variable} antialiased`}
+
+      
       >
         {children}
       </body>

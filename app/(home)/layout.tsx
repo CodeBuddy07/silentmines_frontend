@@ -1,3 +1,4 @@
+import Footer from "@/components/shared/footer";
 import Navbar from "@/components/shared/navbar";
 import type { Metadata } from "next";
 
@@ -13,13 +14,14 @@ export default function HomeLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
+    <div>
+      <div>
         <Navbar/>
         <div className="bg-[url('/starry_background.jpg')] bg-repeat text-white min-h-screen">
             {children}
         </div>
-      </body>
-    </html>
+        <Footer/>
+      </div>
+    </div>
   );
 }
