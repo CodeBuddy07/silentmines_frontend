@@ -122,6 +122,7 @@
   }
 }
 
+
 @keyframes marquee-scroll {
   0% {
     transform: translateX(0%);
@@ -155,5 +156,4 @@
     text-shadow: 0 0 5px #00ff99, 0 0 10px #00ff99, 0 0 15px #00ff99;
   }
 }
-
 
