@@ -6,8 +6,6 @@ import dynamic from 'next/dynamic';
 // Dynamically import JoditEditor with SSR disabled
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
-
-
 const Announcement = () => {
     const editor = useRef(null);
     const [content, setContent] = useState('');
@@ -28,6 +26,11 @@ const Announcement = () => {
         []
     );
 
+    const handlePublish = () => {
+        console.log("Announcement Content:", content);
+        alert("Announcement published successfully!");
+    };
+
     return (
         <div className="lg:p-6 pt-8">
             <Header title='Announcement' subTitle='Create and manage announcements' />
@@ -42,7 +45,7 @@ const Announcement = () => {
             </div>
 
             <div className="flex justify-end mt-4">
-                <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow transition">
+                <button onClick={handlePublish} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow transition">
                     Publish
                 </button>
             </div>
