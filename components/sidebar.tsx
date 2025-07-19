@@ -15,12 +15,12 @@ const navigationItems = [
     href: "/dashboard",
     icon: PlusCircleIcon,
   },
-  {
-    id: "category",
-    label: "Category",
-    href: "/dashboard/category",
-    icon: AlignEndVertical,
-  },
+  // {
+  //   id: "category",
+  //   label: "Category",
+  //   href: "/dashboard/category",
+  //   icon: AlignEndVertical,
+  // },
   {
     id: "promotion",
     label: "Promotion",

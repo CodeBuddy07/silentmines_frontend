@@ -1,7 +1,6 @@
 
 import { Sidebar } from "@/components/sidebar"
 import type { Metadata } from "next"
-
 export const metadata: Metadata = {
   title: "Dr. Green Thumb | Dashboard",
   description: "Admin Dashboard for Product Management",
@@ -35,3 +34,4 @@ export default function DashboardLayout({
       </div>
     </div>
   )
+}
