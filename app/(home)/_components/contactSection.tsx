@@ -13,27 +13,27 @@ const ContactSection: React.FC<ContactSectionProps> = ({ className = "" }) => {
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="mb-12">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-4">Contact Us</h2>
+                    <h2 className="text-2xl md:text-3xl font-bold mb-4">Contact Us</h2>
                     <div className="w-16 h-1 bg-white mb-8"></div>
                 </div>
 
                 {/* Main Content */}
                 <div className="space-y-8">
                     {/* Gallery Info */}
-                    <p className="text-lg leading-relaxed">
+                    <p className=" leading-relaxed">
                         All items featured in our current gallery are available for both breakdown and bulk ordering.
                     </p>
 
                     {/* Flavor Selection */}
                     <div className="space-y-4">
-                        <p className="text-lg">
+                        <p className="">
                             <span className="font-semibold">Select Your Flavor:</span> Once you have chosen the flavor you wish to order, please confirm the desired order size. We offer sizes ranging from 1 oz to 5 lb for each flavor.
                         </p>
                     </div>
 
                     {/* Contact Methods */}
                     <div className="space-y-6">
-                        <p className="text-lg">
+                        <p className="">
                             <span className="font-semibold">Contact Us:</span> Click any of our platforms to reach us:
                         </p>
 
