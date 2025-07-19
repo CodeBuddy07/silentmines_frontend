@@ -21,12 +21,12 @@ const navigationItems = [
   //   href: "/dashboard/category",
   //   icon: AlignEndVertical,
   // },
-  {
-    id: "promotion",
-    label: "Promotion",
-    href: "/dashboard/promotion",
-    icon: CannabisIcon,
-  },
+  // {
+  //   id: "promotion",
+  //   label: "Promotion",
+  //   href: "/dashboard/promotion",
+  //   icon: CannabisIcon,
+  // },
   {
     id: "announcement",
     label: "Announcement",
