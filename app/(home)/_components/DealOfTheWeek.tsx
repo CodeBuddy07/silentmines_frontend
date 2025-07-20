@@ -10,7 +10,7 @@ export interface Price {
     amount: string;
 }
 
-interface Product {
+export interface Product {
     id: number;
     image: string;
     discount: number;

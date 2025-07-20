@@ -2,6 +2,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Search, X } from 'lucide-react';
 import { Button } from '../ui/button';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 interface SearchSuggestion {
   id: string;
@@ -10,7 +12,19 @@ interface SearchSuggestion {
   url: string;
 }
 
+interface SubItem {
+  name: string;
+  href: string;
+}
+
+interface NavItem {
+  name: string;
+  href?: string;
+  sub?: SubItem[];
+}
+
 const Navbar = () => {
+  const pathname = usePathname();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
@@ -32,7 +46,7 @@ const Navbar = () => {
     { id: '7', title: 'Last Chance Clearance', category: 'Deals', url: '/deals/clearance' },
   ];
 
-  const navItems = [
+  const navItems: NavItem[] = [
     { name: 'Home', href: '/' },
     { name: 'Gallery', href: '/gallery' },
     {
@@ -50,6 +64,31 @@ const Navbar = () => {
     { name: 'Vapes', href: '/vapes' },
     { name: 'Contact', href: '/contact' },
   ];
+
+  // Function to check if a navigation item is active
+  const isActive = (item: NavItem): boolean => {
+    if (item.href) {
+      return pathname === item.href;
+    }
+
+    // For items with sub-navigation, check if any sub-item is active
+    if (item.sub) {
+      return item.sub.some(subItem => pathname === subItem.href);
+    }
+
+    return false;
+  };
+
+  // Function to check if a sub-item is active
+  const isSubItemActive = (href: string): boolean => {
+    return pathname === href;
+  };
+
+  // Function to check if a parent item should be highlighted (has active sub-item)
+  const hasActiveSubItem = (item: NavItem): boolean => {
+    if (!item.sub) return false;
+    return item.sub.some(subItem => pathname === subItem.href);
+  };
 
   const handleDropdownEnter = (itemName: string) => {
     if (dropdownTimeoutRef.current) {
@@ -141,10 +180,17 @@ const Navbar = () => {
                   onMouseEnter={() => item.sub && handleDropdownEnter(item.name)}
                   onMouseLeave={handleDropdownLeave}
                 >
-                  <a
-                    href={item.sub ? '#' : item.href}
-                    className={`px-3 py-2 rounded-md text-nowrap text-sm font-medium transition-all duration-200 hover:text-green-400 ${item.sub ? '' : 'hover:bg-gray-900'} flex items-center gap-1 ${activeDropdown === item.name ? 'text-green-400 bg-gray-900' : ''
-                      }`}
+                  <Link
+                    href={item.sub ? '#' : (item.href || '#')}
+                    className={`
+                    px-3 py-2 rounded-md text-nowrap text-sm font-medium transition-all duration-200 
+                    flex items-center gap-1 relative
+                    ${isActive(item) || hasActiveSubItem(item)
+                        ? 'text-green-400 bg-green-900/20 border border-green-500/30'
+                        : 'hover:text-green-400 hover:bg-gray-900'
+                      }
+                    ${activeDropdown === item.name ? 'text-green-400 bg-gray-900' : ''}
+                  `}
                   >
                     {item.name}
                     {item.sub && (
@@ -153,29 +199,43 @@ const Navbar = () => {
                           }`}
                       />
                     )}
-                  </a>
+
+                    {/* Active indicator dot */}
+                    {(isActive(item) || hasActiveSubItem(item)) && (
+                      <span className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-5 h-1 bg-green-400 rounded-full"></span>
+                    )}
+                  </Link>
 
                   {/* Desktop Dropdown */}
                   {item.sub && (
                     <div
                       className={`absolute top-full left-0 mt-1 w-56 bg-green-900/30 backdrop-blur-lg border border-gray-700 rounded-lg shadow-2xl transition-all duration-300 ease-out transform ${activeDropdown === item.name
-                        ? 'opacity-100 visible translate-y-0'
-                        : 'opacity-0 invisible -translate-y-2'
+                          ? 'opacity-100 visible translate-y-0'
+                          : 'opacity-0 invisible -translate-y-2'
                         }`}
                     >
                       <div className="py-2">
                         {item.sub.map((subItem, index) => (
-                          <a
+                          <Link
                             key={subItem.name}
                             href={subItem.href}
-                            className={`block px-4 py-3 text-sm text-gray-300 hover:text-green-500 hover:bg-green-600/10 transition-all duration-200 transform hover:translate-x-1 ${activeDropdown === item.name ? 'animate-in slide-in-from-left' : ''
-                              }`}
+                            className={`
+                            block px-4 py-3 text-sm transition-all duration-200 transform hover:translate-x-1
+                            ${isSubItemActive(subItem.href)
+                                ? 'text-green-400 bg-green-600/20 border-r-2 border-green-400'
+                                : 'text-gray-300 hover:text-green-500 hover:bg-green-600/10'
+                              }
+                            ${activeDropdown === item.name ? 'animate-in slide-in-from-left' : ''}
+                          `}
                             style={{
                               animationDelay: activeDropdown === item.name ? `${index * 50}ms` : '0ms'
                             }}
                           >
                             {subItem.name}
-                          </a>
+                            {isSubItemActive(subItem.href) && (
+                              <span className="ml-2 w-1 h-1 bg-green-400 rounded-full inline-block"></span>
+                            )}
+                          </Link>
                         ))}
                       </div>
                     </div>
@@ -228,17 +288,26 @@ const Navbar = () => {
             {navItems.map((item, index) => (
               <div key={item.name}>
                 <div className="flex items-center justify-between">
-                  <a
-                    href={item.sub ? '#' : item.href}
-                    onClick={() => toggleMobileSubMenu(item.name)}
-                    className={`flex-1 block px-3 py-2 rounded-md text-base font-medium transition-all hover:text-green-400 ${item.sub ? '' : 'hover:bg-gray-900 '} duration-300 ease-out transform ${isMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
-                      }`}
+                  <Link
+                    href={item.sub ? '#' : (item.href || '#')}
+                    onClick={() => item.sub && toggleMobileSubMenu(item.name)}
+                    className={`
+                    flex-1 block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 ease-out transform
+                    ${isActive(item) || hasActiveSubItem(item)
+                        ? 'text-green-400 bg-green-900/20 border-l-2 border-green-400'
+                        : 'hover:text-green-400 hover:bg-gray-900'
+                      }
+                    ${isMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'}
+                  `}
                     style={{
                       transitionDelay: isMenuOpen ? `${index * 50}ms` : '0ms'
                     }}
                   >
                     {item.name}
-                  </a>
+                    {(isActive(item) || hasActiveSubItem(item)) && (
+                      <span className="ml-2 w-2 h-2 bg-green-400 rounded-full inline-block"></span>
+                    )}
+                  </Link>
 
                   {/* Mobile submenu toggle */}
                   {item.sub && (
@@ -264,17 +333,26 @@ const Navbar = () => {
                     }`}>
                     <div className="ml-4 border-l border-gray-700 pl-4 py-2 space-y-1">
                       {item.sub.map((subItem, subIndex) => (
-                        <a
+                        <Link
                           key={subItem.name}
                           href={subItem.href}
-                          className={`block px-3 py-2 rounded-md text-sm text-gray-400 hover:text-green-500 hover:bg-gray-800 transition-all duration-200 transform ${mobileSubMenuOpen === item.name ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0'
-                            }`}
+                          className={`
+                          block px-3 py-2 rounded-md text-sm transition-all duration-200 transform
+                          ${isSubItemActive(subItem.href)
+                              ? 'text-green-400 bg-green-600/20 border-l-2 border-green-400'
+                              : 'text-gray-400 hover:text-green-500 hover:bg-gray-800'
+                            }
+                          ${mobileSubMenuOpen === item.name ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0'}
+                        `}
                           style={{
                             transitionDelay: mobileSubMenuOpen === item.name ? `${subIndex * 50}ms` : '0ms'
                           }}
                         >
                           {subItem.name}
-                        </a>
+                          {isSubItemActive(subItem.href) && (
+                            <span className="ml-2 w-1 h-1 bg-green-400 rounded-full inline-block"></span>
+                          )}
+                        </Link>
                       ))}
                     </div>
                   </div>

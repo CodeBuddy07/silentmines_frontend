@@ -28,7 +28,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
     return (
         <Card
-            className=" pt-0 backdrop-blur-sm border border-white/10 overflow-hidden bg-green-600/5 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/50 flex flex-col" // 🧠 Make Card flex container
+            className=" pt-0 backdrop-blur-sm border border-white/10 overflow-hidden bg-green-600/5 transition-all duration-500 hover:scale-105 hover:shadow-xl hover:shadow-green-500/50 flex flex-col" // 🧠 Make Card flex container
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
@@ -37,7 +37,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 <div className="relative w-full h-64">
                     <Image
                         src={image}
-                        alt={name}
+                        alt={" Product Image "}
                         fill
                         className={`object-cover transition-transform duration-700 ${isHovered ? 'scale-110' : 'scale-100'}`}
                     />
