@@ -6,6 +6,7 @@ import { Price } from "@/app/(home)/_components/DealOfTheWeek";
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '../ui/button';
+import Link from 'next/link';
 
 interface ProductCardProps {
     image: string;
@@ -26,6 +27,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
     const [isHovered, setIsHovered] = useState(false);
     console.log(`Rendering ProductCard for ${discount} and id ${name}`);
+
 
     return (
         <Card
@@ -71,14 +73,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 </div>
 
                 {/* Button at Bottom */}
-                <Button
-                    onClick={()=> console.log(`Viewing details for ${name}`)}
-                    variant="outline"
-                    className="relative overflow-hidden w-full mt-6 border-white/20 bg-white/10 hover:text-white hover:bg-white/20 text-white group cursor-pointer"
-                >
-                    <span className="absolute inset-0 bg-green-500 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0" />
-                    <span className="relative z-10 px-4 py-2">View Details</span>
-                </Button>
+                <Link href={`/products/${name}`} className="w-full">
+                    <Button
+
+                        variant="outline"
+                        className="relative overflow-hidden w-full mt-6 border-white/20 bg-white/10 hover:text-white hover:bg-white/20 text-white group cursor-pointer"
+                    >
+                        <span className="absolute inset-0 bg-green-500 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0" />
+                        <span className="relative z-10 px-4 py-2">View Details</span>
+                    </Button>
+                </Link>
 
             </CardContent>
         </Card>
