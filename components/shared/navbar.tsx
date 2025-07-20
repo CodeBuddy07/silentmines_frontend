@@ -62,7 +62,7 @@ const Navbar = () => {
     { name: 'Extracts', href: '/extracts' },
     { name: 'Edibles', href: '/edibles' },
     { name: 'Vapes', href: '/vapes' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Contact', href: '/#contact' },
   ];
 
   // Function to check if a navigation item is active
