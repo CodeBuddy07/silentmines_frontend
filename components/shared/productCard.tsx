@@ -25,6 +25,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     prices,
 }) => {
     const [isHovered, setIsHovered] = useState(false);
+    console.log(`Rendering ProductCard for ${discount} and id ${name}`);
 
     return (
         <Card

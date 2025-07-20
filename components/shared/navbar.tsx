@@ -62,7 +62,7 @@ const Navbar = () => {
     { name: 'Extracts', href: '/extracts' },
     { name: 'Edibles', href: '/edibles' },
     { name: 'Vapes', href: '/vapes' },
-    { name: 'Contact', href: '/contact' },
+    { name: 'Contact', href: '#contact' },
   ];
 
   // Function to check if a navigation item is active
@@ -181,7 +181,7 @@ const Navbar = () => {
                   onMouseLeave={handleDropdownLeave}
                 >
                   <Link
-                    href={item.sub ? '#' : (item.href || '#')}
+                    href={item.sub ? '#' : (item.href || '#') }
                     className={`
                     px-3 py-2 rounded-md text-nowrap text-sm font-medium transition-all duration-200 
                     flex items-center gap-1 relative
@@ -210,8 +210,8 @@ const Navbar = () => {
                   {item.sub && (
                     <div
                       className={`absolute top-full left-0 mt-1 w-56 bg-green-900/30 backdrop-blur-lg border border-gray-700 rounded-lg shadow-2xl transition-all duration-300 ease-out transform ${activeDropdown === item.name
-                          ? 'opacity-100 visible translate-y-0'
-                          : 'opacity-0 invisible -translate-y-2'
+                        ? 'opacity-100 visible translate-y-0'
+                        : 'opacity-0 invisible -translate-y-2'
                         }`}
                     >
                       <div className="py-2">
@@ -261,7 +261,7 @@ const Navbar = () => {
                 className="relative rounded-full overflow-hidden  border-white bg-transparent hover:text-black hover:bg-transparent text-white group cursor-pointer"
               >
                 <span className="absolute inset-0 bg-white translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0" />
-                <span className="relative z-10 px-2 pr-4 py-2">Daily Special  </span>
+                <span className="relative z-10 px-2 pr-4 py-2">Order Now  </span>
               </Button>
 
               {/* Mobile menu button */}

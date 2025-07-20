@@ -2,6 +2,7 @@
 import ProductCard from '@/components/shared/productCard';
 import SectionHeader from '@/components/shared/sectionHeader';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 
 // Types
@@ -125,13 +126,16 @@ export const PremiumSelectedFlower: React.FC<premiumSelectedFlowerProps> = ({
 
                 {/* Shop More Button */}
                 <div className="text-center">
-                    <Button
-                        size="lg"
-                        className="bg-green-500/10 hover:bg-green-500/20 border border-white/20 text-white hover:text-white hover:scale-105 transition-all duration-300 group"
-                    >
-                        <span>Shop More Deals</span>
-                        <span className="ml-2 group-hover:translate-x-1 transition-transform duration-300">→</span>
-                    </Button>
+                    <Link href={"/gallery"}>
+                        <Button
+                            size="lg"
+                            className="bg-green-500/10 hover:bg-green-500/20 border border-white/20 text-white hover:text-white hover:scale-105 transition-all duration-300 group"
+                        >
+                            <span>Shop More Deals</span>
+                            <span className="ml-2 group-hover:translate-x-1 transition-transform duration-300">→</span>
+                        </Button>
+                    </Link>
+
                 </div>
             </div>
         </section>

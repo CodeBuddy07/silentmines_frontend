@@ -9,7 +9,7 @@ interface ContactSectionProps {
 
 const ContactSection: React.FC<ContactSectionProps> = ({ className = "" }) => {
     return (
-        <section className={`py-16 px-4 bg-black text-white ${className}`}>
+        <section id='contact' className={`py-16 px-4 bg-black text-white ${className}`}>
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="mb-12">
