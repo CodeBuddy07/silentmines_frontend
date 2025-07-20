@@ -4,6 +4,7 @@ import { ChevronDown, Search, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import OrderPopup from '@/app/(home)/_components/OrderForm';
 
 interface SearchSuggestion {
   id: string;
@@ -161,7 +162,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="bg-black text-white relative z-50 border-b border-gray-800">
+      <nav className="bg-black text-white z-50 border-b border-gray-800 sticky top-0">
         <div className="mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -181,7 +182,7 @@ const Navbar = () => {
                   onMouseLeave={handleDropdownLeave}
                 >
                   <Link
-                    href={item.sub ? '#' : (item.href || '#') }
+                    href={item.sub ? '#' : (item.href || '#')}
                     className={`
                     px-3 py-2 rounded-md text-nowrap text-sm font-medium transition-all duration-200 
                     flex items-center gap-1 relative
@@ -256,13 +257,17 @@ const Navbar = () => {
               </button>
 
               {/* Daily Special Button */}
-              <Button
-                variant="outline"
-                className="relative rounded-full overflow-hidden  border-white bg-transparent hover:text-black hover:bg-transparent text-white group cursor-pointer"
-              >
-                <span className="absolute inset-0 bg-white translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0" />
-                <span className="relative z-10 px-2 pr-4 py-2">Order Now  </span>
-              </Button>
+
+              <OrderPopup>
+                <Button
+                  variant="outline"
+                  className="relative rounded-full overflow-hidden  border-white bg-transparent hover:text-black hover:bg-transparent text-white group cursor-pointer"
+                >
+                  <span className="absolute inset-0 bg-white translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0" />
+                  <span className="relative z-10 px-2 pr-4 py-2">Order Now  </span>
+                </Button>
+              </OrderPopup>
+
 
               {/* Mobile menu button */}
               <button

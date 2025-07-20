@@ -29,7 +29,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
     return (
         <Card
-            className=" pt-0 backdrop-blur-sm border border-white/10 overflow-hidden bg-green-600/5 transition-all duration-500 hover:scale-105 hover:shadow-xl hover:shadow-green-500/50 flex flex-col" // 🧠 Make Card flex container
+            className=" pt-0 backdrop-blur-sm border border-white/10 overflow-hidden bg-green-600/5 transition-all duration-500 hover:scale-105 hover:shadow-xl hover:shadow-green-800/40 flex flex-col" // 🧠 Make Card flex container
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
