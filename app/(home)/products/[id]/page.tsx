@@ -1,14 +1,13 @@
 import React from 'react';
 
-type ProductProps = {
-  params: {
-    id: string;
-  };
-}
 
- async function ProductDetailPage({ params }: ProductProps) {
+ async function ProductDetailPage({
+    params,
+}: {
+    params: Promise<{ id: string }>
+}) {
 
-    const { id } = params;
+    const  {id}  = await params;
 
     console.log(`Fetching product with ID: ${id}`);
 
@@ -16,7 +15,7 @@ type ProductProps = {
 
   return (
     <div className="p-6">
-      <h1>hello</h1>
+      <h1>hello {id} </h1>
     </div>
   );
 }
