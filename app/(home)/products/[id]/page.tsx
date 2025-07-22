@@ -44,7 +44,7 @@ const Page = ({
     category: "LICENSED INDOORS",
     subcategory: "DAILY SPECIAL",
     name: "LEMON BUBBLEGUM 🍋⚡",
-    description: "Premium quality Lemon Bubblegum strain with an exceptional citrusy flavor profile and energizing effects. This licensed indoor cultivation ensures consistent quality and purity. Perfect for daytime use with its uplifting and creative properties. Limited time offer with 75% discount - don't miss out on this amazing deal!",
+    description: "Premium quality Lemon Bubblegum strain with an demo exceptional citrusy flavor profile and energizing effects. This licensed indoor cultivation ensures consistent quality and purity. Perfect for daytime use with its uplifting and creative properties. Limited time offer with 75% discount - don't miss out on this amazing deal!",
     prices: [
       { weight: "1 LB", amount: "750" },
       { weight: "2 LB", amount: "1400" },
