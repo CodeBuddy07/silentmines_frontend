@@ -1,6 +1,8 @@
 import Footer from "@/components/shared/footer";
 import Navbar from "@/components/shared/navbar";
 import type { Metadata } from "next";
+import { AuthProvider } from "../contexts/auth-context";
+import ProtectedRoute from "./_components/protected-route";
 
 
 export const metadata: Metadata = {
@@ -14,14 +16,18 @@ export default function HomeLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div>
+    <AuthProvider>
       <div>
-        <Navbar/>
-        <div className="bg-[url('/starry_background.jpg')] bg-repeat text-white min-h-screen">
+        <ProtectedRoute>
+          <Navbar />
+          <div className="bg-[url('/starry_background.jpg')] bg-repeat text-white min-h-screen">
+
             {children}
-        </div>
-        <Footer/>
+
+          </div>
+          <Footer />
+        </ProtectedRoute>
       </div>
-    </div>
+    </AuthProvider>
   );
 }
