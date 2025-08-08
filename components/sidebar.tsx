@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Menu, X, PlusCircleIcon, AlignEndVertical, LogOut, MegaphoneIcon, CannabisIcon } from "lucide-react"
+import { Menu, X, PlusCircleIcon, AlignEndVertical, LogOut, MegaphoneIcon, CannabisIcon, StarHalf, CalendarSync } from "lucide-react"
 import { toast } from "sonner"
 
 const navigationItems = [
@@ -15,18 +15,30 @@ const navigationItems = [
     href: "/dashboard",
     icon: PlusCircleIcon,
   },
-  // {
-  //   id: "category",
-  //   label: "Category",
-  //   href: "/dashboard/category",
-  //   icon: AlignEndVertical,
-  // },
-  // {
-  //   id: "promotion",
-  //   label: "Promotion",
-  //   href: "/dashboard/promotion",
-  //   icon: CannabisIcon,
-  // },
+  {
+    id: "category",
+    label: "Manage Category",
+    href: "/dashboard/category",
+    icon: AlignEndVertical,
+  },
+  {
+    id: "tags",
+    label: "Manage Tags",
+    href: "/dashboard/tags",
+    icon: CannabisIcon,
+  },
+  {
+    id: "review",
+    label: "Manage Reviews",
+    href: "/dashboard/manageReviews",
+    icon: StarHalf,
+  },
+  {
+    id: "time",
+    label: "Manage Times",
+    href: "/dashboard/manageTimes",
+    icon: CalendarSync,
+  },
   {
     id: "announcement",
     label: "Announcement",

@@ -84,6 +84,7 @@ const AddProductForm = () => {
                     >
                         All Products
                     </TabsTrigger>
+                   
                 </TabsList>
 
                 <TabsContent value="add">
