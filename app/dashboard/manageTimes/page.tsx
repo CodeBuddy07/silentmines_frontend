@@ -57,7 +57,7 @@ const Page = () => {
 
                 <div className="pt-4">
                     <Button onClick={saveTimes} className="bg-red-600 hover:bg-red-700">
-                        Save Available Times
+                        Save Available Times 
                     </Button>
                 </div>
             </section>
