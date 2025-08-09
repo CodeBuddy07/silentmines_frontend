@@ -79,7 +79,7 @@ const ReviewsPage: React.FC = () => {
           className={`w-5 h-5 ${
             i <= rating 
               ? 'fill-green-500 text-green-500' 
-              : 'fill-gray-600 text-gray-600'
+              : 'fill-gray-600 text-gray-600 '
           }`}
         />
       );
