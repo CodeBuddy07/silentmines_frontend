@@ -148,12 +148,7 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
                 </div>
             </div>
 
-            <div className='mt-20'>
-                <video  autoPlay loop muted className="w-screen h-80 object-cover ">
-                    <source src="/original.mov" type="video/mp4" />
-                    Your browser does not support the video tag.
-                </video>
-            </div>
+            
         </div>
     );
 };

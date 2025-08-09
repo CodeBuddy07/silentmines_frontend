@@ -105,7 +105,7 @@ export const PremiumSelectedFlower: React.FC<premiumSelectedFlowerProps> = ({
             <div className="max-w-7xl mx-auto">
                 {/* Section Header */}
                 <SectionHeader
-                    title={"Premium Selected Flower"}
+                    title={"Best Sellers of the Galaxy"}
                     subtitle={"Shop only the highest quality products. Out of this world THC - select any combination of flowers to build your top-notch supply."}
                 />
 

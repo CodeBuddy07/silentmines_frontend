@@ -168,7 +168,9 @@ const Navbar = () => {
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
               <div className="grid place-items-center w-12 h-12 rounded-full overflow-hidden border border-gray-700 cursor-pointer">
-                <img className=' ' src="/logo.jpeg" alt="" />
+                <Link href="/" className="flex items-center justify-center">
+                  <img className=' ' src="/logo.jpeg" alt="" />
+                </Link>
               </div>
             </div>
 

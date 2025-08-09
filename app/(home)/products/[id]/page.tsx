@@ -3,6 +3,7 @@
 import { ChevronLeft, ChevronRight, Star, Heart, Share2, Play, Pause } from 'lucide-react';
 import React, { use, useState } from 'react';
 import { PremiumSelectedFlower } from '../../_components/premiumSelectedFlower';
+import AddToBagButton from '../../_components/addToBagButton';
 
 
 interface ProductPrice {
@@ -34,8 +35,8 @@ const Page = ({
 }: {
   params: Promise<{ id: string }>
 }) => {
-  
-  const  {id}  = use(params);
+
+  const { id } = use(params);
 
   const sampleProduct: Product = {
     id: id,
@@ -91,10 +92,7 @@ const Page = ({
 
   return (
     <div className="min-h-screen bg-black text-white p-4">
-      <div className='w-full max-h-72 overflow-hidden rounded-xl flex items-center justify-center mb-8 '>
-        <img className='w-full' src="/detailpage.avif" alt="" />
 
-      </div>
       <div className="max-w-6xl mx-auto mt-20">
         {/* Header */}
 
@@ -226,28 +224,38 @@ const Page = ({
                   </div>
                 )}
               </div>
+
               <p className="text-emerald-200 mt-2 text-sm">Price for {selectedWeight}</p>
             </div>
 
             {/* Weight Selection */}
             <div className="space-y-4">
               <h3 className="text-base font-semibold text-emerald-300">Select Weight</h3>
-              <div className="flex justify-start items-center gap-3">
-                {product.prices.map((price) => (
-                  <button
-                    key={price.weight}
-                    onClick={() => setSelectedWeight(price.weight)}
-                    className={`p-2 rounded-full border-2 transition-all text-left ${selectedWeight === price.weight
-                      ? 'border-emerald-500 bg-emerald-900/40 shadow-lg shadow-emerald-500/20'
-                      : 'border-emerald-500/30 bg-emerald-900/10 hover:border-emerald-400/60 hover:bg-emerald-800/20'
-                      }`}
-                  >
-                    <div className="flex items-center justify-between ">
-                      <span className="font-medium text-sm text-white">{price.weight}</span>
+              <div className="flex justify-between items-center gap-3 w-full">
+                <div className="flex justify-start items-center gap-3">
+                  {product.prices.map((price) => (
+                    <button
+                      key={price.weight}
+                      onClick={() => setSelectedWeight(price.weight)}
+                      className={`p-2 rounded-full border-2 transition-all text-left ${selectedWeight === price.weight
+                        ? 'border-emerald-500 bg-emerald-900/40 shadow-lg shadow-emerald-500/20'
+                        : 'border-emerald-500/30 bg-emerald-900/10 hover:border-emerald-400/60 hover:bg-emerald-800/20'
+                        }`}
+                    >
+                      <div className="flex items-center justify-between ">
+                        <span className="font-medium text-sm text-white">{price.weight}</span>
 
-                    </div>
-                  </button>
-                ))}
+                      </div>
+                    </button>
+                  ))}
+
+
+
+                </div>
+
+                <div className=''>
+                  <AddToBagButton />
+                </div>
               </div>
             </div>
 
@@ -281,6 +289,8 @@ const Page = ({
                 <div className="text-sm text-gray-400">Quality Grade</div>
               </div>
             </div>
+
+
           </div>
         </div>
       </div>

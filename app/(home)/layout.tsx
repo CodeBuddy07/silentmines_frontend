@@ -6,7 +6,7 @@ import ProtectedRoute from "./_components/protected-route";
 
 
 export const metadata: Metadata = {
-  title: "Dr. Green Thumb",
+  title: "The Green Thumb",
   description: "High Quality Weed That's Out of This World",
 };
 
