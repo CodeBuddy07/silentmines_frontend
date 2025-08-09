@@ -31,6 +31,8 @@ export default function Page() {
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [selected, setSelected] = useState<any>(null);
+    const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+      const [isTagOpen, setIsTagOpen] = useState(false);
 
     const handleEditClick = (tag: any) => {
         setSelected(tag);

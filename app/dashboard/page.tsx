@@ -16,6 +16,9 @@ import {
 import Header from '@/components/dashboard/header/header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AllProducts from '@/components/dashboard/allProducts/allProducts';
+import { toast } from 'sonner';
+import CategoryModel from '@/components/dashboard/categoryModel/CategoryModel';
+import TypesModal from '@/components/dashboard/typesModel/TypesModel';
 
 const AddProductForm = () => {
     const [productName, setProductName] = useState('');
@@ -27,6 +30,18 @@ const AddProductForm = () => {
     const [priceList, setPriceList] = useState<{ price: string; unit: string }[]>([]);
     const [photos, setPhotos] = useState<File[]>([]);
     const [videos, setVideos] = useState<File[]>([]);
+
+    const [categories, setCategories] = useState([]);
+    const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+    const [newCategory, setNewCategory] = useState({ name: "", description: "" });
+
+    const [isTypesOpen, setIsTypesOpen] = useState(false);
+    const [newType, setNewType] = useState({ title: "" });
+
+    const addCategory = () => {
+        toast.success('Category added succesfully.')
+    };
+
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -66,26 +81,83 @@ const AddProductForm = () => {
             : setVideos([...videos, ...fileArray]);
     };
 
+    const addType = () => {
+        // add newType to your types array or API call
+        setIsTypesOpen(false);
+        setNewType({ title: "" });
+    };
+
     return (
         <div>
             <Header title="Add New Product" subTitle="Fill in the product details below" />
 
             <Tabs defaultValue="add">
-                <TabsList className="bg-[#0f1b0f]/60 border-b border-white/10 mb-8">
-                    <TabsTrigger
-                        className="text-white cursor-pointer data-[state=active]:bg-green-600 data-[state=active]:text-white"
-                        value="add"
-                    >
-                        Add Product
-                    </TabsTrigger>
-                    <TabsTrigger
-                        className="text-white cursor-pointer data-[state=active]:bg-green-600 data-[state=active]:text-white"
-                        value="allProducts"
-                    >
-                        All Products
-                    </TabsTrigger>
-                   
-                </TabsList>
+                <div className='flex items-center justify-between'>
+                    <TabsList className="bg-[#0f1b0f]/60 border-b border-white/10 mb-8">
+                        <TabsTrigger
+                            className="text-white cursor-pointer data-[state=active]:bg-green-600 data-[state=active]:text-white"
+                            value="add"
+                        >
+                            Add Product
+                        </TabsTrigger>
+                        <TabsTrigger
+                            className="text-white cursor-pointer data-[state=active]:bg-green-600 data-[state=active]:text-white"
+                            value="allProducts"
+                        >
+                            All Products
+                        </TabsTrigger>
+                    </TabsList>
+
+                    <div className='flex items-center gap-2'>
+                        <Button
+                            className='bg-[#00A63E] cursor-pointer'
+                            onClick={() => setIsCategoryOpen(true)}
+                        >Add Category</Button>
+
+                        {/* Category Model */}
+                        <CategoryModel
+                            open={isCategoryOpen}
+                            setOpen={setIsCategoryOpen}
+                            title="Add Category"
+                            fields={[
+                                {
+                                    name: "name",
+                                    placeholder: "Category Name",
+                                    value: newCategory.name,
+                                    onChange: (val: any) => setNewCategory({ ...newCategory, name: val }),
+                                },
+                                {
+                                    name: "description",
+                                    placeholder: "Description",
+                                    type: "textarea",
+                                    value: newCategory.description,
+                                    onChange: (val: any) =>
+                                        setNewCategory({ ...newCategory, description: val }),
+                                },
+                            ]}
+                            onSave={addCategory}
+                        />
+
+                        <Button className="bg-[#00A63E] cursor-pointer" onClick={() => setIsTypesOpen(true)}>
+                            Add Types
+                        </Button>
+
+                        <TypesModal
+                            open={isTypesOpen}
+                            setOpen={setIsTypesOpen}
+                            title="Add Type"
+                            fields={[
+                                {
+                                    name: "title",
+                                    placeholder: "Type Title",
+                                    value: newType.title,
+                                    onChange: (val) => setNewType({ title: val }),
+                                },
+                            ]}
+                            onSave={addType}
+                        />
+                    </div>
+                </div>
 
                 <TabsContent value="add">
                     <form onSubmit={handleSubmit} className="p-6 bg-[#0f1b0f]/60 rounded-xl shadow-lg border border-white/10 text-white space-y-6">
