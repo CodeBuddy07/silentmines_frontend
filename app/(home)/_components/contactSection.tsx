@@ -1,7 +1,7 @@
 "use client";
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface ContactSectionProps {
     className?: string;
@@ -9,80 +9,81 @@ interface ContactSectionProps {
 
 const ContactSection: React.FC<ContactSectionProps> = ({ className = "" }) => {
     return (
-        <section id='contact' className={`py-16 px-4 bg-black text-white ${className}`}>
+        <section id="contact" className={`py-16 px-4 bg-black text-white ${className}`}>
             <div className="max-w-7xl mx-auto">
-                {/* Header */}
+                {/* Title */}
                 <div className="mb-12">
                     <h2 className="text-2xl md:text-3xl font-bold mb-4">Contact Us</h2>
                     <div className="w-16 h-1 bg-white mb-8"></div>
                 </div>
 
-                {/* Main Content */}
-                <div className="space-y-8">
-                    {/* Gallery Info */}
-                    <p className=" leading-relaxed">
-                        All items featured in our current gallery are available for both breakdown and bulk ordering.
-                    </p>
+                {/* Instructions */}
+                <p className="mb-4">Ready to place an order? It’s easy.</p>
+                <p className="flex items-start gap-2 mb-2">
+                    <span role="img" aria-label="cart">🛒</span>
+                    <span>
+                        <strong>Step 1:</strong> Add the products you want to your cart and complete checkout.
+                    </span>
+                </p>
+                <p className="flex items-start gap-2 mb-6">
+                    <span role="img" aria-label="signal">📲</span>
+                    <span>
+                        <strong>Step 2:</strong> We’ll reach out to you directly on <strong>Signal</strong> with pickup instructions.
+                    </span>
+                </p>
 
-                    {/* Flavor Selection */}
-                    <div className="space-y-4">
-                        <p className="">
-                            <span className="font-semibold">Select Your Flavor:</span> Once you have chosen the flavor you wish to order, please confirm the desired order size. We offer sizes ranging from 1 oz to 5 lb for each flavor.
-                        </p>
-                    </div>
+                <p className="mb-6 text-gray-300">
+                    You can message us at any time — we respond FAST (like warp-speed fast). Our support is always
+                    online during business hours, but we often reply after hours too. Don’t be shy!
+                </p>
 
-                    {/* Contact Methods */}
-                    <div className="space-y-6">
-                        <p className="">
-                            <span className="font-semibold">Contact Us:</span> Click any of our platforms to reach us:
-                        </p>
+                {/* Need to get in touch */}
+                <h3 className="text-lg font-semibold mb-4">Need to get in touch right now?</h3>
+                <p className="mb-4">Tap one of the platforms below:</p>
 
-                        {/* Platform Buttons */}
-                        <div className="flex flex-wrap gap-4">
-                            {/* Signal */}
-                            <Button
-                                className="w-full sm:w-auto bg-[#3a76f0] hover:bg-[#2c61d8] text-white px-6 py-4 rounded-xl flex items-center gap-4 transition-all duration-300 shadow-md hover:shadow-lg"
-                                onClick={() => window.open('https://signal.org', '_blank')}
-                            >
-                                <img src="/signal_logo.png" alt="Signal" className="w-6 h-6 rounded-2xl" />
-                                <div className="text-left">
-                                    <span className="text-base font-semibold">Signal</span>
-                                    <span className="text-sm opacity-90 ml-1">(For the fastest response)</span>
-                                </div>
-                            </Button>
+                {/* Platform Buttons */}
+                <div className="flex flex-wrap gap-4 mb-8">
+                    {/* Signal */}
+                    <Button
+                        className="w-full sm:w-auto bg-[#3a76f0] hover:bg-[#2c61d8] cursor-pointer text-white px-6 py-4 rounded-xl flex items-center gap-4 shadow-md hover:shadow-lg"
+                        onClick={() => window.open("https://signal.org", "_blank")}
+                    >
+                        <img src="/element_logo.png" alt="Element" className="w-6 h-6  rounded-2xl" />
+                        <span className="font-semibold">Signal</span>
+                        <span className="text-sm opacity-90">(For the fastest response)</span>
+                    </Button>
 
-                            {/* Element */}
-                            <Button
-                                className="w-full sm:w-auto bg-[#00bfa5] hover:bg-[#00a896] text-white px-6 py-4 rounded-xl flex items-center gap-4 transition-all duration-300 shadow-md hover:shadow-lg"
-                                onClick={() => window.open('https://element.io', '_blank')}
-                            >
-                                <img src="/element_logo.png" alt="Element" className="w-6 h-6  rounded-2xl" />
-                                <span className="text-base font-semibold">Element</span>
-                            </Button>
-
-                            {/* Telegram */}
-                            <Button
-                                className="w-full sm:w-auto bg-[#229ED9] hover:bg-[#1b8ec2] text-white px-6 py-4 rounded-xl flex items-center gap-4 transition-all duration-300 shadow-md hover:shadow-lg"
-                                onClick={() => window.open('https://telegram.org', '_blank')}
-                            >
-                                <img src="/telegram_logo.avif" alt="Telegram" className="w-6 h-6 rounded-2xl" />
-                                <span className="text-base font-semibold">Telegram</span>
-                            </Button>
-                        </div>
-
-
-                        {/* Response Time */}
-                        <Card className="bg-gray-900 border-gray-800">
-                            <CardContent className="p-6">
-                                <p className="text-gray-300 leading-relaxed">
-                                    We strive to respond on the same day, Monday through Friday, from{' '}
-                                    <span className="font-semibold text-white">9 AM to 5 PM PST</span>.
-                                    Thank you for your interest!
-                                </p>
-                            </CardContent>
-                        </Card>
-                    </div>
+                    {/* Telegram */}
+                    <Button
+                        className="w-full sm:w-auto bg-[#229ED9] hover:bg-[#1b8ec2] cursor-pointer text-white px-6 py-4 rounded-xl flex items-center gap-4 shadow-md hover:shadow-lg"
+                        onClick={() => window.open("https://telegram.org", "_blank")}
+                    >
+                        <img src="/telegram_logo.avif" alt="Element" className="w-6 h-6  rounded-2xl" />
+                        <span className="font-semibold">Telegram</span>
+                        <span className="text-sm opacity-90">(Reliable and encrypted)</span>
+                    </Button>
                 </div>
+
+                {/* Help list */}
+                <p className="font-semibold mb-4">We’re here to help with:</p>
+                <ul className="list-disc list-inside space-y-2 text-gray-300 mb-8">
+                    <li>Order status and updates</li>
+                    <li>Custom or bulk requests</li>
+                    <li>Pickup coordination</li>
+                    <li>Product questions</li>
+                    <li>General cosmic curiosity 🛸</li>
+                </ul>
+
+                {/* Hours */}
+                <Card className="bg-gray-900 border-gray-800 text-white">
+                    <CardContent className="p-6">
+                        <p>
+                            <strong>Hours:</strong>
+                            <br />
+                            Daily | <span className="font-semibold">12:00 PM – 10:00 PM EST</span>
+                        </p>
+                    </CardContent>
+                </Card>
             </div>
         </section>
     );

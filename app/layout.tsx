@@ -22,7 +22,7 @@ const planetCosmos = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "DR. Green Thumb",
+  title: "The Green Thumb",
   description: "High Quality Weed That's Out of This World.",
 };
 
@@ -31,14 +31,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  
-  
+
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${planetCosmos.variable} antialiased`}
 
-      
+
       >
         {children}
       </body>

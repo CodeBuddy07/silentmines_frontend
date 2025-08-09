@@ -16,7 +16,7 @@ export default function AdminLoginPage() {
     return (
         <div className="min-h-screen bg-black flex items-center justify-center px-4">
             <div className="w-full max-w-md bg-[#0f1b0f] border border-green-800/30 rounded-2xl shadow-xl p-8 text-white">
-                <h1 className="text-3xl font-bold text-center mb-6 text-green-400">Dr. Green Thumb</h1>
+                <h1 className="text-3xl font-bold text-center mb-6 text-green-400">The Green Thumb</h1>
                 <p className="text-sm text-center text-gray-400 mb-8">Admin Login</p>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
@@ -49,7 +49,7 @@ export default function AdminLoginPage() {
                 </form>
 
                 <div className="text-center text-xs text-gray-500 mt-6">
-                    © {new Date().getFullYear()} Dr. Green Thumb. All rights reserved.
+                    © {new Date().getFullYear()} The Green Thumb. All rights reserved.
                 </div>
             </div>
         </div>

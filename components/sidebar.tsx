@@ -69,7 +69,7 @@ export function Sidebar({ className }: SidebarProps) {
         <div className="flex flex-col h-full text-white relative z-10">
           {/* Logo */}
           <div className="flex items-center justify-center h-16 px-4 pt-10">
-            <h1 className="text-green-400 text-xl font-bold">Dr. Green Thumb</h1>
+            <h1 className="text-green-400 text-xl font-bold">The Green Thumb</h1>
           </div>
 
           {/* Navigation */}

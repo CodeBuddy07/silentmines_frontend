@@ -22,9 +22,10 @@ const Header = () => {
                     className="text-4xl sm:text-6xl md:text-7xl text-white"
                     style={{ fontFamily: 'var(--font-planet-cosmos)' }}
                 >
-                    DR. Green Thumb*
+                    The Green Thumb*
                 </h1>
-                <div className='relative inline-block'>
+                {/* 
+                 <div className='relative inline-block'>
                     <h2
                         data-aos="fade-up"
                         className="absolute inset-0 text-lg sm:text-xl md:text-2xl font-semibold text-white blur-[6px] opacity-80 z-0"
@@ -33,16 +34,17 @@ const Header = () => {
                         WHOLE SITE ON SALE — UP TO $300 OFF
                     </h2>
 
-                    {/* Main visible text */}
-                    <h2
-                        data-aos="fade-up"
-                        className="relative text-lg sm:text-xl md:text-2xl font-semibold text-white z-10"
-                    >
-                        WHOLE SITE ON SALE — UP TO $300 OFF
-                    </h2>
-                </div>
+                <h2
+                    data-aos="fade-up"
+                    className="relative text-lg sm:text-xl md:text-2xl font-semibold text-white z-10"
+                >
+                    WHOLE SITE ON SALE — UP TO $300 OFF
+                </h2>
             </div>
-        </div>
+
+                */}
+            </div>
+        </div >
 
     );
 };
