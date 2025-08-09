@@ -78,7 +78,7 @@ const ReviewsPage: React.FC = () => {
           key={i}
           className={`w-5 h-5 ${
             i <= rating 
-              ? 'fill-green-500 text-green-500' 
+              ? 'fill-green-500 text-green-500 ' 
               : 'fill-gray-600 text-gray-600'
           }`}
         />
