@@ -30,7 +30,7 @@ const AddProductForm = () => {
     const [priceList, setPriceList] = useState<{ price: string; unit: string }[]>([]);
     const [photos, setPhotos] = useState<File[]>([]);
     const [videos, setVideos] = useState<File[]>([]);
-
+    const [discount, setDiscount] = useState('');
     const [categories, setCategories] = useState([]);
     const [isCategoryOpen, setIsCategoryOpen] = useState(false);
     const [newCategory, setNewCategory] = useState({ name: "", description: "" });
@@ -53,6 +53,7 @@ const AddProductForm = () => {
             priceList,
             photos,
             videos,
+            discount
         });
 
         alert('Product submitted successfully!');
@@ -181,6 +182,20 @@ const AddProductForm = () => {
                                 className="bg-[#1a2a1a] mt-3 text-white"
                             />
                         </div>
+
+                        <div className="space-y-1">
+                            <Label>Discount (%)</Label>
+                            <Input
+                                placeholder="e.g. 10"
+                                type="number"
+                                min="0"
+                                max="100"
+                                value={discount}
+                                onChange={e => setDiscount(e.target.value)}
+                                className="bg-[#1a2a1a] mt-3 text-white"
+                            />
+                        </div>
+
 
                         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-4">
                             <div className="flex-1">
