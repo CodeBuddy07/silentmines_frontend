@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Menu, X, PlusCircleIcon, AlignEndVertical, LogOut, MegaphoneIcon, CannabisIcon, StarHalf, CalendarSync } from "lucide-react"
+import { Menu, X, PlusCircleIcon, AlignEndVertical, LogOut, MegaphoneIcon, CannabisIcon, StarHalf, CalendarSync, Settings } from "lucide-react"
 import { toast } from "sonner"
 
 const navigationItems = [
@@ -44,6 +44,12 @@ const navigationItems = [
     label: "Announcement",
     href: "/dashboard/announcement",
     icon: MegaphoneIcon,
+  },
+  {
+    id: "changePassword",
+    label: "Change Password",
+    href: "/dashboard/changepassword",
+    icon: Settings,
   },
 ];
 

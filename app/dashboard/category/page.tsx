@@ -68,7 +68,7 @@ export default function Page() {
             <TableRow>
               <TableHead className="w-[150px] text-white">Name</TableHead>
               <TableHead className="text-white">Description</TableHead>
-              <TableHead className="text-white">Subcategories</TableHead> {/* 👈 New */}
+              <TableHead className="text-white">Subcategories</TableHead>
               <TableHead className="text-right text-white">Actions</TableHead>
             </TableRow>
           </TableHeader>
