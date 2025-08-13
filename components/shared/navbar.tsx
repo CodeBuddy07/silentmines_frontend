@@ -24,6 +24,51 @@ interface NavItem {
   sub?: SubItem[];
 }
 
+// Dummy categories data - simplified without subcategory descriptions
+const dummyCategories = [
+  {
+    id: '1',
+    name: 'Flowers',
+    slug: 'flowers',
+    description: 'Beautiful fresh flowers for all occasions',
+    subCategories: [
+      { id: '1-1', name: 'Tier 1 (EXOTIC)', slug: 'tier-1-(exotic)' },
+      { id: '1-2', name: 'Tier 2 (TOP SHELF)', slug: 'tier-2-(top-shelf)' },
+      { id: '1-3', name: 'Tier 3 (CHEAP)', slug: 'tier-3-(cheap)' },
+      { id: '1-4', name: 'Snowcaps', slug: 'snowcaps' },
+      { id: '1-5', name: 'Monorocks', slug: 'monorocks' }
+    ]
+  },
+  {
+    id: '2',
+    name: 'Pre-Rolls',
+    slug: 'pre-rolls',
+    description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
+    subCategories: []
+  },
+    {
+    id: '3',
+    name: 'Extracts',
+    slug: 'extracts',
+    description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
+    subCategories: []
+  },
+    {
+    id: '4',
+    name: 'Edibles',
+    slug: 'edibles',
+    description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
+    subCategories: []
+  },
+      {
+    id: '5',
+    name: 'Vapes',
+    slug: 'vapes',
+    description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
+    subCategories: []
+  },
+];
+
 const Navbar = () => {
   const pathname = usePathname();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -35,36 +80,65 @@ const Navbar = () => {
   const searchRef = useRef<HTMLDivElement>(null);
   const dropdownTimeoutRef = useRef<NodeJS.Timeout>(null);
 
+  // Build navigation items from dummy categories
+  const buildNavItems = (): NavItem[] => {
+    const staticItems: NavItem[] = [
+      { name: 'Home', href: '/' },
+      // { name: 'Gallery', href: '/gallery' }
+    ];
 
-  // Mock search suggestions - replace with your actual search logic
-  const mockSuggestions: SearchSuggestion[] = [
-    { id: '1', title: 'Flowers', category: 'Flowers', url: '/flowers' },
-    { id: '2', title: 'Exotic Plants Collection', category: 'Licensed Exotics', url: '/exotics/plants' },
-    { id: '3', title: 'Organic Fertilizer', category: 'Soil Exotics', url: '/soil/fertilizer' },
-    { id: '4', title: 'Indoor Grow Lights', category: 'Licensed Indoors', url: '/indoors/grow-lights' },
-    { id: '5', title: 'Wax Melts', category: 'Wax', url: '/wax/melts' },
-    { id: '6', title: 'AAA Grade Seeds', category: 'Licensed AAA', url: '/aaa/seeds' },
-    { id: '7', title: 'Last Chance Clearance', category: 'Deals', url: '/deals/clearance' },
-  ];
+    const categoryItems: NavItem[] = dummyCategories.map(category => ({
+      name: category.name,
+      href: `/categories/${category.slug}`,
+      // Only show subcategories in dropdown for preview, but they won't have separate pages
+      sub: category.subCategories.length > 0 ? category.subCategories.map(sub => ({
+        name: sub.name,
+        href: `/categories/${category.slug}` // Same href as parent, filtering happens on the page
+      })) : undefined
+    }));
 
-  const navItems: NavItem[] = [
-    { name: 'Home', href: '/' },
-    { name: 'Gallery', href: '/gallery' },
-    {
-      name: 'Flowers', href: '/flowers', sub: [
-        { name: 'Tier 1 (EXOTIC)', href: '/flowers/tier1' },
-        { name: 'Tier 2 (TOP SHELF)', href: '/flowers/tier2' },
-        { name: 'Tier 3 (CHEAP)', href: '/flowers/tier3' },
-        { name: 'Snowcaps', href: '/flowers/snowcaps' },
-        { name: 'Moonrocks', href: '/flowers/moonrocks' },
-      ]
-    },
-    { name: 'Pre-Rolls', href: '/pre-rolls' },
-    { name: 'Extracts', href: '/extracts' },
-    { name: 'Edibles', href: '/edibles' },
-    { name: 'Vapes', href: '/vapes' },
-    { name: 'Contact', href: '/#contact' },
-  ];
+    const endItems: NavItem[] = [
+      { name: 'Contact', href: '/#contact' }
+    ];
+
+    return [...staticItems, ...categoryItems, ...endItems];
+  };
+
+  const navItems = buildNavItems();
+
+  // Generate search suggestions from categories
+  const generateSearchSuggestions = (): SearchSuggestion[] => {
+    const suggestions: SearchSuggestion[] = [];
+    
+    dummyCategories.forEach(category => {
+      suggestions.push({
+        id: `cat-${category.id}`,
+        title: category.name,
+        category: 'Category',
+        url: `/categories/${category.slug}`
+      });
+
+      category.subCategories.forEach(sub => {
+        suggestions.push({
+          id: `sub-${sub.id}`,
+          title: sub.name,
+          category: category.name,
+          url: `/categories/${category.slug}` // Same URL, filtering will happen on the page
+        });
+      });
+    });
+
+    // Add some additional suggestions
+    suggestions.push(
+      { id: 'search-1', title: 'Premium Bouquets', category: 'Special', url: '/premium' },
+      { id: 'search-2', title: 'Same Day Delivery', category: 'Service', url: '/same-day' },
+      { id: 'search-3', title: 'Corporate Orders', category: 'Business', url: '/corporate' }
+    );
+
+    return suggestions;
+  };
+
+  const allSearchSuggestions = generateSearchSuggestions();
 
   // Function to check if a navigation item is active
   const isActive = (item: NavItem): boolean => {
@@ -107,7 +181,7 @@ const Navbar = () => {
   // Filter suggestions based on search query
   useEffect(() => {
     if (searchQuery.trim()) {
-      const filtered = mockSuggestions.filter(
+      const filtered = allSearchSuggestions.filter(
         (item) =>
           item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.category.toLowerCase().includes(searchQuery.toLowerCase())
@@ -158,8 +232,6 @@ const Navbar = () => {
     // Handle navigation here
   };
 
-
-
   return (
     <>
       <nav className="bg-black text-white z-50 border-b border-gray-800 sticky top-0">
@@ -169,7 +241,7 @@ const Navbar = () => {
             <div className="flex-shrink-0 flex items-center">
               <div className="grid place-items-center w-12 h-12 rounded-full overflow-hidden border border-gray-700 cursor-pointer">
                 <Link href="/" className="flex items-center justify-center">
-                  <img className=' ' src="/logo.jpeg" alt="" />
+                  <img className='' src="/logo.jpeg" alt="Logo" />
                 </Link>
               </div>
             </div>
@@ -212,22 +284,31 @@ const Navbar = () => {
                   {/* Desktop Dropdown */}
                   {item.sub && (
                     <div
-                      className={`absolute top-full left-0 mt-1 w-56 bg-green-900/30 backdrop-blur-lg border border-gray-700 rounded-lg shadow-2xl transition-all duration-300 ease-out transform ${activeDropdown === item.name
+                      className={`absolute top-full left-0 mt-1 w-64 bg-green-900/30 backdrop-blur-lg border border-gray-700 rounded-lg shadow-2xl transition-all duration-300 ease-out transform z-50 ${activeDropdown === item.name
                         ? 'opacity-100 visible translate-y-0'
                         : 'opacity-0 invisible -translate-y-2'
                         }`}
                     >
                       <div className="py-2">
+                        {/* View All Category Link */}
+                        <Link
+                          href={item.href || '#'}
+                          className="block px-4 py-3 text-sm text-gray-300 hover:text-green-500 hover:bg-green-600/10 transition-all duration-200 border-b border-gray-700"
+                        >
+                          <div className="font-medium">View All {item.name}</div>
+                          <div className="text-xs text-gray-400 mt-1">
+                            Browse complete collection
+                          </div>
+                        </Link>
+
+                        {/* Subcategories - these show info but link to main category page */}
                         {item.sub.map((subItem, index) => (
                           <Link
                             key={subItem.name}
-                            href={subItem.href}
+                            href={item.href || '#'}
                             className={`
                             block px-4 py-3 text-sm transition-all duration-200 transform hover:translate-x-1
-                            ${isSubItemActive(subItem.href)
-                                ? 'text-green-400 bg-green-600/20 border-r-2 border-green-400'
-                                : 'text-gray-300 hover:text-green-500 hover:bg-green-600/10'
-                              }
+                            text-gray-300 hover:text-green-500 hover:bg-green-600/10
                             ${activeDropdown === item.name ? 'animate-in slide-in-from-left' : ''}
                           `}
                             style={{
@@ -235,9 +316,6 @@ const Navbar = () => {
                             }}
                           >
                             {subItem.name}
-                            {isSubItemActive(subItem.href) && (
-                              <span className="ml-2 w-1 h-1 bg-green-400 rounded-full inline-block"></span>
-                            )}
                           </Link>
                         ))}
                       </div>
@@ -258,18 +336,16 @@ const Navbar = () => {
                 <Search className="w-5 h-5" />
               </button>
 
-              {/* Daily Special Button */}
-
+              {/* Order Now Button */}
               <OrderPopup>
                 <Button
                   variant="outline"
-                  className="relative rounded-full overflow-hidden  border-white bg-transparent hover:text-black hover:bg-transparent text-white group cursor-pointer"
+                  className="relative rounded-full overflow-hidden border-white bg-transparent hover:text-black hover:bg-transparent text-white group cursor-pointer"
                 >
                   <span className="absolute inset-0 bg-white translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0" />
-                  <span className="relative z-10 px-2 pr-4 py-2">Order Now  </span>
+                  <span className="relative z-10 px-2 pr-4 py-2">Order Now</span>
                 </Button>
               </OrderPopup>
-
 
               {/* Mobile menu button */}
               <button
@@ -289,7 +365,7 @@ const Navbar = () => {
         </div>
 
         {/* Mobile menu */}
-        <div className={`lg:hidden bg-black border-t border-gray-800 transition-all duration-300 ease-out overflow-hidden ${isMenuOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+        <div className={`lg:hidden bg-black border-t border-gray-800 transition-all duration-300 ease-out overflow-hidden ${isMenuOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'
           }`}>
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navItems.map((item, index) => (
@@ -297,7 +373,7 @@ const Navbar = () => {
                 <div className="flex items-center justify-between">
                   <Link
                     href={item.sub ? '#' : (item.href || '#')}
-                    onClick={() => item.sub && toggleMobileSubMenu(item.name)}
+                    onClick={() => !item.sub && setIsMenuOpen(false)}
                     className={`
                     flex-1 block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 ease-out transform
                     ${isActive(item) || hasActiveSubItem(item)
@@ -339,16 +415,24 @@ const Navbar = () => {
                   <div className={`overflow-hidden transition-all duration-300 ease-out ${mobileSubMenuOpen === item.name ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'
                     }`}>
                     <div className="ml-4 border-l border-gray-700 pl-4 py-2 space-y-1">
+                      {/* View All Link for Mobile */}
+                      <Link
+                        href={item.href || '#'}
+                        onClick={() => setIsMenuOpen(false)}
+                        className="block px-3 py-2 rounded-md text-sm text-gray-400 hover:text-green-500 hover:bg-gray-800 transition-all duration-200 border-b border-gray-700/50 mb-2"
+                      >
+                        <div className="font-medium">View All {item.name}</div>
+                      </Link>
+
+                      {/* Subcategories for Mobile - all link to main category */}
                       {item.sub.map((subItem, subIndex) => (
                         <Link
                           key={subItem.name}
-                          href={subItem.href}
+                          href={item.href || '#'}
+                          onClick={() => setIsMenuOpen(false)}
                           className={`
                           block px-3 py-2 rounded-md text-sm transition-all duration-200 transform
-                          ${isSubItemActive(subItem.href)
-                              ? 'text-green-400 bg-green-600/20 border-l-2 border-green-400'
-                              : 'text-gray-400 hover:text-green-500 hover:bg-gray-800'
-                            }
+                          text-gray-400 hover:text-green-500 hover:bg-gray-800
                           ${mobileSubMenuOpen === item.name ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0'}
                         `}
                           style={{
@@ -356,9 +440,6 @@ const Navbar = () => {
                           }}
                         >
                           {subItem.name}
-                          {isSubItemActive(subItem.href) && (
-                            <span className="ml-2 w-1 h-1 bg-green-400 rounded-full inline-block"></span>
-                          )}
                         </Link>
                       ))}
                     </div>
@@ -430,12 +511,12 @@ const Navbar = () => {
               </div>
             )}
 
-            {/* Popular searches or recent searches when no query */}
+            {/* Popular searches when no query */}
             {!searchQuery && (
               <div className="p-4">
                 <h3 className="text-sm font-medium text-gray-900 mb-3">Popular Searches</h3>
                 <div className="flex flex-wrap gap-2">
-                  {['Flowers', 'Pre-Rolls', 'Exotic Plants', 'Wax Products'].map((term, index) => (
+                  {['Fresh Flowers', 'Wedding Flowers', 'Potted Plants', 'Gift Sets'].map((term, index) => (
                     <button
                       key={term}
                       onClick={() => setSearchQuery(term)}

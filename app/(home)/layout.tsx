@@ -3,6 +3,7 @@ import Navbar from "@/components/shared/navbar";
 import type { Metadata } from "next";
 import { AuthProvider } from "../contexts/auth-context";
 import ProtectedRoute from "./_components/protected-route";
+import { CartProvider } from "../contexts/cartContext";
 
 
 export const metadata: Metadata = {
@@ -17,7 +18,7 @@ export default function HomeLayout({
 }>) {
   return (
     <AuthProvider>
-      <div>
+      <CartProvider>
         <ProtectedRoute>
           <Navbar />
           <div className="bg-[url('/starry_background.jpg')] bg-repeat text-white min-h-screen">
@@ -27,7 +28,7 @@ export default function HomeLayout({
           </div>
           <Footer />
         </ProtectedRoute>
-      </div>
+      </CartProvider>
     </AuthProvider>
   );
 }
