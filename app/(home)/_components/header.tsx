@@ -29,7 +29,6 @@ const Header = () => {
                     The Green Thumb*
                 </h1>
 
-                {/* Button Section */}
                 <div
                     className="mt-8 flex flex-wrap justify-center items-center gap-4 max-w-xl"
                     data-aos="fade-up"
