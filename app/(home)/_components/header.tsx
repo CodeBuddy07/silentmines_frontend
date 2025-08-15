@@ -35,11 +35,11 @@ const Header = () => {
                     data-aos="fade-up"
                     data-aos-delay="200"
                 >
-                    {["Flowers", "Pre-Rolls", "Extracts", "Edibles", "Vapes"].map(
+                    {["Flower", "Pre-Rolls", "Extracts", "Edibles", "Vapes"].map(
                         (item) => (
                             <Link
                                 key={item}
-                                href={`/categories/${item.toLowerCase()}`}
+                                href={`/categories/${item == "Flower" ? "flowers" : item.toLowerCase()}`}
                             >
                                 <Button
                                     key={item}
