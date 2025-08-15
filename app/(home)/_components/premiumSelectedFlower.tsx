@@ -126,7 +126,7 @@ export const PremiumSelectedFlower: React.FC<premiumSelectedFlowerProps> = ({
 
                 {/* Shop More Button */}
                 <div className="text-center">
-                    <Link href={"/gallery"}>
+                    <Link href={"/"}>
                         <Button
                             size="lg"
                             className="bg-green-500/10 hover:bg-green-500/20 border border-white/20 text-white hover:text-white hover:scale-105 transition-all duration-300 group"

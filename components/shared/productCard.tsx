@@ -47,7 +47,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                         />
                     </div>
                     <Badge className="absolute top-4 right-4 bg-red-600 hover:bg-red-600 text-white">
-                        ${discount} OFF
+                        {discount ? `${discount}% OFF` : ''}
                     </Badge>
                 </div>
 

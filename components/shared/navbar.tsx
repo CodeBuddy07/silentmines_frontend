@@ -36,7 +36,8 @@ const dummyCategories = [
       { id: '1-2', name: 'Tier 2 (TOP SHELF)', slug: 'tier-2-(top-shelf)' },
       { id: '1-3', name: 'Tier 3 (CHEAP)', slug: 'tier-3-(cheap)' },
       { id: '1-4', name: 'Snowcaps', slug: 'snowcaps' },
-      { id: '1-5', name: 'Monorocks', slug: 'monorocks' }
+      { id: '1-5', name: 'Monorocks', slug: 'monorocks' },
+      { id: '1-6', name: 'Mushrooms', slug: 'mushrooms' }
     ]
   },
   {
