@@ -1,5 +1,6 @@
-import React from 'react';
-import { Star, User, Calendar } from 'lucide-react';
+"use client";
+import React, { JSX, useState } from 'react';
+import { Star, User, Calendar, Plus, X } from 'lucide-react';
 
 interface Review {
   id: string;
@@ -10,9 +11,23 @@ interface Review {
   image?: string;
 }
 
+interface ReviewFormData {
+  name: string;
+  rating: number;
+  review: string;
+  image?: File | null;
+}
+
 const ReviewsPage: React.FC = () => {
-  // Sample reviews data - replace with your actual data from MongoDB
-  const reviews: Review[] = [
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState<ReviewFormData>({
+    name: '',
+    rating: 0,
+    review: '',
+    image: null
+  });
+  const [reviews, setReviews] = useState<Review[]>([
     {
       id: '1',
       name: 'Sarah Johnson',
@@ -59,7 +74,83 @@ const ReviewsPage: React.FC = () => {
       review: 'Good service with room for improvement. The project was completed satisfactorily, though there were some delays. Communication could have been better.',
       date: '2024-07-15',
     }
-  ];
+  ]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setFormData(prev => ({
+      ...prev,
+      image: file
+    }));
+  };
+
+  const handleRatingClick = (rating: number) => {
+    setFormData(prev => ({
+      ...prev,
+      rating
+    }));
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      rating: 0,
+      review: '',
+      image: null
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('rating', formData.rating.toString());
+      formDataToSend.append('review', formData.review);
+      
+      if (formData.image) {
+        formDataToSend.append('image', formData.image);
+      }
+
+      // Replace with your actual API endpoint
+      const response = await fetch('/api/reviews', {
+        method: 'POST',
+        body: formDataToSend,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit review');
+      }
+
+      const newReview = await response.json();
+      
+      // Add the new review to the top of the list
+      setReviews(prev => [newReview, ...prev]);
+      
+      // Close dialog and reset form
+      setIsDialogOpen(false);
+      resetForm();
+      
+      // You might want to show a success message here
+      alert('Review submitted successfully!');
+      
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      alert('Failed to submit review. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
@@ -70,7 +161,7 @@ const ReviewsPage: React.FC = () => {
     });
   };
 
-  const renderStars = (rating: number) => {
+  const renderStars = (rating: number): JSX.Element[] => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       stars.push(
@@ -79,7 +170,7 @@ const ReviewsPage: React.FC = () => {
           className={`w-5 h-5 ${
             i <= rating 
               ? 'fill-green-500 text-green-500' 
-              : 'fill-gray-600 text-gray-600 '
+              : 'fill-gray-600 text-gray-600'
           }`}
         />
       );
@@ -114,6 +205,17 @@ const ReviewsPage: React.FC = () => {
           <p className="text-gray-400 text-lg">
             What our customers are saying about us
           </p>
+        </div>
+
+        {/* Write Review Button */}
+        <div className="text-center mb-8">
+          <button
+            onClick={() => setIsDialogOpen(true)}
+            className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-green-500/25 flex items-center gap-2 mx-auto"
+          >
+            <Plus className="w-5 h-5" />
+            Write a Review
+          </button>
         </div>
 
         {/* Reviews Grid */}
@@ -176,6 +278,132 @@ const ReviewsPage: React.FC = () => {
             Load More Reviews
           </button>
         </div>
+
+        {/* Review Dialog */}
+        {isDialogOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md border border-gray-700 max-h-[90vh] overflow-y-auto">
+              {/* Dialog Header */}
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white">Write a Review</h2>
+                <button
+                  onClick={() => {
+                    setIsDialogOpen(false);
+                    resetForm();
+                  }}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Name Field */}
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
+                    Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="Enter your name"
+                  />
+                </div>
+
+
+
+                {/* Rating Field */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Rating *
+                  </label>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => handleRatingClick(star)}
+                        className="focus:outline-none"
+                      >
+                        <Star
+                          className={`w-8 h-8 transition-colors ${
+                            star <= formData.rating
+                              ? 'fill-green-500 text-green-500'
+                              : 'fill-gray-600 text-gray-600 hover:text-green-400'
+                          }`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Review Field */}
+                <div>
+                  <label htmlFor="review" className="block text-sm font-medium text-gray-300 mb-1">
+                    Review *
+                  </label>
+                  <textarea
+                    id="review"
+                    name="review"
+                    value={formData.review}
+                    onChange={handleInputChange}
+                    required
+                    rows={4}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                    placeholder="Share your experience..."
+                  />
+                </div>
+
+                {/* Image Upload Field */}
+                <div>
+                  <label htmlFor="image" className="block text-sm font-medium text-gray-300 mb-1">
+                    Profile Image (Optional)
+                  </label>
+                  <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    onChange={handleImageChange}
+                    accept="image/*"
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white file:mr-4 file:py-1 file:px-4 file:rounded-lg file:border-0 file:bg-green-600 file:text-white hover:file:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                  {formData.image && (
+                    <p className="text-sm text-green-400 mt-1">
+                      Selected: {formData.image.name}
+                    </p>
+                  )}
+                </div>
+
+                {/* Submit Buttons */}
+                <div className="flex gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsDialogOpen(false);
+                      resetForm();
+                    }}
+                    className="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg font-medium transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting || !formData.name || !formData.review || formData.rating === 0}
+                    className="flex-1 px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-all"
+                  >
+                    {isSubmitting ? 'Submitting...' : 'Submit Review'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

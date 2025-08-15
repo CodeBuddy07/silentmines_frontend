@@ -10,9 +10,9 @@ import Link from 'next/link';
 
 interface ProductCardProps {
     image: string;
-    discount: number;
+    discount?: number;
     category: string;
-    subcategory: string;
+    subcategory?: string;
     name: string;
     prices: Price[];
 }

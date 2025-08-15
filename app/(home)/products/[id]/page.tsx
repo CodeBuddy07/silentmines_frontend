@@ -1,34 +1,12 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Star, Heart, Share2, Play, Pause } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, ShoppingBag } from 'lucide-react';
 import React, { use, useState } from 'react';
 import { PremiumSelectedFlower } from '../../_components/premiumSelectedFlower';
+import { Button } from '@/components/ui/button';
+import { Product, useCart } from '@/app/contexts/cartContext';
+import OrderPopup from '../../_components/OrderForm';
 import AddToBagButton from '../../_components/addToBagButton';
-
-
-interface ProductPrice {
-  weight: string;
-  amount: string;
-}
-
-interface Product {
-  id: string;
-  image: string;
-  discount: number;
-  category: string;
-  subcategory: string;
-  name: string;
-  description: string;
-  prices: ProductPrice[];
-  videos?: string[];
-  gallery?: string[];
-}
-
-
-interface ProductPageProps {
-  params: { id: string };
-}
-
 
 const Page = ({
   params,
@@ -37,6 +15,7 @@ const Page = ({
 }) => {
 
   const { id } = use(params);
+  const { getCartItemCount } = useCart();
 
   const sampleProduct: Product = {
     id: id,
@@ -45,7 +24,7 @@ const Page = ({
     category: "LICENSED INDOORS",
     subcategory: "DAILY SPECIAL",
     name: "LEMON BUBBLEGUM 🍋⚡",
-    description: "Premium quality Lemon Bubblegum strain with an demo exceptional citrusy flavor profile and energizing effects. This licensed indoor cultivation ensures consistent quality and purity. Perfect for daytime use with its uplifting and creative properties. Limited time offer with 75% discount - don't miss out on this amazing deal!",
+    description: "Premium quality Lemon Bubblegum strain with an exceptional citrusy flavor profile and energizing effects. This licensed indoor cultivation ensures consistent quality and purity. Perfect for daytime use with its uplifting and creative properties. Limited time offer with 75% discount - don't miss out on this amazing deal!",
     prices: [
       { weight: "1 LB", amount: "750" },
       { weight: "2 LB", amount: "1400" },
@@ -62,10 +41,6 @@ const Page = ({
       "/demo_product-5.png"
     ]
   };
-
-
-
-
 
   const [product, setProduct] = useState<Product>(sampleProduct);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -88,10 +63,23 @@ const Page = ({
     setCurrentSlide((prev) => (prev - 1 + allMedia.length) % allMedia.length);
   };
 
-
+  const cartItemCount = getCartItemCount();
 
   return (
     <div className="min-h-screen bg-black text-white p-4">
+      {/* Floating Cart Button */}
+      {cartItemCount > 0 && (
+        <div className="fixed bottom-6 right-6 z-50">
+          <OrderPopup>
+            <Button className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-full p-4 shadow-lg shadow-emerald-500/30 relative">
+              <ShoppingBag className="w-6 h-6" />
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
+                {cartItemCount}
+              </span>
+            </Button>
+          </OrderPopup>
+        </div>
+      )}
 
       <div className="max-w-6xl mx-auto mt-20">
         {/* Header */}
@@ -139,7 +127,6 @@ const Page = ({
                       autoPlay
                       controlsList='nodownload'
                     />
-
                   </div>
                 ) : (
                   <img
@@ -224,7 +211,6 @@ const Page = ({
                   </div>
                 )}
               </div>
-
               <p className="text-emerald-200 mt-2 text-sm">Price for {selectedWeight}</p>
             </div>
 
@@ -242,22 +228,38 @@ const Page = ({
                         : 'border-emerald-500/30 bg-emerald-900/10 hover:border-emerald-400/60 hover:bg-emerald-800/20'
                         }`}
                     >
-                      <div className="flex items-center justify-between ">
+                      <div className="flex items-center justify-between">
                         <span className="font-medium text-sm text-white">{price.weight}</span>
-
                       </div>
                     </button>
                   ))}
-
-
-
                 </div>
 
-                <div className=''>
-                  <AddToBagButton />
+                <div className='flex-1 max-w-xs'>
+                  <AddToBagButton 
+                    product={product} 
+                    selectedWeight={selectedWeight}
+                  />
                 </div>
               </div>
             </div>
+
+            {/* Order Button for existing cart items */}
+            {cartItemCount > 0 && (
+              <div className="p-4 bg-emerald-600/10 border border-emerald-500/40 rounded-2xl">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-emerald-300 text-sm">Items in cart: {cartItemCount}</p>
+                    <p className="text-white font-semibold">Ready to order?</p>
+                  </div>
+                  <OrderPopup>
+                    <Button className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-lg shadow-lg shadow-emerald-500/30">
+                      View Cart & Order
+                    </Button>
+                  </OrderPopup>
+                </div>
+              </div>
+            )}
 
             {/* Product Description */}
             <div className="p-6 bg-emerald-900/10 backdrop-blur-xl border border-emerald-500/30 rounded-xl">
@@ -289,8 +291,6 @@ const Page = ({
                 <div className="text-sm text-gray-400">Quality Grade</div>
               </div>
             </div>
-
-
           </div>
         </div>
       </div>
