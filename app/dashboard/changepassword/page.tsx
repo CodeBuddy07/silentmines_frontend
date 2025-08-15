@@ -24,7 +24,7 @@ export default function UpdatePasswordPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e:any) => {
     e.preventDefault();
 
     console.log("Password updated:", form);
