@@ -83,7 +83,6 @@ export default function OrderPopup({ children }: OrderPopupProps) {
   };
 
   const handleSubmit = async () => {
-    // Validate form
     if (cart.length === 0) {
       alert('Please add items to your cart');
       return;
