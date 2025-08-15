@@ -12,13 +12,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Plus, Minus, ShoppingCart, Trash2, Clock, Phone, User } from 'lucide-react';
+import { Plus, Minus, ShoppingCart, Trash2, Clock, Phone, User, NotebookPen } from 'lucide-react';
 import { useCart } from '@/app/contexts/cartContext';
+import { Textarea } from '@/components/ui/textarea';
 
 
 interface OrderFormData {
   pickupTime: string;
   phoneNumber: string;
+  orderNotes: string;
 }
 
 interface OrderPopupProps {
@@ -32,6 +34,7 @@ export default function OrderPopup({ children }: OrderPopupProps) {
   const [formData, setFormData] = useState<OrderFormData>({
     pickupTime: '',
     phoneNumber: '',
+    orderNotes: '',
   });
 
   // Generate today's pickup times from 12:00 PM to 10:00 PM
@@ -100,6 +103,7 @@ export default function OrderPopup({ children }: OrderPopupProps) {
       total: getCartTotal(),
       pickupTime: formData.pickupTime,
       phoneNumber: formData.phoneNumber,
+      orderNotes: formData.orderNotes,
       orderDate: new Date().toISOString(),
       orderId: `ORDER-${Date.now()}`,
     };
@@ -115,6 +119,7 @@ export default function OrderPopup({ children }: OrderPopupProps) {
       setFormData({
         pickupTime: '',
         phoneNumber: '',
+        orderNotes: '',
       });
       clearCart();
       setIsOpen(false);
@@ -305,7 +310,21 @@ export default function OrderPopup({ children }: OrderPopupProps) {
               </RadioGroup>
             </div>
           </div>
+           <div className="space-y-2">
+            <Label htmlFor="phone" className="text-sm font-medium text-emerald-300 flex items-center gap-2">
+              <NotebookPen className="w-4 h-4" />
+              Order Notes
+            </Label>
+            <Textarea
+              id="phone"
+              placeholder="Any special instructions or requests?"
 
+              value={formData.orderNotes}
+              onChange={(e) => handleInputChange('orderNotes', e.target.value)}
+              className="bg-emerald-900/20 border-emerald-500/40 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/30"
+              required
+            />
+          </div>
           {/* Phone Number Input */}
           <div className="space-y-2">
             <Label htmlFor="phone" className="text-sm font-medium text-emerald-300 flex items-center gap-2">
