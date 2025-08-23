@@ -9,52 +9,12 @@ import { useMemo } from 'react';
 const dummyCategories = [
   {
     id: '1',
-    name: 'Flowers',
-    slug: 'flowers',
-    description: 'Beautiful fresh flowers for all occasions',
-    subCategories: [
-      { id: '1-1', name: 'Tier 1 (EXOTIC)', slug: 'tier-1-(exotic)' },
-      { id: '1-2', name: 'Tier 2 (TOP SHELF)', slug: 'tier-2-(top-shelf)' },
-      { id: '1-3', name: 'Tier 3 (CHEAP)', slug: 'tier-3-(cheap)' },
-      { id: '1-4', name: 'Snowcaps', slug: 'snowcaps' },
-      { id: '1-5', name: 'Monorocks', slug: 'monorocks' },
-    ]
-  },
-  {
-    id: '2',
-    name: 'Pre-Rolls',
-    slug: 'pre-rolls',
-    description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
+    name: 'Gallery',
+    slug: 'all',
+    description: 'Browse our extensive gallery of products. All out of this world.',
     subCategories: []
   },
-  {
-    id: '3',
-    name: 'Extracts',
-    slug: 'extracts',
-    description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
-    subCategories: []
-  },
-  {
-    id: '4',
-    name: 'Edibles',
-    slug: 'edibles',
-    description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
-    subCategories: []
-  },
-  {
-    id: '5',
-    name: 'Vapes',
-    slug: 'vapes',
-    description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
-    subCategories: []
-  },
-  {
-    id: '6',
-    name: 'Mushrooms',
-    slug: 'mushrooms',
-    description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
-    subCategories: []
-  },
+  
 ];
 
 // Helper function to get random image
@@ -255,11 +215,11 @@ const CategoryPage = () => {
 
   // Find category and products
   const category = useMemo(() => {
-    return dummyCategoriesZ
+    return dummyCategories[0]
   }, [categorySlug]);
 
   const products = useMemo(() => {
-    return dummyProducts.filter(product => product.category === categorySlug);
+    return dummyProducts;
   }, [categorySlug]);
 
   // Loading state (simulate loading)

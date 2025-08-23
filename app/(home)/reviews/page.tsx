@@ -281,7 +281,7 @@ const ReviewsPage: React.FC = () => {
 
         {/* Review Dialog */}
         {isDialogOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center p-4 z-10">
             <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md border border-gray-700 max-h-[90vh] overflow-y-auto">
               {/* Dialog Header */}
               <div className="flex items-center justify-between mb-6">

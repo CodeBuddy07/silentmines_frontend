@@ -48,7 +48,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ className = "" }) => {
                         className="w-full sm:w-auto bg-[#3a76f0] hover:bg-[#2c61d8] cursor-pointer text-white px-6 py-4 rounded-xl flex items-center gap-4 shadow-md hover:shadow-lg"
                         onClick={() => window.open("https://signal.org", "_blank")}
                     >
-                        <img src="/element_logo.png" alt="Element" className="w-6 h-6  rounded-2xl" />
+                        <img src="/signal_logo.png" alt="Signal" className="w-6 h-6  rounded-2xl" />
                         <span className="font-semibold">Signal</span>
                         <span className="text-sm opacity-90">(For the fastest response)</span>
                     </Button>
@@ -58,7 +58,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ className = "" }) => {
                         className="w-full sm:w-auto bg-[#229ED9] hover:bg-[#1b8ec2] cursor-pointer text-white px-6 py-4 rounded-xl flex items-center gap-4 shadow-md hover:shadow-lg"
                         onClick={() => window.open("https://telegram.org", "_blank")}
                     >
-                        <img src="/telegram_logo.avif" alt="Element" className="w-6 h-6  rounded-2xl" />
+                        <img src="/telegram_logo.avif" alt="telegram" className="w-6 h-6  rounded-2xl" />
                         <span className="font-semibold">Telegram</span>
                         <span className="text-sm opacity-90">(Reliable and encrypted)</span>
                     </Button>
