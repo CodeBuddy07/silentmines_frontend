@@ -156,7 +156,7 @@ const Page = ({
 
             {/* Thumbnail Strip */}
             {allMedia.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto pb-2">
+              <div className="flex flex-wrap gap-2 overflow-x-auto pb-2">
                 {allMedia.map((media, index) => (
                   <button
                     key={index}

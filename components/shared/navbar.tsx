@@ -257,7 +257,7 @@ const Navbar = () => {
                   onMouseLeave={handleDropdownLeave}
                 >
                   <Link
-                    href={item.sub ? '#' : (item.href || '#')}
+                    href={item.href || '#'}
                     className={`
                     px-3 py-2 rounded-md text-nowrap text-sm font-medium transition-all duration-200 
                     flex items-center gap-1 relative
@@ -373,7 +373,7 @@ const Navbar = () => {
               <div key={item.name}>
                 <div className="flex items-center justify-between">
                   <Link
-                    href={item.sub ? '#' : (item.href || '#')}
+                    href={(item.href || '#')}
                     onClick={() => !item.sub && setIsMenuOpen(false)}
                     className={`
                     flex-1 block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 ease-out transform

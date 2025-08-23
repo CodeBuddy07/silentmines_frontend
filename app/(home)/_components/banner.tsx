@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import React from 'react';
 
 const Banner = () => {
@@ -11,16 +12,20 @@ const Banner = () => {
             High Quality <span className="text-white">Weed</span> That's Out of This World.
           </h1>
 
-          <Button
-            variant="outline"
-            className="relative rounded-full overflow-hidden mt-4 border-white bg-transparent hover:text-black hover:bg-transparent text-white group cursor-pointer"
-          >
-            <span className="absolute inset-0 bg-white translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0" />
-            <span className="relative z-10 flex items-center gap-2 px-6 py-2">
-              Shop Now
-              <span className="transition-transform duration-500 ease-out group-hover:translate-x-2">&gt;</span>
-            </span>
-          </Button>
+          <Link href={'/gallery'}>
+
+            <Button
+              variant="outline"
+              className="relative rounded-full overflow-hidden mt-4 border-white bg-transparent hover:text-black hover:bg-transparent text-white group cursor-pointer"
+            >
+              <span className="absolute inset-0 bg-white translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0" />
+              <span className="relative z-10 flex items-center gap-2 px-6 py-2">
+                Shop Now
+                <span className="transition-transform duration-500 ease-out group-hover:translate-x-2">&gt;</span>
+              </span>
+            </Button>
+
+          </Link>
         </div>
 
         {/* Right: Description */}
