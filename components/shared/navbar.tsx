@@ -37,7 +37,6 @@ const dummyCategories = [
       { id: '1-3', name: 'Tier 3 (CHEAP)', slug: 'tier-3-(cheap)' },
       { id: '1-4', name: 'Snowcaps', slug: 'snowcaps' },
       { id: '1-5', name: 'Monorocks', slug: 'monorocks' },
-      { id: '1-6', name: 'Mushrooms', slug: 'mushrooms' }
     ]
   },
   {
@@ -47,24 +46,31 @@ const dummyCategories = [
     description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
     subCategories: []
   },
-    {
+  {
     id: '3',
     name: 'Extracts',
     slug: 'extracts',
     description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
     subCategories: []
   },
-    {
+  {
     id: '4',
     name: 'Edibles',
     slug: 'edibles',
     description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
     subCategories: []
   },
-      {
+  {
     id: '5',
     name: 'Vapes',
     slug: 'vapes',
+    description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
+    subCategories: []
+  },
+  {
+    id: '6',
+    name: 'Mushrooms',
+    slug: 'mushrooms',
     description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
     subCategories: []
   },
@@ -110,7 +116,7 @@ const Navbar = () => {
   // Generate search suggestions from categories
   const generateSearchSuggestions = (): SearchSuggestion[] => {
     const suggestions: SearchSuggestion[] = [];
-    
+
     dummyCategories.forEach(category => {
       suggestions.push({
         id: `cat-${category.id}`,

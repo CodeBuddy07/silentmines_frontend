@@ -11,13 +11,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Plus, Minus, ShoppingCart, Trash2, Clock, Phone, User, NotebookPen } from 'lucide-react';
 import { useCart } from '@/app/contexts/cartContext';
 import { Textarea } from '@/components/ui/textarea';
 
 
 interface OrderFormData {
+  pickupDate: 'today' | 'tomorrow';
   pickupTime: string;
   phoneNumber: string;
   orderNotes: string;
@@ -30,49 +30,35 @@ interface OrderPopupProps {
 export default function OrderPopup({ children }: OrderPopupProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { cart, updateQuantity, removeFromCart, clearCart, getCartTotal, getCartItemCount } = useCart();
-  
+
   const [formData, setFormData] = useState<OrderFormData>({
+    pickupDate: 'today',
     pickupTime: '',
     phoneNumber: '',
     orderNotes: '',
   });
 
-  // Generate today's pickup times from 12:00 PM to 10:00 PM
-  const generatePickupTimes = () => {
-    const times = [];
-    const now = new Date();
-    const currentHour = now.getHours();
-    
-    for (let hour = 12; hour <= 22; hour++) {
-      // Skip past times
-      if (hour <= currentHour) continue;
-      
-      const displayHour = hour > 12 ? hour - 12 : hour;
-      const period = hour >= 12 ? 'PM' : 'AM';
-      const timeString = `TODAY ${displayHour}:00 ${period}`;
-      times.push({
-        value: `${hour}:00`,
-        label: timeString,
-      });
-    }
+  const getTimesForSelectedDay = () => {
+    const todayTimes = [
+      { value: 'today-12pm', label: '12:00 PM' },
+      { value: 'today-1pm', label: '1:00 PM' },
+      { value: 'today-2pm', label: '2:00 PM' },
+      { value: 'today-4pm', label: '4:00 PM' },
+      { value: 'today-5pm', label: '5:00 PM' },
+      { value: 'today-7pm', label: '7:00 PM' }
+    ];
 
-    // Add tomorrow's times if today's times are limited
-    if (times.length < 5) {
-      for (let hour = 12; hour <= 18; hour++) {
-        const displayHour = hour > 12 ? hour - 12 : hour;
-        const period = hour >= 12 ? 'PM' : 'AM';
-        const timeString = `TOMORROW ${displayHour}:00 ${period}`;
-        times.push({
-          value: `tomorrow-${hour}:00`,
-          label: timeString,
-        });
-      }
-    }
+    const tomorrowTimes = [
+      { value: 'tomorrow-2pm', label: '2:00 PM' },
+      { value: 'tomorrow-3pm', label: '3:00 PM' },
+      { value: 'tomorrow-4pm', label: '4:00 PM' },
+      { value: 'tomorrow-5pm', label: '5:00 PM' },
+      { value: 'tomorrow-6pm', label: '6:00 PM' },
+      { value: 'tomorrow-7pm', label: '7:00 PM' }
+    ];
 
-    return times;
+    return formData.pickupDate === 'today' ? todayTimes : tomorrowTimes;
   };
-
-  const pickupTimes = generatePickupTimes();
 
   const handleQuantityChange = (productId: string, weight: string, newQuantity: number) => {
     if (newQuantity <= 0) {
@@ -110,19 +96,20 @@ export default function OrderPopup({ children }: OrderPopupProps) {
     try {
       // Here you would typically send the order to your backend
       console.log('Order submitted:', orderData);
-      
+
       // For now, just show success message
       alert(`Order submitted successfully!\n\nOrder ID: ${orderData.orderId}\nTotal: $${orderData.total.toFixed(2)}\nPickup: ${formData.pickupTime}\n\nYou will receive a confirmation on Signal.`);
-      
+
       // Reset form and close dialog
       setFormData({
+        pickupDate: 'today',
         pickupTime: '',
         phoneNumber: '',
         orderNotes: '',
       });
       clearCart();
       setIsOpen(false);
-      
+
     } catch (error) {
       console.error('Error submitting order:', error);
       alert('There was an error submitting your order. Please try again.');
@@ -144,222 +131,249 @@ export default function OrderPopup({ children }: OrderPopupProps) {
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-black/90 backdrop-blur-xl border-emerald-500/30 text-white shadow-2xl shadow-emerald-500/20">
-        <DialogHeader>
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-xl font-semibold text-white">
-              Place Your Order
-            </DialogTitle>
-            {cartItemCount > 0 && (
-              <div className="flex items-center gap-2 bg-emerald-600/20 px-3 py-1 rounded-full">
-                <ShoppingCart className="w-4 h-4 text-emerald-400" />
-                <span className="text-sm text-emerald-400 font-semibold">
-                  {cartItemCount} items • ${cartTotal.toFixed(2)}
-                </span>
-              </div>
-            )}
-          </div>
-        </DialogHeader>
-        
-        <div className="space-y-6">
-          {/* Cart Items Section */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium text-emerald-300">
-                Your Cart ({cartItemCount} items)
-              </Label>
-              {cart.length > 0 && (
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={clearCart}
-                  className="text-xs bg-red-600/20 hover:bg-red-600/30 text-red-400 border-red-500/30"
-                >
-                  <Trash2 className="w-3 h-3 mr-1" />
-                  Clear Cart
-                </Button>
+
+      <DialogContent className="w-[96vw] sm:w-[90vw] md:w-[80vw] lg:w-[70vw] xl:max-w-2xl h-[96vh] sm:h-[90vh] p-0 overflow-y-auto bg-black/90 backdrop-blur-xl border-emerald-500/30 text-white shadow-2xl shadow-emerald-500/20 mx-2 sm:mx-4">
+        <div className="flex flex-col h-full">
+          <DialogHeader className="flex-shrink-0 p-3 sm:p-4 md:p-6 border-b border-emerald-500/20">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+              <DialogTitle className="text-base sm:text-lg md:text-xl font-semibold text-white">
+                Place Your Order
+              </DialogTitle>
+              {cartItemCount > 0 && (
+                <div className="flex items-center gap-1 sm:gap-2 bg-emerald-600/20 px-2 sm:px-3 py-1 rounded-full">
+                  <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-400 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm text-emerald-400 font-semibold whitespace-nowrap">
+                    {cartItemCount} items • ${cartTotal.toFixed(2)}
+                  </span>
+                </div>
               )}
             </div>
+          </DialogHeader>
 
-            {cart.length === 0 ? (
-              <div className="text-center py-8 text-gray-400">
-                <ShoppingCart className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                <p>Your cart is empty</p>
-                <p className="text-sm">Add some items to get started!</p>
-              </div>
-            ) : (
-              <div className="space-y-3 max-h-64 overflow-y-auto bg-emerald-900/10 p-4 rounded-lg border border-emerald-500/30">
-                {cart.map((item) => (
-                  <div
-                    key={`${item.productId}-${item.weight}`}
-                    className="flex items-center gap-3 p-3 bg-emerald-800/20 rounded-lg"
-                  >
-                    {item.image && (
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-12 h-12 rounded-lg object-cover"
-                      />
-                    )}
-                    
-                    <div className="flex-1">
-                      <h4 className="font-medium text-white">{item.name}</h4>
-                      <div className="flex items-center gap-2 text-xs text-emerald-200/70">
-                        <span>Weight: {item.weight}</span>
-                        <span>•</span>
-                        <span>${item.price.toFixed(2)} each</span>
-                      </div>
-                      <p className="text-emerald-400 font-semibold text-sm">
-                        ${(item.price * item.quantity).toFixed(2)}
-                      </p>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        size="sm"
-                        onClick={() => handleQuantityChange(item.productId, item.weight, item.quantity - 1)}
-                        className="w-8 h-8 p-0 bg-red-600/80 hover:bg-red-600 text-white border-0"
-                      >
-                        <Minus className="w-4 h-4" />
-                      </Button>
-                      
-                      <span className="w-8 text-center text-emerald-400 font-semibold">
-                        {item.quantity}
-                      </span>
-                      
-                      <Button
-                        type="button"
-                        size="sm"
-                        onClick={() => handleQuantityChange(item.productId, item.weight, item.quantity + 1)}
-                        className="w-8 h-8 p-0 bg-emerald-600 hover:bg-emerald-500 text-white border-0"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </Button>
-
-                      <Button
-                        type="button"
-                        size="sm"
-                        onClick={() => removeFromCart(item.productId, item.weight)}
-                        className="w-8 h-8 p-0 ml-2 bg-red-600/60 hover:bg-red-600 text-white border-0"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Cart Summary */}
-            {cart.length > 0 && (
-              <div className="bg-emerald-600/10 p-4 rounded-lg border border-emerald-500/30">
-                <h4 className="font-semibold text-emerald-400 mb-2">Order Summary</h4>
-                <div className="space-y-1">
-                  {cart.map((item) => (
-                    <div key={`${item.productId}-${item.weight}`} className="flex justify-between text-sm">
-                      <span className="text-emerald-200/80">
-                        {item.name} ({item.weight}) × {item.quantity}
-                      </span>
-                      <span className="text-emerald-400">
-                        ${(item.price * item.quantity).toFixed(2)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <div className="border-t border-emerald-500/30 mt-2 pt-2">
-                  <div className="flex justify-between font-semibold text-emerald-400">
-                    <span>Total</span>
-                    <span>${cartTotal.toFixed(2)}</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Pickup Time Selection */}
-          <div className="space-y-3">
-            <Label className="text-sm font-medium text-emerald-300 flex items-center gap-2">
-              <Clock className="w-4 h-4" />
-              Choose your pickup time:
-            </Label>
-            <div className="bg-emerald-900/10 p-4 rounded-lg border border-emerald-500/30">
-              <RadioGroup
-                value={formData.pickupTime}
-                onValueChange={(value) => handleInputChange('pickupTime', value)}
-                className="max-h-48 overflow-y-auto space-y-3"
-                required
-              >
-                {pickupTimes.map((time) => (
-                  <div key={time.value} className="flex items-center space-x-3 p-2 rounded-md hover:bg-emerald-800/20 transition-colors">
-                    <RadioGroupItem 
-                      value={time.value} 
-                      id={time.value}
-                      className="border-emerald-500/60 text-emerald-400 data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-400" 
-                    />
-                    <Label 
-                      htmlFor={time.value} 
-                      className="text-sm cursor-pointer flex-1 text-white hover:text-emerald-300 transition-colors"
+          <div className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
+            <div className="space-y-3 sm:space-y-4 md:space-y-6">
+              {/* Cart Items Section */}
+              <div className="space-y-2 sm:space-y-3 md:space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <Label className="text-xs sm:text-sm font-medium text-emerald-300">
+                    Your Cart ({cartItemCount} items)
+                  </Label>
+                  {cart.length > 0 && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={clearCart}
+                      className="text-xs bg-red-600/20 hover:bg-red-600/30 text-red-400 border-red-500/30 h-6 sm:h-7 px-2 w-fit self-start sm:self-auto"
                     >
-                      {time.label}
-                    </Label>
+                      <Trash2 className="md:w-3 md:h-3 w-1 h-1 mr-1" />
+                      <span className="hidden xs:inline sm:hidden md:inline">Clear Cart</span>
+                      <span className="xs:hidden sm:inline md:hidden">Clear</span>
+                    </Button>
+                  )}
+                </div>
+
+                {cart.length === 0 ? (
+                  <div className="text-center py-4 sm:py-6 md:py-8 text-gray-400">
+                    <ShoppingCart className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 mx-auto mb-2 opacity-50" />
+                    <p className="text-xs sm:text-sm md:text-base">Your cart is empty</p>
+                    <p className="text-xs sm:text-sm">Add some items to get started!</p>
                   </div>
-                ))}
-              </RadioGroup>
+                ) : (
+                  <div className="space-y-1 sm:space-y-2 md:space-y-3 max-h-40 sm:max-h-48 md:max-h-64 overflow-y-auto bg-emerald-900/10 p-2 sm:p-3 md:p-4 rounded-lg border border-emerald-500/30">
+                    {cart.map((item) => (
+                      <div
+                        key={`${item.productId}-${item.weight}`}
+                        className="flex items-center gap-1 sm:gap-2 md:gap-3 p-1.5 sm:p-2 md:p-3 bg-emerald-800/20 rounded-lg"
+                      >
+                        {item.image && (
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg object-cover flex-shrink-0"
+                          />
+                        )}
+
+                        <div className="flex-1 min-w-0 overflow-hidden">
+                          <h4 className="font-medium text-white text-xs sm:text-sm md:text-base truncate">{item.name}</h4>
+                          <div className="flex items-center gap-1 text-xs text-emerald-200/70">
+                            <span className="truncate">Weight: {item.weight}</span>
+                            <span className="flex-shrink-0">•</span>
+                            <span className="flex-shrink-0">${item.price.toFixed(2)} each</span>
+                          </div>
+                          <p className="text-emerald-400 font-semibold text-xs sm:text-sm">
+                            ${(item.price * item.quantity).toFixed(2)}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-0.5 sm:gap-1 md:gap-2 flex-shrink-0">
+                          <Button
+                            type="button"
+                            size="sm"
+                            onClick={() => handleQuantityChange(item.productId, item.weight, item.quantity - 1)}
+                            className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 p-0 bg-red-600/80 hover:bg-red-600 text-white border-0"
+                          >
+                            <Minus className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4" />
+                          </Button>
+
+                          <span className="w-4 sm:w-6 md:w-8 text-center text-emerald-400 font-semibold text-xs sm:text-sm">
+                            {item.quantity}
+                          </span>
+
+                          <Button
+                            type="button"
+                            size="sm"
+                            onClick={() => handleQuantityChange(item.productId, item.weight, item.quantity + 1)}
+                            className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 p-0 bg-emerald-600 hover:bg-emerald-500 text-white border-0"
+                          >
+                            <Plus className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4" />
+                          </Button>
+
+                          <Button
+                            type="button"
+                            size="sm"
+                            onClick={() => removeFromCart(item.productId, item.weight)}
+                            className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 p-0 ml-0.5 sm:ml-1 md:ml-2 bg-red-600/60 hover:bg-red-600 text-white border-0"
+                          >
+                            <Trash2 className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Cart Summary */}
+                {cart.length > 0 && (
+                  <div className="bg-emerald-600/10 p-2 sm:p-3 md:p-4 rounded-lg border border-emerald-500/30">
+                    <h4 className="font-semibold text-emerald-400 mb-1 sm:mb-2 text-xs sm:text-sm md:text-base">Order Summary</h4>
+                    <div className="space-y-0.5 sm:space-y-1">
+                      {cart.map((item) => (
+                        <div key={`${item.productId}-${item.weight}`} className="flex justify-between text-xs gap-2">
+                          <span className="text-emerald-200/80 truncate flex-1 text-xs sm:text-sm">
+                            {item.name} ({item.weight}) × {item.quantity}
+                          </span>
+                          <span className="text-emerald-400 flex-shrink-0 text-xs sm:text-sm">
+                            ${(item.price * item.quantity).toFixed(2)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="border-t border-emerald-500/30 mt-1 sm:mt-2 pt-1 sm:pt-2">
+                      <div className="flex justify-between font-semibold text-emerald-400 text-xs sm:text-sm md:text-base">
+                        <span>Total</span>
+                        <span>${cartTotal.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Pickup Time Selection */}
+              <div className="space-y-2 sm:space-y-3">
+                <Label className="text-xs sm:text-sm font-medium text-emerald-300 flex items-center gap-2">
+                  <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+                  Choose your pickup time:
+                </Label>
+
+                <div className="bg-emerald-900/10 p-2 sm:p-3 md:p-4 rounded-lg border border-emerald-500/30">
+                  {/* Day Selection Buttons */}
+                  <div className="flex gap-1 sm:gap-2 md:gap-3 mb-2 sm:mb-3 md:mb-4">
+                    <button
+                      type="button"
+                      onClick={() => handleInputChange('pickupDate', 'today')}
+                      className={`flex-1 px-2 sm:px-3 md:px-6 py-1 sm:py-1.5 md:py-2 text-xs sm:text-sm rounded-md border transition-all ${formData.pickupDate === 'today'
+                          ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
+                          : 'border-emerald-500/30 text-white hover:border-emerald-400 hover:text-emerald-300'
+                        }`}
+                    >
+                      TODAY
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleInputChange('pickupDate', 'tomorrow')}
+                      className={`flex-1 px-2 sm:px-3 md:px-6 py-1 sm:py-1.5 md:py-2 text-xs sm:text-sm rounded-md border transition-all ${formData.pickupDate === 'tomorrow'
+                          ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
+                          : 'border-emerald-500/30 text-white hover:border-emerald-400 hover:text-emerald-300'
+                        }`}
+                    >
+                      TOMORROW
+                    </button>
+                  </div>
+
+                  {/* Time Grid - Ultra Responsive */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 sm:gap-2 md:gap-3">
+                    {getTimesForSelectedDay().map((time) => (
+                      <button
+                        key={time.value}
+                        type="button"
+                        onClick={() => handleInputChange('pickupTime', time.value)}
+                        className={`relative px-1 sm:px-2 md:px-4 py-1.5 sm:py-2 rounded-md border transition-all text-xs sm:text-sm font-medium ${formData.pickupTime === time.value
+                            ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
+                            : 'border-emerald-500/30 text-white hover:border-emerald-400 hover:text-emerald-300 hover:bg-emerald-800/10'
+                          }`}
+                      >
+                        {/* Green dot indicator for selected item */}
+                        {formData.pickupTime === time.value && (
+                          <div className="absolute left-1 sm:left-1.5 md:left-2 top-1/2 transform -translate-y-1/2 w-1 h-1 sm:w-1.5 sm:h-1.5 md:w-2 md:h-2 bg-emerald-400 rounded-full"></div>
+                        )}
+                        <span className={`${formData.pickupTime === time.value ? 'ml-2 sm:ml-3 md:ml-4' : ''} truncate block`}>
+                          {time.label}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Order Notes */}
+              <div className="space-y-1 sm:space-y-2">
+                <Label htmlFor="notes" className="text-xs sm:text-sm font-medium text-emerald-300 flex items-center gap-2">
+                  <NotebookPen className="w-3 h-3 sm:w-4 sm:h-4" />
+                  Order Notes
+                </Label>
+                <Textarea
+                  id="notes"
+                  placeholder="Any special instructions or requests?"
+                  value={formData.orderNotes}
+                  onChange={(e) => handleInputChange('orderNotes', e.target.value)}
+                  className="bg-emerald-900/20 border-emerald-500/40 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/30 min-h-[60px] sm:min-h-[80px] text-xs sm:text-sm"
+                  rows={2}
+                />
+              </div>
+
+              {/* Phone Number Input */}
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="text-sm font-medium text-emerald-300 flex items-center gap-2">
+                  <Phone className="w-4 h-4" />
+                  Signal Phone Number
+                </Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="+1 (555) 123-4567"
+                  value={formData.phoneNumber}
+                  onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+                  className="bg-emerald-900/20 border-emerald-500/40 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/30 text-xs sm:text-sm"
+                  required
+                />
+                <p className="text-xs text-emerald-200/70">
+                  We'll send your order confirmation via Signal
+                </p>
+              </div>
             </div>
           </div>
-           <div className="space-y-2">
-            <Label htmlFor="phone" className="text-sm font-medium text-emerald-300 flex items-center gap-2">
-              <NotebookPen className="w-4 h-4" />
-              Order Notes
-            </Label>
-            <Textarea
-              id="phone"
-              placeholder="Any special instructions or requests?"
 
-              value={formData.orderNotes}
-              onChange={(e) => handleInputChange('orderNotes', e.target.value)}
-              className="bg-emerald-900/20 border-emerald-500/40 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/30"
-              required
-            />
-          </div>
-          {/* Phone Number Input */}
-          <div className="space-y-2">
-            <Label htmlFor="phone" className="text-sm font-medium text-emerald-300 flex items-center gap-2">
-              <Phone className="w-4 h-4" />
-              Signal Phone Number
-            </Label>
-            <Input
-              id="phone"
-              type="tel"
-              placeholder="+1 (555) 123-4567"
-              value={formData.phoneNumber}
-              onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
-              className="bg-emerald-900/20 border-emerald-500/40 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/30"
-              required
-            />
-            <p className="text-xs text-emerald-200/70">
-              We'll send your order confirmation via Signal
-            </p>
-          </div>
-
-          {/* Submit Button */}
-          <div className="flex gap-3 pt-4">
-            <Button
-              type="button"
-              onClick={() => setIsOpen(false)}
-              className="flex-1 bg-gray-600 hover:bg-gray-500 text-white"
-            >
-              Continue Shopping
-            </Button>
-            <Button 
-              onClick={handleSubmit}
-              disabled={cart.length === 0}
-              className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Submit Order • ${cartTotal.toFixed(2)}
-            </Button>
+          {/* Submit Button - Fixed at bottom */}
+          <div className="flex-shrink-0 p-3 sm:p-4 md:p-6 border-t border-emerald-500/20">
+            <div className="flex flex-col xs:flex-row gap-2 sm:gap-3">
+              <Button
+                onClick={handleSubmit}
+                disabled={cart.length === 0}
+                className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm md:text-base py-2 sm:py-2.5 md:py-3 min-h-[36px] sm:min-h-[40px]"
+              >
+                <span className="truncate">Submit Order</span>
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>

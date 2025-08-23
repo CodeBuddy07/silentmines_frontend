@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '../ui/button';
 import Link from 'next/link';
+import MediaSlider from './mediaSlider';
 
 interface ProductCardProps {
     image: string;
@@ -28,6 +29,20 @@ const ProductCard: React.FC<ProductCardProps> = ({
     const [isHovered, setIsHovered] = useState(false);
     console.log(`Rendering ProductCard for ${discount} and id ${name}`);
 
+    // Combine all media (images and videos) for the MediaSlider
+    const allMedia = [
+        ...[
+            "/original.mov",
+            "https://sample-videos.com/zip/10/mp4/360/sample2.mp4"
+        ].map(vid => ({ type: 'video' as const, src: vid })),
+        ...[
+            "/demo_product-2.png",
+            "/demo_product-3.png",
+            "/demo_product-4.png",
+            "/demo_product-5.png"
+        ].map(img => ({ type: 'image' as const, src: img }))
+    ];
+
 
     return (
         <Card
@@ -39,6 +54,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 {/* Product Image */}
                 <div className="relative overflow-hidden">
                     <div className="relative w-full h-64">
+                        {/* <MediaSlider
+                            media={allMedia}
+                            alt={name}
+                            discount={discount}
+                            className="w-full"
+                        /> */}
                         <Image
                             src={image}
                             alt={" Product Image "}

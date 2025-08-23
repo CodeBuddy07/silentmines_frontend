@@ -80,7 +80,7 @@ const AddToBagButton: React.FC<AddToBagButtonProps> = ({ product, selectedWeight
       onClick={handleAddToCart}
       disabled={isAdding}
       className={`
-        relative overflow-hidden w-full border-emerald-500/40 bg-emerald-900/20 
+        relative overflow-hidden w-full border border-emerald-500 bg-emerald-900/20 
         hover:bg-emerald-600 text-white group cursor-pointer transition-all duration-300
         ${isAdding ? 'scale-95' : 'scale-100'}
         ${showSuccess ? 'bg-green-600 border-green-500' : ''}
