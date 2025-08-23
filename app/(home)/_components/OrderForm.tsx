@@ -54,7 +54,8 @@ export default function OrderPopup({ children }: OrderPopupProps) {
       { value: 'tomorrow-4pm', label: '4:00 PM' },
       { value: 'tomorrow-5pm', label: '5:00 PM' },
       { value: 'tomorrow-6pm', label: '6:00 PM' },
-      { value: 'tomorrow-7pm', label: '7:00 PM' }
+      { value: 'tomorrow-7pm', label: '7:00 PM' },
+      { value: 'tomorrow-8pm', label: '8:00 PM' }
     ];
 
     return formData.pickupDate === 'today' ? todayTimes : tomorrowTimes;
