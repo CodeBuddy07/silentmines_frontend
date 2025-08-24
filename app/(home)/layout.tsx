@@ -3,7 +3,8 @@ import Navbar from "@/components/shared/navbar";
 import type { Metadata } from "next";
 import { AuthProvider } from "../contexts/auth-context";
 import ProtectedRoute from "./_components/protected-route";
-import { CartProvider } from "../contexts/cartContext";
+import { CartProvider, useCart } from "../contexts/cartContext";
+
 
 
 export const metadata: Metadata = {
@@ -16,13 +17,16 @@ export default function HomeLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
+
   return (
     <AuthProvider>
       <CartProvider>
         <ProtectedRoute>
           <Navbar />
           <div className="bg-[url('/starry_background.jpg')] bg-repeat text-white min-h-screen">
-
+           
             {children}
 
           </div>
