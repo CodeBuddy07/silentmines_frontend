@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { toast } from 'sonner';
 
 export interface ProductPrice {
   weight: string;
@@ -59,6 +60,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       } catch (error) {
         console.error('Error parsing cart from localStorage:', error);
         localStorage.removeItem('shopping-cart');
+        toast.error('Failed to load saved cart');
       }
     }
   }, []);
@@ -70,10 +72,16 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
   const addToCart = (product: Product, selectedWeight: string, quantity: number = 1) => {
     const selectedPrice = product.prices.find(p => p.weight === selectedWeight);
-    if (!selectedPrice) return;
+    if (!selectedPrice) {
+      toast.error('Invalid weight selection');
+      return;
+    }
 
     const price = parseFloat(selectedPrice.amount);
-    const cartItemKey = `${product.id}-${selectedWeight}`;
+    if (isNaN(price)) {
+      toast.error('Invalid price format');
+      return;
+    }
 
     setCart(prevCart => {
       const existingItem = prevCart.find(item => 
@@ -81,12 +89,17 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       );
 
       if (existingItem) {
+        const newQuantity = existingItem.quantity + quantity;
+        toast.success(`Updated ${product.name} (${selectedWeight}) quantity to ${newQuantity}`);
+        
         return prevCart.map(item =>
           item.productId === product.id && item.weight === selectedWeight
-            ? { ...item, quantity: item.quantity + quantity }
+            ? { ...item, quantity: newQuantity }
             : item
         );
       } else {
+        toast.success(`Added ${product.name} (${selectedWeight}) to cart`, {id: 'add-to-cart'});
+        
         return [...prevCart, {
           productId: product.id,
           name: product.name,
@@ -100,14 +113,34 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   const removeFromCart = (productId: string, weight: string) => {
+    const itemToRemove = cart.find(item => 
+      item.productId === productId && item.weight === weight
+    );
+    
+    if (!itemToRemove) {
+      toast.warning('Item not found in cart');
+      return;
+    }
+
     setCart(prevCart => prevCart.filter(item => 
       !(item.productId === productId && item.weight === weight)
     ));
+
+    toast.info(`Removed ${itemToRemove.name} (${weight}) from cart`);
   };
 
   const updateQuantity = (productId: string, weight: string, quantity: number) => {
     if (quantity <= 0) {
       removeFromCart(productId, weight);
+      return;
+    }
+
+    const existingItem = cart.find(item => 
+      item.productId === productId && item.weight === weight
+    );
+
+    if (!existingItem) {
+      toast.warning('Item not found in cart');
       return;
     }
 
@@ -118,11 +151,20 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
           : item
       )
     );
+
+    toast.success(`Updated ${existingItem.name} (${weight}) quantity to ${quantity}`);
   };
 
   const clearCart = () => {
+    const itemCount = getCartItemCount();
+    if (itemCount === 0) {
+      toast.info('Cart is already empty');
+      return;
+    }
+
     setCart([]);
     localStorage.removeItem('shopping-cart');
+    toast.success(`Cleared ${itemCount} item${itemCount > 1 ? 's' : ''} from cart`);
   };
 
   const getCartTotal = () => {

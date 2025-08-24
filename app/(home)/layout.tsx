@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { AuthProvider } from "../contexts/auth-context";
 import ProtectedRoute from "./_components/protected-route";
 import { CartProvider, useCart } from "../contexts/cartContext";
+import { Toaster } from "@/components/ui/sonner";
 
 
 
@@ -26,9 +27,9 @@ export default function HomeLayout({
         <ProtectedRoute>
           <Navbar />
           <div className="bg-[url('/starry_background.jpg')] bg-repeat text-white min-h-screen">
-           
-            {children}
 
+            {children}
+            <Toaster position="top-center" richColors  expand={true} />
           </div>
           <Footer />
         </ProtectedRoute>
