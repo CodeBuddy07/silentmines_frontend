@@ -20,17 +20,6 @@ export const AnnouncementSection = () => {
           <p className="text-center">PAPA&apos;S TAKING THE AREA FAM TO THE MOON 🚀</p>
         </div>
 
-        <div className="pt-6 space-y-1 text-xs text-center text-gray-300">
-          <p>🧾 NEW TELEGRAM ANNOUNCEMENT PAGE 🧾</p>
-          <a
-            href="https://t.me/+kEPmUjLS_ck2NzJh"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:underline"
-          >
-            https://t.me/+kEPmUjLS_ck2NzJh
-          </a>
-        </div>
       </div>
     </section>
   )
