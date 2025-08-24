@@ -58,14 +58,7 @@ const Footer = () => {
               Connect
             </h4>
             <ul className="space-y-2">
-              <li>
-                <a
-                  href="mailto:hello@example.com"
-                  className="hover:text-green-400 transition-colors duration-200"
-                >
-                  hello@example.com
-                </a>
-              </li>
+
               <li className="flex space-x-4 mt-3">
                 <a
                   href="https://telegram.org"
@@ -76,12 +69,12 @@ const Footer = () => {
                   <img src="/telegram_logo.avif" alt="Element" className="w-6 h-6  rounded-2xl" />
                 </a>
                 <a
-                  href="https://element.io"
+                  href="https://signal.org"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-green-400 text-lg"
                 >
-                  <img src="/element_logo.png" alt="Element" className="w-6 h-6  rounded-2xl" />
+                  <img src="/signal_logo.png" alt="Signal" className="w-6 h-6  rounded-2xl" />
                 </a>
               </li>
             </ul>

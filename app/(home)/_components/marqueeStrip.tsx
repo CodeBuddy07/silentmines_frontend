@@ -22,7 +22,7 @@ export const MarqueeStrip = () => {
         <div className="marquee-content text-neon tracking-widest font-mono text-sm md:text-base">
           {Array(2)
             .fill(
-              Array(20).fill(" * OUT OF THIS WORLD ").join("")
+              Array(20).fill(" * OUT OF THIS WORLD  * BEST IN THE GALAXY").join("")
             )
             .join(" ")}
         </div>
