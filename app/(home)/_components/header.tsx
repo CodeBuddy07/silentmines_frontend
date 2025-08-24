@@ -34,7 +34,7 @@ const Header = () => {
                     data-aos="fade-up"
                     data-aos-delay="200"
                 >
-                    {["Flower", "Pre-Rolls", "Extracts", "Edibles", "Vapes"].map(
+                    {["Flower", "Pre-Rolls", "Extracts", "Edibles", "Vapes", "Mushrooms"].map(
                         (item) => (
                             <Link
                                 key={item}
