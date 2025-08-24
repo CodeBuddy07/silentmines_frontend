@@ -380,7 +380,7 @@ const Navbar = () => {
                 <div className="flex items-center justify-between">
                   <Link
                     href={(item.href || '#')}
-                    onClick={() => !item.sub && setIsMenuOpen(false)}
+                    onClick={() => setIsMenuOpen(false)}
                     className={`
                     flex-1 block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 ease-out transform
                     ${isActive(item) || hasActiveSubItem(item)
