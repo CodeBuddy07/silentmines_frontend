@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Plus, Minus, ShoppingCart, Trash2, Clock, Phone, User, NotebookPen } from 'lucide-react';
 import { useCart } from '@/app/contexts/cartContext';
 import { Textarea } from '@/components/ui/textarea';
+import Link from 'next/link';
 
 
 interface OrderFormData {
@@ -133,7 +134,7 @@ export default function OrderPopup({ children }: OrderPopupProps) {
         {children}
       </DialogTrigger>
 
-      <DialogContent className="w-[96vw] sm:w-[90vw] md:w-[80vw] lg:w-[70vw] xl:max-w-2xl h-[96vh] sm:h-[90vh] p-0 overflow-y-auto bg-black/90 backdrop-blur-xl border-emerald-500/30 text-white shadow-2xl shadow-emerald-500/20 mx-2 sm:mx-4">
+      <DialogContent className="w-[96vw]  sm:w-[90vw] md:w-[80vw] lg:w-[70vw] xl:max-w-2xl h-[80vh]  p-0 overflow-y-auto bg-black/90 backdrop-blur-xl border-emerald-500/30 text-white shadow-2xl shadow-emerald-500/20 mx-2 sm:mx-4">
         <div className="flex flex-col h-full">
           <DialogHeader className="flex-shrink-0 p-3 sm:p-4 md:p-6 border-b border-emerald-500/20">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
@@ -359,6 +360,10 @@ export default function OrderPopup({ children }: OrderPopupProps) {
                 />
                 <p className="text-xs text-emerald-200/70">
                   We'll send your order confirmation via Signal
+                </p>
+
+                <p className="text-xs text-emerald-200/70">
+                  You must have Signal app downloaded to complete this order. Please download at <Link href={"https://signal.org/download/"} className='text-blue-500 underline'>Signal.org</Link> if you haven't already.
                 </p>
               </div>
             </div>

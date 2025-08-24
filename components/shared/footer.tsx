@@ -15,7 +15,7 @@ const Footer = () => {
             </h3>
             <p className="text-gray-400 text-sm">
               Your one-stop shop for galactic flavors, cosmic curiosities, and
-              more. Available worldwide 🌍
+              more.
             </p>
           </div>
 
