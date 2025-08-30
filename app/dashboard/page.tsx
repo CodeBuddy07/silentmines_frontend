@@ -35,14 +35,15 @@ const AddProductForm = () => {
     const [categories, setCategories] = useState([]);
     const [isCategoryOpen, setIsCategoryOpen] = useState(false);
     const [newCategory, setNewCategory] = useState({ name: "", description: "" });
-
     const [isTypesOpen, setIsTypesOpen] = useState(false);
     const [newType, setNewType] = useState({ title: "" });
 
+    const [dealOfTheWeek, setDealOfTheWeek] = useState(false);
+    const [bestSeller, setBestSeller] = useState(false);
+
+
     const addCategory = () => {
-        toast.success('Category added succesfully.')
-
-
+        toast.success('Category added succesfully.');
     };
 
     const handleFileChange = (files: FileList | null, type: 'photo' | 'video') => {
@@ -63,21 +64,21 @@ const AddProductForm = () => {
         formData.append('type', type);
         formData.append('discount', discount);
         formData.append('priceOptions', JSON.stringify(priceList));
+        formData.append('dealofftheweek', dealOfTheWeek ? 'true' : 'false');;
+        formData.append('bestSeller', bestSeller ? 'true' : 'false');
 
         photos.forEach(photo => formData.append('photos', photo));
         videos.forEach(video => formData.append('videos', video));
 
-
         formData.forEach((value, key) => {
             console.log(key, value);
         });
-        
+
         try {
-            const req  = await axios.post('http://localhost:5001/api/products', formData);
+            const req = await axios.post('http://localhost:5001/api/products', formData);
             const response = req;
             console.log(response);
 
-            
             if (response.data.status === 201) {
                 toast.success('Product added successfully!');
             } else {
@@ -88,7 +89,6 @@ const AddProductForm = () => {
             toast.error('An unexpected error occurred');
         }
     };
-
 
     const handleAddPriceUnit = () => {
         if (!priceInput || !unitInput) return;
@@ -102,7 +102,6 @@ const AddProductForm = () => {
     };
 
     const addType = () => {
-        // add newType to your types array or API call
         setIsTypesOpen(false);
         setNewType({ title: "" });
     };
@@ -215,6 +214,29 @@ const AddProductForm = () => {
                             />
                         </div>
 
+                        <div className="flex gap-6 items-center mt-4">
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    checked={dealOfTheWeek}
+                                    onChange={() => setDealOfTheWeek(prev => !prev)}
+                                    className="w-4 h-4"
+                                />
+                                <Label>Deal of the Week</Label>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    checked={bestSeller}
+                                    onChange={() => setBestSeller(prev => !prev)}
+                                    className="w-4 h-4"
+                                />
+                                <Label>Best Selling</Label>
+                            </div>
+                        </div>
+
+
 
                         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-4">
                             <div className="flex-1">
@@ -224,12 +246,6 @@ const AddProductForm = () => {
                                         <SelectValue placeholder="Select Category" />
                                     </SelectTrigger>
                                     <SelectContent className="bg-[#1a2a1a] text-white">
-                                        <SelectItem value="flower">Flower</SelectItem>
-                                        <SelectItem value="tier-1-(EXOTIC) ">Tier 1 (EXOTIC)</SelectItem>
-                                        <SelectItem value="tier-2-(TOP-SHELF)">Tier 2 (TOP SHELF)</SelectItem>
-                                        <SelectItem value="tier-3-(CHEAP)">Tier 3 (CHEAP)</SelectItem>
-                                        <SelectItem value="snowcaps">Snowcaps</SelectItem>
-                                        <SelectItem value="moonrocks">Moonrocks</SelectItem>
                                         <SelectItem value="pre-rolls">Pre-Rolls</SelectItem>
                                         <SelectItem value="extracts">Extracts</SelectItem>
                                         <SelectItem value="edibles">Edibles</SelectItem>
@@ -256,6 +272,25 @@ const AddProductForm = () => {
                                         <SelectItem value="cartridges">Cartridges</SelectItem>
                                         <SelectItem value="disposables">Disposables</SelectItem>
                                         <SelectItem value="live-resin-pens">Live Resin Pens</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className="flex-1">
+                                <Label>Sub Category</Label>
+                                <Select onValueChange={setType}>
+                                    <SelectTrigger className="bg-[#1a2a1a] mt-3 w-full text-white">
+                                        <SelectValue placeholder="e.g. jar, packwood" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-[#1a2a1a] text-white">
+                                        <SelectItem value="flower">Flower</SelectItem>
+                                        <SelectItem value="tier-1-(EXOTIC) ">Tier 1 (EXOTIC)</SelectItem>
+                                        <SelectItem value="tier-2-(TOP-SHELF)">Tier 2 (TOP SHELF)</SelectItem>
+                                        <SelectItem value="tier-3-(CHEAP)">Tier 3 (CHEAP)</SelectItem>
+                                        <SelectItem value="snowcaps">Snowcaps</SelectItem>
+                                        <SelectItem value="moonrocks">Moonrocks</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
