@@ -12,12 +12,9 @@ export default function ForgetPasswordPage() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        // Handle the form submission logic here
         if (newPassword !== confirmPassword) {
-            // Show an error if passwords don't match
             alert("Passwords do not match!")
         } else {
-            // Proceed with password reset logic
             console.log(newPassword);
             
             console.log("Password reset successful!")

@@ -19,6 +19,7 @@ import AllProducts from '@/components/dashboard/allProducts/allProducts';
 import { toast } from 'sonner';
 import CategoryModel from '@/components/dashboard/categoryModel/CategoryModel';
 import TypesModal from '@/components/dashboard/typesModel/TypesModel';
+import axios from 'axios';
 
 const AddProductForm = () => {
     const [productName, setProductName] = useState('');
@@ -40,25 +41,54 @@ const AddProductForm = () => {
 
     const addCategory = () => {
         toast.success('Category added succesfully.')
+
+
     };
 
+    const handleFileChange = (files: FileList | null, type: 'photo' | 'video') => {
+        if (!files) return;
+        const fileArray = Array.from(files);
+        type === 'photo'
+            ? setPhotos([...photos, ...fileArray])
+            : setVideos([...videos, ...fileArray]);
+    };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log({
-            productName,
-            description,
-            category,
-            type,
-            priceList,
-            photos,
-            videos,
-            discount
-        });
 
-        alert('Product submitted successfully!');
-        // Reset form fields
+        const formData = new FormData();
+        formData.append('name', productName);
+        formData.append('description', description);
+        formData.append('category', category);
+        formData.append('type', type);
+        formData.append('discount', discount);
+        formData.append('priceOptions', JSON.stringify(priceList));
+
+        photos.forEach(photo => formData.append('photos', photo));
+        videos.forEach(video => formData.append('videos', video));
+
+
+        formData.forEach((value, key) => {
+            console.log(key, value);
+        });
+        
+        try {
+            const req  = await axios.post('http://localhost:5001/api/products', formData);
+            const response = req;
+            console.log(response);
+
+            
+            if (response.data.status === 201) {
+                toast.success('Product added successfully!');
+            } else {
+                toast.error('Error adding product');
+            }
+        } catch (error) {
+            console.error('Error uploading data:', error);
+            toast.error('An unexpected error occurred');
+        }
     };
+
 
     const handleAddPriceUnit = () => {
         if (!priceInput || !unitInput) return;
@@ -69,17 +99,6 @@ const AddProductForm = () => {
 
     const handleDeletePriceUnit = (index: number) => {
         setPriceList(priceList.filter((_, i) => i !== index));
-    };
-
-    const handleFileChange = (
-        files: FileList | null,
-        type: 'photo' | 'video'
-    ) => {
-        if (!files) return;
-        const fileArray = Array.from(files);
-        type === 'photo'
-            ? setPhotos([...photos, ...fileArray])
-            : setVideos([...videos, ...fileArray]);
     };
 
     const addType = () => {
