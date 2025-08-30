@@ -10,7 +10,6 @@ export default function AdminLoginPage() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        // Submit credentials to backend
     }
 
     return (
@@ -42,11 +41,20 @@ export default function AdminLoginPage() {
                             placeholder="••••••••"
                         />
                     </div>
-
                     <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white">
                         Login
                     </Button>
                 </form>
+
+                <div className="text-center mt-4">
+                    <a
+                        href="/forget-password"
+                        className="text-green-400 hover:text-green-600 font-semibold text-sm"
+                    >
+                        Forget Password?
+                    </a>
+                </div>
+
 
                 <div className="text-center text-xs text-gray-500 mt-6">
                     © {new Date().getFullYear()} The Green Thumb. All rights reserved.
