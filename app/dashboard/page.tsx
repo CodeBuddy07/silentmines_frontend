@@ -21,6 +21,8 @@ import CategoryModel from '@/components/dashboard/categoryModel/CategoryModel';
 import TypesModal from '@/components/dashboard/typesModel/TypesModel';
 import axios from 'axios';
 
+export const baseUrl = 'http://localhost:5001/api';
+
 const AddProductForm = () => {
     const [productName, setProductName] = useState('');
     const [description, setDescription] = useState('');
@@ -41,10 +43,31 @@ const AddProductForm = () => {
     const [dealOfTheWeek, setDealOfTheWeek] = useState(false);
     const [bestSeller, setBestSeller] = useState(false);
 
+    const addCategory = async () => {
+        if (!newCategory.name) {
+            toast.error('Please provide a category name.');
+            return;
+        }
 
-    const addCategory = () => {
-        toast.success('Category added succesfully.');
+        try {
+            const response = await axios.post(`${baseUrl}/categories`, {
+                name: newCategory.name,
+                description: newCategory.description,
+            });
+
+            if (response.status === 201) {
+                toast.success('Category added successfully!');
+                setIsCategoryOpen(false);
+                setNewCategory({ name: "", description: "" });
+            } else {
+                toast.error('Failed to add category');
+            }
+        } catch (error) {
+            console.error('Error adding category:', error);
+            toast.error('An error occurred while adding the category');
+        }
     };
+
 
     const handleFileChange = (files: FileList | null, type: 'photo' | 'video') => {
         if (!files) return;
@@ -75,7 +98,7 @@ const AddProductForm = () => {
         });
 
         try {
-            const req = await axios.post('http://localhost:5001/api/products', formData);
+            const req = await axios.post(`${baseUrl}/products`, formData);
             const response = req;
             console.log(response);
 
@@ -101,7 +124,30 @@ const AddProductForm = () => {
         setPriceList(priceList.filter((_, i) => i !== index));
     };
 
-    const addType = () => {
+    const addType = async () => {
+        if (!newType.title) {
+            toast.error('Please provide a type title.');
+            return;
+        }
+       
+        try {
+            const response = await axios.post(`${baseUrl}/types`, {
+                name: newType.title
+            })
+
+            if (response.status === 201) {
+                toast.success('Type added successfully!');
+                setIsTypesOpen(false);
+                setNewType({ title: "" });
+            } else {
+                toast.error('Failed to add type');
+            }
+        } catch (error) {
+            console.error('Error adding category:', error);
+
+            toast.error('An error occurred while adding the category');
+        }
+
         setIsTypesOpen(false);
         setNewType({ title: "" });
     };
@@ -158,17 +204,17 @@ const AddProductForm = () => {
                         />
 
                         <Button className="bg-[#00A63E] cursor-pointer" onClick={() => setIsTypesOpen(true)}>
-                            Add Types
+                            Add Tages
                         </Button>
 
                         <TypesModal
                             open={isTypesOpen}
                             setOpen={setIsTypesOpen}
-                            title="Add Type"
+                            title="Add Tags"
                             fields={[
                                 {
                                     name: "title",
-                                    placeholder: "Type Title",
+                                    placeholder: "Tags Title",
                                     value: newType.title,
                                     onChange: (val) => setNewType({ title: val }),
                                 },
