@@ -98,7 +98,7 @@ export default function Page() {
         // Update the selected category with the newly added subcategory
         setSelected({
           ...selected,
-          subcategories: [...(selected.subcategories || []), response.data.subcategory],
+          subcategories: [...(response.data.subcategories || [])],
         });
 
         // Update categories state with the new subcategory
@@ -148,7 +148,6 @@ export default function Page() {
       try {
 
         const response = await axios.get(`${baseUrl}/categories`);
-        console.log(response.data);
 
         if (response) {
           setCategories(response.data);
@@ -275,7 +274,7 @@ export default function Page() {
                 </div>
               )}
             </div>
-
+  
             {/* Display existing subcategories */}
             <div className="space-y-4">
               {(selected?.subcategories || []).map((sub: any, index: number) => (

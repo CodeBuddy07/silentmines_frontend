@@ -57,29 +57,32 @@ const Page = () => {
         subTitle="Select pickup times when you are NOT available."
       />
 
-      {sections.map((section) => (
-        <section
-          key={section}
-          className="bg-[#0f1b0f]/60 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow space-y-4"
-        >
-          <h2 className="text-lg font-semibold text-white">{section}</h2>
+      <div className="flex flex-wrap gap-2">
 
-          {allTimeSlots.map((slot) => (
-            <label
-              key={slot}
-              className="flex items-center gap-3 cursor-pointer hover:bg-white/5 p-2 rounded transition"
-            >
-              <Checkbox
-                checked={availableTimes[section]?.includes(slot) || false}
-                onCheckedChange={() => toggleTime(section, slot)}
-              />
-              <span className="text-white font-medium">
-                {section} {slot}
-              </span>
-            </label>
-          ))}
-        </section>
-      ))}
+        {sections.map((section) => (
+          <section
+            key={section}
+            className="bg-[#0f1b0f]/60 flex-1 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow space-y-4"
+          >
+            <h2 className="text-lg font-semibold text-white">{section}</h2>
+
+            {allTimeSlots.map((slot) => (
+              <label
+                key={slot}
+                className="flex items-center gap-3 cursor-pointer hover:bg-white/5 p-2 rounded transition"
+              >
+                <Checkbox
+                  checked={availableTimes[section]?.includes(slot) || false}
+                  onCheckedChange={() => toggleTime(section, slot)}
+                />
+                <span className="text-white font-medium">
+                  {section} {slot}
+                </span>
+              </label>
+            ))}
+          </section>
+        ))}
+      </div>
 
       {/* Reason textarea */}
       <div className="bg-[#0f1b0f]/60 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow space-y-2">
