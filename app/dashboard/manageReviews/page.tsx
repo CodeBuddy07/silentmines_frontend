@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Header from "@/components/dashboard/header/header";
 import { Button } from "@/components/ui/button";
@@ -8,51 +8,51 @@ import { Star } from "lucide-react";
 import { toast } from "sonner";
 import FormatDate from "@/components/dashboard/formatDate/formatDate";
 
-const initialReviews = [
-    {
-        id: 1,
-        name: "John Doe",
-        comment: "Great product, fast delivery. Will buy again!",
-        status: "pending", // "approved" | "rejected"
-        imageURL:
-            "https://t4.ftcdn.net/jpg/02/44/43/69/360_F_244436923_vkMe10KKKiw5bjhZeRDT05moxWcPpdmb.jpg",
-        starCount: 4.5,
-        date: "2025-03-04",
-    },
-    {
-        id: 2,
-        name: "Sarah Khan",
-        comment: "Quality could be better, but overall okay.",
-        status: "approved",
-        imageURL:
-            "https://randomuser.me/api/portraits/women/65.jpg",
-        starCount: 3.5,
-        date: "2025-02-28",
-    },
-    {
-        id: 3,
-        name: "Alex Smith",
-        comment: "Not satisfied, item arrived damaged.",
-        status: "rejected",
-        imageURL:
-            "https://randomuser.me/api/portraits/men/22.jpg",
-        starCount: 2,
-        date: "2025-01-15",
-    },
-];
-
+// Fetching reviews from backend API
 const Page = () => {
-    const [reviews, setReviews] = useState(initialReviews);
+    const [reviews, setReviews] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const handleStatusChange = (id: number, newStatus: "approved" | "rejected") => {
-        setReviews((prev) =>
-            prev.map((review) =>
-                review.id === id ? { ...review, status: newStatus } : review
-            )
-        );
-        console.log('inside handle status change');
+    const fetchReviews = async () => {
+        try {
+            const response = await fetch("http://localhost:5001/api/review/allreview");
+            const data = await response.json();
+            setReviews(data);
+        } catch (error) {
+            console.error("Error fetching reviews:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        toast.success("Review updated successfully")
+    useEffect(() => {
+        fetchReviews();
+    }, []);
+
+    const handleStatusChange = async (id: string, newStatus: "approved" | "rejected") => {
+        try {
+            const response = await fetch(`http://localhost:5001/api/review/approve/${id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ status: newStatus }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to update review status");
+            }
+
+            setReviews((prev: any) =>
+                prev.map((review: any) =>
+                    review._id === id ? { ...review, status: newStatus } : review
+                )
+            );
+            toast.success("Review updated successfully");
+        } catch (error) {
+            console.error("Error updating review:", error);
+            toast.error("Failed to update review");
+        }
     };
 
     return (
@@ -60,24 +60,26 @@ const Page = () => {
             <Header title="Manage Reviews" subTitle="Manage all your reviews." />
 
             <section className="bg-[#0f1b0f]/60 backdrop-blur-md border border-white/10 p-6 rounded-xl mt-6 shadow space-y-4">
-                {reviews.length === 0 ? (
+                {loading ? (
+                    <div className="text-gray-500 text-sm">Loading reviews...</div>
+                ) : reviews.length === 0 ? (
                     <div className="text-gray-500 text-sm">No reviews yet.</div>
                 ) : (
-                    reviews.map((review) => (
+                    reviews.map((review:any) => (
                         <div
-                            key={review.id}
+                            key={review._id}  // Correct comment syntax here
                             className="flex items-start gap-4 border-b border-white/10 pb-4 last:border-0 last:pb-0"
                         >
                             <Image
-                                src={review.imageURL}
-                                alt={review.name}
+                                src={review.imageURL || "/default-image.png"}  // Handle empty src
+                                alt={review.clientName || "Reviewer's profile image"}  // Added alt text
                                 width={50}
                                 height={50}
                                 className="rounded-full border border-white/20 object-cover"
                             />
                             <div className="flex-1">
                                 <div className="flex items-center justify-between">
-                                    <h4 className="font-semibold text-white">{review.name}</h4>
+                                    <h4 className="font-semibold text-white">{review.clientName}</h4>
                                     <FormatDate date={review.date} />
                                 </div>
                                 <div className="flex items-center gap-1 text-yellow-400">
@@ -86,25 +88,25 @@ const Page = () => {
                                             key={i}
                                             size={14}
                                             className={
-                                                i + 1 <= Math.floor(review.starCount)
+                                                i + 1 <= Math.floor(review.rating)
                                                     ? "fill-current"
-                                                    : i + 0.5 <= review.starCount
+                                                    : i + 0.5 <= review.rating
                                                         ? "fill-current opacity-50"
                                                         : "opacity-20"
                                             }
                                         />
                                     ))}
                                     <span className="ml-1 text-xs text-gray-400">
-                                        {review.starCount}
+                                        {review.rating}
                                     </span>
                                 </div>
-                                <p className="text-sm text-gray-300 mt-1">{review.comment}</p>
+                                <p className="text-sm text-gray-300 mt-1">{review.description}</p>
 
                                 <div className="flex items-center gap-2 mt-3">
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        onClick={() => handleStatusChange(review.id, "approved")}
+                                        onClick={() => handleStatusChange(review._id, "approved")}
                                         className={`${review.status === "approved"
                                             ? "border-green-500 text-white bg-[#00A63E]"
                                             : "bg-[#00A63E]"
@@ -115,7 +117,7 @@ const Page = () => {
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        onClick={() => handleStatusChange(review.id, "rejected")}
+                                        onClick={() => handleStatusChange(review._id, "rejected")}
                                         className={`${review.status === "rejected"
                                             ? "border-red-500 bg-red-500"
                                             : "bg-red-500"
