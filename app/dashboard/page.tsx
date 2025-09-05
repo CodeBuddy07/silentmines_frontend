@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -39,6 +39,8 @@ const AddProductForm = () => {
     const [newCategory, setNewCategory] = useState({ name: "", description: "" });
     const [isTypesOpen, setIsTypesOpen] = useState(false);
     const [newType, setNewType] = useState({ title: "" });
+    const [types, setTypes] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('');
 
     const [dealOfTheWeek, setDealOfTheWeek] = useState(false);
     const [bestSeller, setBestSeller] = useState(false);
@@ -67,7 +69,6 @@ const AddProductForm = () => {
             toast.error('An error occurred while adding the category');
         }
     };
-
 
     const handleFileChange = (files: FileList | null, type: 'photo' | 'video') => {
         if (!files) return;
@@ -129,7 +130,7 @@ const AddProductForm = () => {
             toast.error('Please provide a type title.');
             return;
         }
-       
+
         try {
             const response = await axios.post(`${baseUrl}/types`, {
                 name: newType.title
@@ -151,6 +152,35 @@ const AddProductForm = () => {
         setIsTypesOpen(false);
         setNewType({ title: "" });
     };
+
+    const fetchCategories = async () => {
+        try {
+            const response = await axios.get(`${baseUrl}/categories`);
+
+            if (response.data) {
+                setCategories(response.data)
+            }
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    }
+
+    const fetchTypes = async () => {
+        try {
+            const response = await axios.get(`${baseUrl}/types`);
+
+            if (response.data) {
+                setTypes(response.data)
+            }
+        } catch (error) {
+            console.error('Error fetching types:', error);
+        }
+    }
+
+    useEffect(() => {
+        fetchTypes();
+        fetchCategories();
+    }, [])
 
     return (
         <div>
@@ -292,10 +322,11 @@ const AddProductForm = () => {
                                         <SelectValue placeholder="Select Category" />
                                     </SelectTrigger>
                                     <SelectContent className="bg-[#1a2a1a] text-white">
-                                        <SelectItem value="pre-rolls">Pre-Rolls</SelectItem>
-                                        <SelectItem value="extracts">Extracts</SelectItem>
-                                        <SelectItem value="edibles">Edibles</SelectItem>
-                                        <SelectItem value="vapes">Vapes</SelectItem>
+                                        {categories.map((category: any) => (
+                                            <SelectItem key={category._id} value={category.name}>
+                                                {category.name}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -307,23 +338,39 @@ const AddProductForm = () => {
                                         <SelectValue placeholder="e.g. jar, packwood" />
                                     </SelectTrigger>
                                     <SelectContent className="bg-[#1a2a1a] text-white">
-                                        <SelectItem value="jar">Jar</SelectItem>
-                                        <SelectItem value="packwood">Packwood</SelectItem>
-                                        <SelectItem value="sluggers">Sluggers</SelectItem>
-                                        <SelectItem value="shatter">Shatter</SelectItem>
-                                        <SelectItem value="sugar">Sugar</SelectItem>
-                                        <SelectItem value="live-resin">Live Resin</SelectItem>
-                                        <SelectItem value="hash-rosin">Hash Rosin</SelectItem>
-                                        <SelectItem value="badder">Badder</SelectItem>
-                                        <SelectItem value="cartridges">Cartridges</SelectItem>
-                                        <SelectItem value="disposables">Disposables</SelectItem>
-                                        <SelectItem value="live-resin-pens">Live Resin Pens</SelectItem>
+                                        {types.map((type: any) => (
+                                            <SelectItem key={type._id} value={type.name}>
+                                                {type.name}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                             </div>
                         </div>
 
-                        <div>
+                        {/* show sub category dynamically */}
+                        {categories.map((cat: any) =>
+                            category === cat.name && cat.subcategories.length > 0 ? (
+                                <div className="flex-1" key={cat._id}>
+                                    <Label>Sub Category</Label>
+                                    <Select onValueChange={setType}>
+                                        <SelectTrigger className="bg-[#1a2a1a] mt-3 w-full text-white">
+                                            <SelectValue placeholder="e.g. jar, packwood" />
+                                        </SelectTrigger>
+                                        <SelectContent className="bg-[#1a2a1a] text-white">
+                                            <SelectItem value="flower">Flower</SelectItem>
+                                            <SelectItem value="tier-1-(EXOTIC) ">Tier 1 (EXOTIC)</SelectItem>
+                                            <SelectItem value="tier-2-(TOP-SHELF)">Tier 2 (TOP SHELF)</SelectItem>
+                                            <SelectItem value="tier-3-(CHEAP)">Tier 3 (CHEAP)</SelectItem>
+                                            <SelectItem value="snowcaps">Snowcaps</SelectItem>
+                                            <SelectItem value="moonrocks">Moonrocks</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            ) : null
+                        )}
+
+                        {/* <div>
                             <div className="flex-1">
                                 <Label>Sub Category</Label>
                                 <Select onValueChange={setType}>
@@ -340,7 +387,7 @@ const AddProductForm = () => {
                                     </SelectContent>
                                 </Select>
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
                             <div className="space-y-1">
@@ -463,7 +510,6 @@ const AddProductForm = () => {
                     </form>
                 </TabsContent>
                 <TabsContent value="allProducts">
-
                     <AllProducts />
                 </TabsContent>
             </Tabs>

@@ -2,9 +2,14 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Price } from "@/app/(home)/_components/DealOfTheWeek";
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+
+// Price type to match the structure you're using for prices
+export interface Price {
+    weight: string;
+    amount: string;
+}
 
 interface ProductCardProps {
     image: string;
@@ -12,7 +17,7 @@ interface ProductCardProps {
     category: string;
     subcategory: string;
     name: string;
-    prices: Price[];
+    prices: Price[]; // This should always be an array of Price objects
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -25,9 +30,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
     const [isHovered, setIsHovered] = useState(false);
 
+    // Ensure prices is always an array
+    const productPrices = Array.isArray(prices) ? prices : [];
     return (
         <Card
-            className=" pt-0 backdrop-blur-sm border border-white/10 overflow-hidden bg-green-600/5 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/50 group flex flex-col" // 🧠 Make Card flex container
+            className="pt-0 backdrop-blur-sm border border-white/10 overflow-hidden bg-green-600/5 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/50 group flex flex-col" 
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
@@ -42,11 +49,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     />
                 </div>
                 <Badge className="absolute top-4 right-4 bg-red-600 hover:bg-red-600 text-white">
-                    ${discount} OFF
+                    {discount}% OFF
                 </Badge>
             </div>
 
-            <CardContent className="p-6 flex flex-col flex-1 justify-between"> {/* 🧠 Make CardContent grow and space items */}
+            <CardContent className="p-6 flex flex-col flex-1 justify-between">
                 {/* Top Info */}
                 <div className="space-y-3">
                     <div className="flex flex-wrap gap-2 text-xs">
@@ -58,18 +65,22 @@ const ProductCard: React.FC<ProductCardProps> = ({
                         {name}
                     </h3>
 
+                    {/* Display Prices */}
                     <div className="space-y-2">
-                        {prices.map((price, index) => (
-                            <div key={index} className="flex justify-between items-center">
-                                <span className="text-white/80 text-sm">{price.weight}</span>
-                                <span className="text-green-400 font-bold">${price.amount}</span>
-                            </div>
-                        ))}
+                        {productPrices.length > 0 ? (
+                            productPrices.map((price, index) => (
+                                <div key={index} className="flex justify-between items-center">
+                                    <span className="text-white/80 text-sm">{price.weight}</span>
+                                    <span className="text-green-400 font-bold">${price.amount}</span>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-gray-400">No prices available</p>
+                        )}
                     </div>
                 </div>
             </CardContent>
         </Card>
-
     );
 };
 
