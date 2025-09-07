@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -15,6 +15,8 @@ import { Plus, Minus, ShoppingCart, Trash2, Clock, Phone, User, NotebookPen } fr
 import { useCart } from '@/app/contexts/cartContext';
 import { Textarea } from '@/components/ui/textarea';
 import Link from 'next/link';
+import { TimeSlot } from '@/types';
+import useAxios from '@/hooks/useAxios';
 
 
 interface OrderFormData {
@@ -39,27 +41,35 @@ export default function OrderPopup({ children }: OrderPopupProps) {
     orderNotes: '',
   });
 
+  const [todayTimeSlots, setTodayTimeSlots] = useState<TimeSlot[]>([]);
+  const [tomorrowTimeSlots, setTomorrowTimeSlots] = useState<TimeSlot[]>([]);
+
+  const getTodayTimeSlot = async () => {
+    const res = await useAxios.get(`/timeslot/today`);
+    setTodayTimeSlots(res.data);
+    console.log(res.data);
+  }
+
+  const getTomorrowTimeSlot = async () => {
+    const res = await useAxios.get(`/timeslot/tomorrow`);
+    setTomorrowTimeSlots(res.data);
+    console.log(res.data);
+  }
+
+  useEffect(() => {
+    getTodayTimeSlot();
+    getTomorrowTimeSlot();
+  }, []);
+
   const getTimesForSelectedDay = () => {
-    const todayTimes = [
-      { value: 'today-12pm', label: '12:00 PM' },
-      { value: 'today-1pm', label: '1:00 PM' },
-      { value: 'today-2pm', label: '2:00 PM' },
-      { value: 'today-4pm', label: '4:00 PM' },
-      { value: 'today-5pm', label: '5:00 PM' },
-      { value: 'today-7pm', label: '7:00 PM' }
-    ];
+    // Select times based on the selected day
+    const selectedTimeSlots = formData.pickupDate === 'today' ? todayTimeSlots : tomorrowTimeSlots;
 
-    const tomorrowTimes = [
-      { value: 'tomorrow-2pm', label: '2:00 PM' },
-      { value: 'tomorrow-3pm', label: '3:00 PM' },
-      { value: 'tomorrow-4pm', label: '4:00 PM' },
-      { value: 'tomorrow-5pm', label: '5:00 PM' },
-      { value: 'tomorrow-6pm', label: '6:00 PM' },
-      { value: 'tomorrow-7pm', label: '7:00 PM' },
-      { value: 'tomorrow-8pm', label: '8:00 PM' }
-    ];
-
-    return formData.pickupDate === 'today' ? todayTimes : tomorrowTimes;
+    // Filter out unavailable slots
+    return selectedTimeSlots.filter(slot => slot.isAvailable).map(slot => ({
+      value: `${slot.day}-${slot.time.replace(":", "").toLowerCase()}`,  // Creating a value based on day and time
+      label: slot.time, // Showing time label from backend data
+    }));
   };
 
   const handleQuantityChange = (productId: string, weight: string, newQuantity: number) => {
@@ -284,8 +294,8 @@ export default function OrderPopup({ children }: OrderPopupProps) {
                       type="button"
                       onClick={() => handleInputChange('pickupDate', 'today')}
                       className={`flex-1 px-2 sm:px-3 md:px-6 py-1 sm:py-1.5 md:py-2 text-xs sm:text-sm rounded-md border transition-all ${formData.pickupDate === 'today'
-                          ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
-                          : 'border-emerald-500/30 text-white hover:border-emerald-400 hover:text-emerald-300'
+                        ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
+                        : 'border-emerald-500/30 text-white hover:border-emerald-400 hover:text-emerald-300'
                         }`}
                     >
                       TODAY
@@ -294,8 +304,8 @@ export default function OrderPopup({ children }: OrderPopupProps) {
                       type="button"
                       onClick={() => handleInputChange('pickupDate', 'tomorrow')}
                       className={`flex-1 px-2 sm:px-3 md:px-6 py-1 sm:py-1.5 md:py-2 text-xs sm:text-sm rounded-md border transition-all ${formData.pickupDate === 'tomorrow'
-                          ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
-                          : 'border-emerald-500/30 text-white hover:border-emerald-400 hover:text-emerald-300'
+                        ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
+                        : 'border-emerald-500/30 text-white hover:border-emerald-400 hover:text-emerald-300'
                         }`}
                     >
                       TOMORROW
@@ -310,8 +320,8 @@ export default function OrderPopup({ children }: OrderPopupProps) {
                         type="button"
                         onClick={() => handleInputChange('pickupTime', time.value)}
                         className={`relative px-1 sm:px-2 md:px-4 py-1.5 sm:py-2 rounded-md border transition-all text-xs sm:text-sm font-medium ${formData.pickupTime === time.value
-                            ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
-                            : 'border-emerald-500/30 text-white hover:border-emerald-400 hover:text-emerald-300 hover:bg-emerald-800/10'
+                          ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
+                          : 'border-emerald-500/30 text-white hover:border-emerald-400 hover:text-emerald-300 hover:bg-emerald-800/10'
                           }`}
                       >
                         {/* Green dot indicator for selected item */}
@@ -326,6 +336,7 @@ export default function OrderPopup({ children }: OrderPopupProps) {
                   </div>
                 </div>
               </div>
+
 
               {/* Order Notes */}
               <div className="space-y-1 sm:space-y-2">

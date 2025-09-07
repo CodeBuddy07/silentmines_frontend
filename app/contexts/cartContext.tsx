@@ -1,25 +1,9 @@
 'use client';
 
+import { Product } from '@/types';
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { toast } from 'sonner';
 
-export interface ProductPrice {
-  weight: string;
-  amount: string;
-}
-
-export interface Product {
-  id: string;
-  image: string;
-  discount: number;
-  category: string;
-  subcategory: string;
-  name: string;
-  description: string;
-  prices: ProductPrice[];
-  videos?: string[];
-  gallery?: string[];
-}
 
 export interface CartItem {
   productId: string;
@@ -71,13 +55,13 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   }, [cart]);
 
   const addToCart = (product: Product, selectedWeight: string, quantity: number = 1) => {
-    const selectedPrice = product.prices.find(p => p.weight === selectedWeight);
+    const selectedPrice = product.priceOptions.find(p => p.unit === selectedWeight);
     if (!selectedPrice) {
       toast.error('Invalid weight selection');
       return;
     }
 
-    const price = parseFloat(selectedPrice.amount);
+    const price = parseFloat(selectedPrice.price.toString());
     if (isNaN(price)) {
       toast.error('Invalid price format');
       return;
@@ -85,7 +69,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
     setCart(prevCart => {
       const existingItem = prevCart.find(item => 
-        item.productId === product.id && item.weight === selectedWeight
+        item.productId === product._id && item.weight === selectedWeight
       );
 
       if (existingItem) {
@@ -93,7 +77,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         toast.success(`Updated ${product.name} (${selectedWeight}) quantity to ${newQuantity}`);
         
         return prevCart.map(item =>
-          item.productId === product.id && item.weight === selectedWeight
+          item.productId === product._id && item.weight === selectedWeight
             ? { ...item, quantity: newQuantity }
             : item
         );
@@ -101,12 +85,12 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         toast.success(`Added ${product.name} (${selectedWeight}) to cart`, {id: 'add-to-cart'});
         
         return [...prevCart, {
-          productId: product.id,
+          productId: product._id,
           name: product.name,
           price,
           weight: selectedWeight,
           quantity,
-          image: product.image,
+          image: product.photoUrls[0] || undefined,
         }];
       }
     });

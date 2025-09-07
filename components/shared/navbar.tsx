@@ -1,10 +1,12 @@
 "use client";
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, use } from 'react';
 import { ChevronDown, Search, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import OrderPopup from '@/app/(home)/_components/OrderForm';
+import { ProductCategory } from '@/types';
+import useAxios from '@/hooks/useAxios';
 
 interface SearchSuggestion {
   id: string;
@@ -12,69 +14,6 @@ interface SearchSuggestion {
   category: string;
   url: string;
 }
-
-interface SubItem {
-  name: string;
-  href: string;
-}
-
-interface NavItem {
-  name: string;
-  href?: string;
-  sub?: SubItem[];
-}
-
-// Dummy categories data - simplified without subcategory descriptions
-const dummyCategories = [
-  {
-    id: '1',
-    name: 'Flowers',
-    slug: 'flowers',
-    description: 'Beautiful fresh flowers for all occasions',
-    subCategories: [
-      { id: '1-1', name: 'Tier 1 (EXOTIC)', slug: 'tier-1-(exotic)' },
-      { id: '1-2', name: 'Tier 2 (TOP SHELF)', slug: 'tier-2-(top-shelf)' },
-      { id: '1-3', name: 'Tier 3 (CHEAP)', slug: 'tier-3-(cheap)' },
-      { id: '1-4', name: 'Snowcaps', slug: 'snowcaps' },
-      { id: '1-5', name: 'Monorocks', slug: 'monorocks' },
-    ]
-  },
-  {
-    id: '2',
-    name: 'Pre-Rolls',
-    slug: 'pre-rolls',
-    description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
-    subCategories: []
-  },
-  {
-    id: '3',
-    name: 'Extracts',
-    slug: 'extracts',
-    description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
-    subCategories: []
-  },
-  {
-    id: '4',
-    name: 'Edibles',
-    slug: 'edibles',
-    description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
-    subCategories: []
-  },
-  {
-    id: '5',
-    name: 'Vapes',
-    slug: 'vapes',
-    description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
-    subCategories: []
-  },
-  {
-    id: '6',
-    name: 'Mushrooms',
-    slug: 'mushrooms',
-    description: 'Discover our complete collection of premium products. Browse through our carefully curated items.',
-    subCategories: []
-  },
-];
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -87,24 +26,36 @@ const Navbar = () => {
   const searchRef = useRef<HTMLDivElement>(null);
   const dropdownTimeoutRef = useRef<NodeJS.Timeout>(null);
 
+  const [categories, setCategories] = useState<ProductCategory[]>([]);
+
+  const getCategories = async () => {
+    const res = await useAxios.get(`/categories`);
+    setCategories(res.data.reverse());
+  }
+
+  useEffect(() => {
+    getCategories();
+  }, []);
+
+  console.log(categories);
+
   // Build navigation items from dummy categories
-  const buildNavItems = (): NavItem[] => {
-    const staticItems: NavItem[] = [
+  const buildNavItems = () => {
+    const staticItems = [
       { name: 'Home', href: '/' },
-      // { name: 'Gallery', href: '/gallery' }
     ];
 
-    const categoryItems: NavItem[] = dummyCategories.map(category => ({
+    const categoryItems = categories.map((category) => ({
       name: category.name,
-      href: `/categories/${category.slug}`,
+      href: `/categories/${category.name.toLowerCase().replaceAll(/\s+/g, '_')}`,
       // Only show subcategories in dropdown for preview, but they won't have separate pages
-      sub: category.subCategories.length > 0 ? category.subCategories.map(sub => ({
+      sub: category.subcategories.length > 0 ? category.subcategories.map(sub => ({
         name: sub.name,
-        href: `/categories/${category.slug}` // Same href as parent, filtering happens on the page
+        href: `/categories/${category.name.toLowerCase().replaceAll(/\s+/g, '_')}` // Same href as parent, filtering happens on the page
       })) : undefined
     }));
 
-    const endItems: NavItem[] = [
+    const endItems = [
       { name: 'Contact', href: '/#contact' }
     ];
 
@@ -117,20 +68,20 @@ const Navbar = () => {
   const generateSearchSuggestions = (): SearchSuggestion[] => {
     const suggestions: SearchSuggestion[] = [];
 
-    dummyCategories.forEach(category => {
+    categories.forEach(category => {
       suggestions.push({
-        id: `cat-${category.id}`,
+        id: `cat-${category._id}`,
         title: category.name,
         category: 'Category',
-        url: `/categories/${category.slug}`
+        url: `/categories/${category.name.toLowerCase().replaceAll(/\s+/g, '_')}`
       });
 
-      category.subCategories.forEach(sub => {
+      category.subcategories.forEach(sub => {
         suggestions.push({
-          id: `sub-${sub.id}`,
+          id: `sub-${sub._id}`,
           title: sub.name,
           category: category.name,
-          url: `/categories/${category.slug}` // Same URL, filtering will happen on the page
+          url: `/categories/${category.name.toLowerCase().replaceAll(/\s+/g, '_')}` // Same URL, filtering will happen on the page
         });
       });
     });
@@ -148,28 +99,28 @@ const Navbar = () => {
   const allSearchSuggestions = generateSearchSuggestions();
 
   // Function to check if a navigation item is active
-  const isActive = (item: NavItem): boolean => {
+  const isActive = (item:any): boolean => {
     if (item.href) {
       return pathname === item.href;
     }
 
     // For items with sub-navigation, check if any sub-item is active
     if (item.sub) {
-      return item.sub.some(subItem => pathname === subItem.href);
+      return item.sub.some((subItem: any) => pathname === subItem.href);
     }
 
     return false;
   };
 
-  // Function to check if a sub-item is active
-  const isSubItemActive = (href: string): boolean => {
-    return pathname === href;
-  };
+  // // Function to check if a sub-item is active
+  // const isSubItemActive = (href: string): boolean => {
+  //   return pathname === href;
+  // };
 
   // Function to check if a parent item should be highlighted (has active sub-item)
-  const hasActiveSubItem = (item: NavItem): boolean => {
+  const hasActiveSubItem = (item: any): boolean => {
     if (!item.sub) return false;
-    return item.sub.some(subItem => pathname === subItem.href);
+    return item.sub.some((subItem: any) => pathname === subItem.href);
   };
 
   const handleDropdownEnter = (itemName: string) => {
@@ -255,7 +206,7 @@ const Navbar = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center space-x-1">
-              {navItems.map((item) => (
+              {navItems.map((item:any) => (
                 <div
                   key={item.name}
                   className="relative"
@@ -309,7 +260,7 @@ const Navbar = () => {
                         </Link>
 
                         {/* Subcategories - these show info but link to main category page */}
-                        {item.sub.map((subItem, index) => (
+                        {item.sub.map((subItem: any, index: number) => (
                           <Link
                             key={subItem.name}
                             href={item.href || '#'}
@@ -375,7 +326,7 @@ const Navbar = () => {
         <div className={`lg:hidden bg-black border-t border-gray-800 transition-all duration-300 ease-out overflow-hidden ${isMenuOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'
           }`}>
           <div className="px-2 pt-2 pb-3 space-y-1">
-            {navItems.map((item, index) => (
+            {navItems.map((item:any, index) => (
               <div key={item.name}>
                 <div className="flex items-center justify-between">
                   <Link
@@ -432,7 +383,7 @@ const Navbar = () => {
                       </Link>
 
                       {/* Subcategories for Mobile - all link to main category */}
-                      {item.sub.map((subItem, subIndex) => (
+                      {item.sub.map((subItem:any, subIndex: any) => (
                         <Link
                           key={subItem.name}
                           href={item.href || '#'}

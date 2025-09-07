@@ -2,106 +2,27 @@
 import ProductCard from '@/components/shared/productCard';
 import SectionHeader from '@/components/shared/sectionHeader';
 import { Button } from '@/components/ui/button';
+import useAxios from '@/hooks/useAxios';
+import { Product } from '@/types';
 import Link from 'next/link';
-
-
-// Types
-export interface Price {
-    weight: string;
-    amount: string;
-}
-
-interface Product {
-    id: number;
-    image: string;
-    discount: number;
-    category: string;
-    subcategory: string;
-    name: string;
-    prices: Price[];
-}
-
-interface premiumSelectedFlowerProps {
-    title?: string;
-    subtitle?: string;
-    products?: Product[];
-    onShopMore?: () => void;
-    className?: string;
-}
-
-
-// Reusable Section Header Component
+import { useEffect, useState } from 'react';
 
 
 // Main Deal Section Component
-export const PremiumSelectedFlower: React.FC<premiumSelectedFlowerProps> = ({
-    title,
-    subtitle,
-    products = [],
-    onShopMore,
-    className = ""
-}) => {
-    // Default products data
-    const defaultProducts: Product[] = [
-        {
-            id: 1,
-            image: "/demo_product-2.png",
-            discount: 75,
-            category: "LICENSED INDOORS",
-            subcategory: "DAILY SPECIAL",
-            name: "LEMON BUBBLEGUM 🍋⚡",
-            prices: [
-                { weight: "1 LB", amount: "750" },
-                { weight: "2 LB", amount: "750" },
-                { weight: "3 LB", amount: "750" }
-            ]
-        },
-        {
-            id: 2,
-            image: "/demo_product-2.png",
-            discount: 75,
-            category: "LICENSED INDOORS",
-            subcategory: "DAILY SPECIAL",
-            name: "CHERRY 7UP 🍒🥤",
-            prices: [
-                { weight: "1 LB", amount: "750" },
-                { weight: "2 LB", amount: "750" },
-                { weight: "3 LB", amount: "750" }
-            ]
-        },
-        {
-            id: 3,
-            image: "/demo_product-2.png",
-            discount: 75,
-            category: "LICENSED INDOORS",
-            subcategory: "DAILY SPECIAL",
-            name: "CALIFORNIA DREAM 🌟🌊",
-            prices: [
-                { weight: "1 LB", amount: "750" },
-                { weight: "2 LB", amount: "750" },
-                { weight: "3 LB", amount: "750" }
-            ]
-        },
-        {
-            id: 4,
-            image: "/demo_product-2.png",
-            discount: 75,
-            category: "LICENSED INDOORS",
-            subcategory: "DAILY SPECIAL",
-            name: "CAKE POPZ 🧁🎉",
-            prices: [
-                { weight: "1 LB", amount: "750" },
-                { weight: "2 LB", amount: "750" },
-                { weight: "3 LB", amount: "750" }
-            ]
-        }
-    ];
+export const PremiumSelectedFlower = () => {
+    const [products, setProducts] = useState<Product[]>([]);
 
-    const displayProducts = products.length > 0 ? products : defaultProducts;
+    const getData = async () => {
+        const res = await useAxios.get(`/products/bestselling`);
+        setProducts(res.data.data.slice(0,4));
+    }
 
+    useEffect(() => {
+        getData();
+    }, []);
 
     return (
-        <section className={`bg-black text-white py-20 px-4 w-full ${className}`}>
+        <section className={`bg-black text-white py-20 px-4 w-full`}>
             <div className="max-w-7xl mx-auto">
                 {/* Section Header */}
                 <SectionHeader
@@ -111,15 +32,19 @@ export const PremiumSelectedFlower: React.FC<premiumSelectedFlowerProps> = ({
 
                 {/* Products Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-                    {displayProducts.map((product) => (
+                    {products.map((product) => (
                         <ProductCard
-                            key={product.id}
-                            image={product.image}
+                            key={product._id}
+                            type={product.type}
+                            id={product._id}
+                            image={product.photoUrls}
                             discount={product.discount}
                             category={product.category}
                             subcategory={product.subcategory}
                             name={product.name}
-                            prices={product.prices}
+                            priceOptions={product.priceOptions}
+                            dealoftheweek={product.dealoftheweek}
+                            bestSeller={product.bestSeller}
                         />
                     ))}
                 </div>

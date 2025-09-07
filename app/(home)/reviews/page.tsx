@@ -1,15 +1,10 @@
 "use client";
-import React, { JSX, useState } from 'react';
+import React, { JSX, useEffect, useState } from 'react';
 import { Star, User, Calendar, Plus, X } from 'lucide-react';
-
-interface Review {
-  id: string;
-  name: string;
-  rating: number;
-  review: string;
-  date: string;
-  image?: string;
-}
+import useAxios from '@/hooks/useAxios';
+import { Review } from '@/types';
+import { toast } from 'sonner';
+import Pagination from '@/components/shared/pagination';
 
 interface ReviewFormData {
   name: string;
@@ -27,54 +22,34 @@ const ReviewsPage: React.FC = () => {
     review: '',
     image: null
   });
-  const [reviews, setReviews] = useState<Review[]>([
-    {
-      id: '1',
-      name: 'Sarah Johnson',
-      rating: 5,
-      review: 'Absolutely amazing service! The team went above and beyond to meet our requirements. The attention to detail was exceptional, and the final product exceeded all expectations. Would definitely recommend to anyone looking for quality work.',
-      date: '2024-08-05',
-      image: 'https://images.unsplash.com/photo-1494790108755-2616b612b1c1?w=64&h=64&fit=crop&crop=face&auto=format'
-    },
-    {
-      id: '2',
-      name: 'Michael Chen',
-      rating: 4,
-      review: 'Great experience overall. The project was delivered on time and the communication throughout was excellent. Minor issues were quickly resolved. Very professional team.',
-      date: '2024-08-03',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=64&h=64&fit=crop&crop=face&auto=format'
-    },
-    {
-      id: '3',
-      name: 'Emily Rodriguez',
-      rating: 5,
-      review: 'Outstanding work! The level of creativity and technical expertise demonstrated was impressive. They understood our vision perfectly and brought it to life beautifully.',
-      date: '2024-07-28',
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=64&h=64&fit=crop&crop=face&auto=format'
-    },
-    {
-      id: '4',
-      name: 'David Thompson',
-      rating: 4,
-      review: 'Solid performance and reliable delivery. The team was responsive to feedback and made necessary adjustments promptly. Good value for money.',
-      date: '2024-07-25',
-    },
-    {
-      id: '5',
-      name: 'Lisa Wang',
-      rating: 5,
-      review: 'Exceptional quality and service! From start to finish, everything was handled professionally. The end result was exactly what we hoped for and more. Highly recommended!',
-      date: '2024-07-20',
-      image: 'https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?w=64&h=64&fit=crop&crop=face&auto=format'
-    },
-    {
-      id: '6',
-      name: 'James Wilson',
-      rating: 3,
-      review: 'Good service with room for improvement. The project was completed satisfactorily, though there were some delays. Communication could have been better.',
-      date: '2024-07-15',
-    }
-  ]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+
+
+  const getData = async () => {
+    const res = await useAxios.get(`/review/approvedreview?page=${currentPage}&limit=${itemsPerPage}`);
+    setReviews(res.data);
+    setTotalPages(res.data.totalPages);
+    setTotalItems(res.data.totalReviews);
+  }
+
+
+  useEffect(() => {
+    getData();
+  }, [currentPage, itemsPerPage]);
+
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+    getData();
+  };
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -114,39 +89,34 @@ const ReviewsPage: React.FC = () => {
 
     try {
       const formDataToSend = new FormData();
-      formDataToSend.append('name', formData.name);
+      formDataToSend.append('clientName', formData.name);
       formDataToSend.append('rating', formData.rating.toString());
-      formDataToSend.append('review', formData.review);
-      
+      formDataToSend.append('description', formData.review);
+      formDataToSend.append('date', new Date().toISOString());
+
       if (formData.image) {
         formDataToSend.append('image', formData.image);
       }
 
       // Replace with your actual API endpoint
-      const response = await fetch('/api/reviews', {
-        method: 'POST',
-        body: formDataToSend,
-      });
+      const response = await useAxios.post('/review/submit', formDataToSend);
 
-      if (!response.ok) {
+      if (response.status === 200) {
         throw new Error('Failed to submit review');
       }
 
-      const newReview = await response.json();
-      
-      // Add the new review to the top of the list
-      setReviews(prev => [newReview, ...prev]);
-      
+      getData();
+
       // Close dialog and reset form
       setIsDialogOpen(false);
       resetForm();
-      
+
       // You might want to show a success message here
-      alert('Review submitted successfully!');
-      
+      toast.success('Review submitted successfully!');
+
     } catch (error) {
       console.error('Error submitting review:', error);
-      alert('Failed to submit review. Please try again.');
+      toast.error((error as any).response?.data?.message || 'Failed to submit review. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -154,10 +124,10 @@ const ReviewsPage: React.FC = () => {
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
   };
 
@@ -167,21 +137,46 @@ const ReviewsPage: React.FC = () => {
       stars.push(
         <Star
           key={i}
-          className={`w-5 h-5 ${
-            i <= rating 
-              ? 'fill-green-500 text-green-500' 
-              : 'fill-gray-600 text-gray-600'
-          }`}
+          className={`w-5 h-5 ${i <= rating
+            ? 'fill-green-500 text-green-500'
+            : 'fill-gray-600 text-gray-600'
+            }`}
         />
       );
     }
     return stars;
   };
 
+  // // Loading state (simulate loading)
+  // if (!reviews || reviews.length === 0) {
+  //   return (
+  //     <div className="min-h-screen bg-black/60 backdrop-blur-[1px] flex items-center justify-center">
+  //       <div className="text-center">
+  //         <div className="text-red-400 mb-4">
+  //           <svg className="mx-auto h-16 w-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  //             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+  //           </svg>
+  //         </div>
+  //         <h3 className="text-xl font-medium text-gray-300 mb-2">No reviews yet!</h3>
+  //         <p className="text-gray-400 mb-6">Be the first to review.</p>
+  //         <button
+  //           onClick={() => window.history.back()}
+  //           className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+  //         >
+  //           Go Back
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
   const getAverageRating = (): number => {
     const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
     return Math.round((totalRating / reviews.length) * 10) / 10;
   };
+
+
+
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -193,13 +188,13 @@ const ReviewsPage: React.FC = () => {
           </h1>
           <div className="flex items-center justify-center gap-4 mb-4">
             <div className="flex items-center gap-1">
-              {renderStars(Math.round(getAverageRating()))}
+              {renderStars(Math.round(getAverageRating() || 0))}
             </div>
             <span className="text-2xl font-semibold text-green-400">
-              {getAverageRating()}
+              {getAverageRating() || 0}
             </span>
             <span className="text-gray-400">
-              ({reviews.length} reviews)
+              ({totalItems} reviews)
             </span>
           </div>
           <p className="text-gray-400 text-lg">
@@ -220,9 +215,9 @@ const ReviewsPage: React.FC = () => {
 
         {/* Reviews Grid */}
         <div className="grid gap-6 md:gap-8">
-          {reviews.map((review) => (
+          {reviews?.map((review) => (
             <div
-              key={review.id}
+              key={review._id}
               className="bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-green-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/10"
             >
               {/* Review Header */}
@@ -232,7 +227,7 @@ const ReviewsPage: React.FC = () => {
                   {review.image ? (
                     <img
                       src={review.image}
-                      alt={review.name}
+                      alt={review.clientName}
                       className="w-12 h-12 rounded-full object-cover ring-2 ring-green-500/20"
                     />
                   ) : (
@@ -245,7 +240,7 @@ const ReviewsPage: React.FC = () => {
                 {/* Name and Rating */}
                 <div className="flex-grow">
                   <h3 className="font-semibold text-lg text-white mb-1">
-                    {review.name}
+                    {review.clientName}
                   </h3>
                   <div className="flex items-center gap-2 mb-2">
                     <div className="flex items-center gap-1">
@@ -265,19 +260,20 @@ const ReviewsPage: React.FC = () => {
               {/* Review Text */}
               <div className="mt-4">
                 <p className="text-gray-300 leading-relaxed text-base">
-                  {review.review}
+                  {review.description}
                 </p>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Load More Button (Optional) */}
-        <div className="text-center mt-12">
-          <button className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-green-500/25">
-            Load More Reviews
-          </button>
-        </div>
+        {totalPages! > 1 && reviews.length > 0 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages || 0}
+            onPageChange={setCurrentPage}
+          />
+        )}
 
         {/* Review Dialog */}
         {isDialogOpen && (
@@ -332,11 +328,10 @@ const ReviewsPage: React.FC = () => {
                         className="focus:outline-none"
                       >
                         <Star
-                          className={`w-8 h-8 transition-colors ${
-                            star <= formData.rating
-                              ? 'fill-green-500 text-green-500'
-                              : 'fill-gray-600 text-gray-600 hover:text-green-400'
-                          }`}
+                          className={`w-8 h-8 transition-colors ${star <= formData.rating
+                            ? 'fill-green-500 text-green-500'
+                            : 'fill-gray-600 text-gray-600 hover:text-green-400'
+                            }`}
                         />
                       </button>
                     ))}
