@@ -4,70 +4,32 @@ import Pagination from '@/components/shared/pagination';
 import ProductCard from '@/components/shared/productCard';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
-
-// Types for navigation structure
-interface Product {
-    id: string;
-    name: string;
-    image: string;
-    category: string;
-    subcategory?: string;
-    prices: {
-    weight: string;
-    amount: string;
-  }[];
-    discount?: number;
-}
-
-interface SubCategory {
-    id: string;
-    name: string;
-    slug: string;
-}
-
-interface Category {
-    id: string;
-    name: string;
-    slug: string;
-    description: string;
-    subCategories?: SubCategory[];
-}
+import { Product, ProductCategory, Subcategory } from '@/types';
 
 interface DynamicProductShowCaseProps {
     products: Product[];
-    category: Category;
+    category: ProductCategory;
+    currentPage: number;
+    itemsPerPage: number;
+    handleItemsPerPageChange: (newItemsPerPage: number) => void;
+    totalPages: number;
+    totalItems?: number;
+    setCurrentPage: (page: number) => void;
 }
 
 // Main Gallery Component
 const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
     products,
-    category
+    category,
+    currentPage,
+    itemsPerPage,
+    handleItemsPerPageChange,
+    totalPages,
+    setCurrentPage,
+    totalItems = 0,
 }) => {
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(12);
+
     const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
-
-    // Filter products based on active subcategory
-    const filteredProducts = useMemo(() => {
-        if (!activeSubCategory || activeSubCategory === 'all') {
-            return products;
-        }
-        return products.filter(product => 
-            product.subcategory?.toLowerCase() === activeSubCategory.toLowerCase()
-        );
-    }, [products, activeSubCategory]);
-
-    // Calculate pagination
-    const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const currentProducts = filteredProducts.slice(startIndex, endIndex);
-
-    // Reset to first page when changing filters or items per page
-    const handleItemsPerPageChange = (newItemsPerPage: number) => {
-        setItemsPerPage(newItemsPerPage);
-        setCurrentPage(1);
-    };
 
     const handleSubCategoryChange = (subCategorySlug: string | null) => {
         setActiveSubCategory(subCategorySlug);
@@ -122,18 +84,17 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
             </div>
 
             {/* Subcategory Tabs (if subcategories exist) */}
-            {category.subCategories && category.subCategories.length > 0 && (
+            {category.subcategories && category.subcategories.length > 0 && (
                 <div className="bg-black/30 border-b border-gray-800">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex flex-wrap gap-2 py-6 justify-center">
                             {/* All Products Tab */}
                             <Button
                                 variant={!activeSubCategory || activeSubCategory === 'all' ? "default" : "outline"}
-                                className={`px-6 py-2 rounded-full transition-all duration-300 ${
-                                    !activeSubCategory || activeSubCategory === 'all'
+                                className={`px-6 py-2 rounded-full transition-all duration-300 ${!activeSubCategory || activeSubCategory === 'all'
                                         ? "bg-green-600 text-white border-green-600 shadow-lg shadow-green-600/20"
                                         : "bg-transparent text-gray-300 border-gray-600 hover:border-green-500 hover:text-green-400"
-                                }`}
+                                    }`}
                                 onClick={() => handleSubCategoryChange('all')}
                             >
                                 All Products
@@ -143,21 +104,20 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
                             </Button>
 
                             {/* Subcategory Tabs */}
-                            {category.subCategories.map((subCategory) => {
-                                const subCategoryCount = products.filter(p => 
-                                    p.subcategory?.toLowerCase() === subCategory.slug.toLowerCase()
+                            {category.subcategories.map((subCategory: Subcategory) => {
+                                const subCategoryCount = products.filter((p: Product) =>
+                                    p.subcategory?.replaceAll(' ', '_').toLowerCase() === subCategory.name.replaceAll(' ', '_').toLowerCase()
                                 ).length;
 
                                 return (
                                     <Button
-                                        key={subCategory.id}
-                                        variant={activeSubCategory === subCategory.slug ? "default" : "outline"}
-                                        className={`px-6 py-2 rounded-full transition-all duration-300 ${
-                                            activeSubCategory === subCategory.slug
+                                        key={subCategory._id}
+                                        variant={activeSubCategory === subCategory.name.replaceAll(' ', '_').toLowerCase() ? "default" : "outline"}
+                                        className={`px-6 py-2 rounded-full transition-all duration-300 ${activeSubCategory === subCategory.name.replaceAll(' ', '_').toLowerCase()
                                                 ? "bg-green-600 text-white border-green-600 shadow-lg shadow-green-600/20"
                                                 : "bg-transparent text-gray-300 border-gray-600 hover:border-green-500 hover:text-green-400"
-                                        }`}
-                                        onClick={() => handleSubCategoryChange(subCategory.slug)}
+                                            }`}
+                                        onClick={() => handleSubCategoryChange(subCategory.name.replaceAll(' ', '_').toLowerCase())}
                                     >
                                         {subCategory.name}
                                         <span className="ml-2 text-xs opacity-75">
@@ -173,16 +133,16 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
 
             {/* Main Content */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                        {/* Active Filter Display */}
+                {/* Active Filter Display */}
                 {activeSubCategory && activeSubCategory !== 'all' && (
                     <div className="mb-6 p-4 bg-green-900/20 border border-green-800 rounded-lg">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-3">
                                 <span className="text-green-400 font-medium">
-                                    Filtered by: {category.subCategories?.find(sub => sub.slug === activeSubCategory)?.name}
+                                    Filtered by: {category.subcategories?.find((sub: Subcategory) => sub.name.replaceAll(' ', '_').toLowerCase() === activeSubCategory)?.name}
                                 </span>
                                 <span className="text-xs text-gray-400">
-                                    {filteredProducts.length} products found
+                                    {totalItems} products found
                                 </span>
                             </div>
                             <Button
@@ -201,7 +161,7 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-gray-900/80 backdrop-blur-sm border border-gray-700 p-4 rounded-lg shadow-lg">
                     <div className="flex items-center space-x-4">
                         <span className="text-sm font-medium text-gray-300">
-                            Showing {filteredProducts.length > 0 ? startIndex + 1 : 0}-{Math.min(endIndex, filteredProducts.length)} of {filteredProducts.length} products
+                            Showing {itemsPerPage} products
                         </span>
                     </div>
 
@@ -226,17 +186,21 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
                 </div>
 
                 {/* Product Grid */}
-                {filteredProducts.length > 0 ? (
+                {products.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-                        {currentProducts.map((product) => (
+                        {products.map((product) => (
                             <ProductCard
-                                key={product.id}
-                                image={product.image}
+                                key={product._id}
+                                id={product._id}
+                                type={product.type}
+                                image={product.photoUrls}
                                 discount={product.discount}
                                 category={product.category}
                                 subcategory={product.subcategory}
                                 name={product.name}
-                                prices={product.prices}
+                                priceOptions={product.priceOptions}
+                                dealoftheweek={product.dealoftheweek}
+                                bestSeller={product.bestSeller}
                             />
                         ))}
                     </div>
@@ -249,14 +213,14 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
                         </div>
                         <h3 className="text-xl font-medium text-gray-300 mb-2">No products found</h3>
                         <p className="text-gray-400 mb-6">
-                            {activeSubCategory && activeSubCategory !== 'all' 
-                                ? `No products available in this subcategory.` 
+                            {activeSubCategory && activeSubCategory !== 'all'
+                                ? `No products available in this subcategory.`
                                 : `No products available in this category.`}
                         </p>
                         {activeSubCategory && activeSubCategory !== 'all' && (
                             <Button
                                 variant="outline"
-                                className="text-gray-300 border-gray-600 hover:border-green-500"
+                                className=" border-green-600 bg-transparent hover:bg-green-500 text-white"
                                 onClick={() => handleSubCategoryChange('all')}
                             >
                                 View All Products
@@ -266,7 +230,7 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
                 )}
 
                 {/* Pagination */}
-                {totalPages > 1 && filteredProducts.length > 0 && (
+                {totalPages > 1 && products.length > 0 && (
                     <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}
@@ -275,13 +239,13 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
                 )}
 
                 {/* Results Summary */}
-                {filteredProducts.length > 0 && (
+                {products.length > 0 && (
                     <div className="text-center mt-8 p-4 bg-gray-900/80 backdrop-blur-sm border border-gray-700 rounded-lg shadow-lg">
                         <p className="text-sm text-gray-300">
-                            Page {currentPage} of {totalPages} • Showing {currentProducts.length} products
+                            Page {currentPage} of {totalPages} • Showing {products.length} products
                             {activeSubCategory && activeSubCategory !== 'all' && (
                                 <span className="ml-2 text-green-400">
-                                    in {category.subCategories?.find(sub => sub.slug === activeSubCategory)?.name}
+                                    in {category.subcategories?.find((sub: Subcategory) => sub.name.replaceAll(' ', '_').toLowerCase() === activeSubCategory)?.name.replaceAll(' ', '_').toLowerCase()}
                                 </span>
                             )}
                         </p>

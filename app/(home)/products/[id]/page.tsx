@@ -1,13 +1,15 @@
 "use client";
 
 import { ShoppingBag } from 'lucide-react';
-import React, { use, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { PremiumSelectedFlower } from '../../_components/premiumSelectedFlower';
 import { Button } from '@/components/ui/button';
-import { Product, useCart } from '@/app/contexts/cartContext';
+import { useCart } from '@/app/contexts/cartContext';
 import OrderPopup from '../../_components/OrderForm';
 import AddToBagButton from '../../_components/addToBagButton';
 import MediaSlider from '@/components/shared/mediaSlider';
+import useAxios from '@/hooks/useAxios';
+import { Product } from '@/types';
 
 const Page = ({
   params,
@@ -18,41 +20,53 @@ const Page = ({
   const { id } = use(params);
   const { getCartItemCount } = useCart();
 
-  const sampleProduct: Product = {
-    id: id,
-    image: "/demo_product-2.png",
-    discount: 75,
-    category: "LICENSED INDOORS",
-    subcategory: "DAILY SPECIAL",
-    name: "LEMON BUBBLEGUM 🍋⚡",
-    description: "Premium quality Lemon Bubblegum strain with an exceptional citrusy flavor profile and energizing effects. This licensed indoor cultivation ensures consistent quality and purity. Perfect for daytime use with its uplifting and creative properties. Limited time offer with 75% discount - don't miss out on this amazing deal!",
-    prices: [
-      { weight: "1 LB", amount: "750" },
-      { weight: "2 LB", amount: "1400" },
-      { weight: "3 LB", amount: "2000" }
-    ],
-    videos: [
-      "/original.mov",
-      "https://sample-videos.com/zip/10/mp4/360/sample2.mp4"
-    ],
-    gallery: [
-      "/demo_product-2.png",
-      "/demo_product-3.png",
-      "/demo_product-4.png",
-      "/demo_product-5.png"
-    ]
-  };
+  const [product, setProduct] = useState<Product>({} as Product);
+  const [selectedWeight, setSelectedWeight] = useState<string>('');
 
-  const [product, setProduct] = useState<Product>(sampleProduct);
-  const [selectedWeight, setSelectedWeight] = useState<string>(sampleProduct.prices[0].weight);
+  const getData = async () => {
+    const res = await useAxios.get(`/products/${id}`);
+    setProduct(res.data);
+    setSelectedWeight(res.data?.priceOptions[0]?.unit);
+    console.log(res.data);
+  }
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  // Loading state (simulate loading)
+  if (!product || Object.keys(product).length === 0) {
+    return (
+      <div className="min-h-screen bg-black/60 backdrop-blur-[1px] flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-400 mb-4">
+            <svg className="mx-auto h-16 w-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-medium text-gray-300 mb-2">Product not found</h3>
+          <p className="text-gray-400 mb-6">The requested product could not be found.</p>
+          <button
+            onClick={() => window.history.back()}
+            className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+
+
 
   // Get current price based on selected weight
-  const currentPrice = product.prices.find(p => p.weight === selectedWeight)?.amount || product.prices[0].amount;
+  const currentPrice = product.priceOptions.find(p => p.unit === selectedWeight)?.price || product?.priceOptions[0]?.price;
 
   // Combine all media (images and videos) for the MediaSlider
   const allMedia = [
-    ...(product.gallery || [product.image]).map(img => ({ type: 'image' as const, src: img })),
-    ...(product.videos || []).map(vid => ({ type: 'video' as const, src: vid }))
+    ...(product.photoUrls || []).map(img => ({ type: 'image' as const, src: img })),
+    ...(product.videoUrls || []).map(vid => ({ type: 'video' as const, src: vid }))
   ];
 
   const cartItemCount = getCartItemCount();
@@ -90,12 +104,12 @@ const Page = ({
             {/* Product Title & Category */}
             <div>
               <div className="flex flex-wrap items-center gap-2 text-sm text-emerald-400 mb-2">
-                <span>{product.category}</span>
+                <span>{product.category.replaceAll('-',' ').replaceAll('_',' ').toUpperCase()}</span>
                 <span className="text-emerald-600">•</span>
-                <span>{product.subcategory}</span>
+                <span>{product.subcategory?.replaceAll('-',' ').replaceAll('_',' ').toUpperCase()}</span>
               </div>
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white leading-tight">
-                {product.name}
+                {product.name.replaceAll('-',' ').replaceAll('_',' ').toUpperCase()}
               </h1>
             </div>
 
@@ -108,7 +122,7 @@ const Page = ({
                 {product.discount > 0 && (
                   <div className="flex items-center gap-2">
                     <span className="text-base sm:text-lg text-gray-500 line-through">
-                      ${Math.round(parseInt(currentPrice) * (1 + product.discount / 100))}
+                     ${Math.round(Number(currentPrice) / (1 - product.discount / 100))}
                     </span>
                     <span className="bg-emerald-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
                       {product.discount}% OFF
@@ -126,16 +140,16 @@ const Page = ({
               {/* Mobile: Stacked Layout */}
               <div className="sm:hidden space-y-3">
                 <div className="flex flex-wrap gap-2">
-                  {product.prices.map((price) => (
+                  {product.priceOptions.map((price) => (
                     <button
-                      key={price.weight}
-                      onClick={() => setSelectedWeight(price.weight)}
-                      className={`flex-1 min-w-[80px] p-3 rounded-lg border-2 transition-all text-center ${selectedWeight === price.weight
+                      key={price.unit}
+                      onClick={() => setSelectedWeight(price.unit)}
+                      className={`flex-1 min-w-[80px] p-3 rounded-lg border-2 transition-all text-center ${selectedWeight === price.unit
                         ? 'border-emerald-500 bg-emerald-900/40 shadow-lg shadow-emerald-500/20'
                         : 'border-emerald-500/30 bg-emerald-900/10 hover:border-emerald-400/60 hover:bg-emerald-800/20'
                         }`}
                     >
-                      <span className="font-medium text-sm text-white">{price.weight}</span>
+                      <span className="font-medium text-sm text-white">{price.unit}</span>
                     </button>
                   ))}
                 </div>
@@ -150,16 +164,16 @@ const Page = ({
               {/* Desktop: Side-by-side Layout */}
               <div className="hidden sm:flex justify-between items-center gap-4">
                 <div className="flex items-center gap-3">
-                  {product.prices.map((price) => (
+                  {product.priceOptions.map((price) => (
                     <button
-                      key={price.weight}
-                      onClick={() => setSelectedWeight(price.weight)}
-                      className={`px-4 py-2 rounded-full border-2 transition-all ${selectedWeight === price.weight
+                      key={price.unit}
+                      onClick={() => setSelectedWeight(price.unit)}
+                      className={`px-4 py-2 rounded-full border-2 transition-all ${selectedWeight === price.unit
                         ? 'border-emerald-500 bg-emerald-900/40 shadow-lg shadow-emerald-500/20'
                         : 'border-emerald-500/30 bg-emerald-900/10 hover:border-emerald-400/60 hover:bg-emerald-800/20'
                         }`}
                     >
-                      <span className="font-medium text-sm text-white">{price.weight}</span>
+                      <span className="font-medium text-sm text-white">{price.unit}</span>
                     </button>
                   ))}
                 </div>
@@ -203,13 +217,13 @@ const Page = ({
                 <div>
                   <span className="text-emerald-400 text-sm font-medium">Category</span>
                   <p className="text-white font-semibold mt-1 text-sm sm:text-base">
-                    {product.category}
+                    {product.category.replaceAll('-',' ').replaceAll('_',' ').toUpperCase()}
                   </p>
                 </div>
                 <div>
                   <span className="text-emerald-400 text-sm font-medium">Special Offer</span>
                   <p className="text-white font-semibold mt-1 text-sm sm:text-base">
-                    {product.subcategory}
+                    {product.subcategory?.replaceAll('-',' ').replaceAll('_',' ').toUpperCase()}
                   </p>
                 </div>
               </div>

@@ -1,7 +1,8 @@
 'use client';
 
-import { Product, useCart } from '@/app/contexts/cartContext';
+import {  useCart } from '@/app/contexts/cartContext';
 import { Button } from '@/components/ui/button';
+import { Product } from '@/types';
 import { ShoppingBag, Plus, Minus, Check } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
@@ -15,7 +16,7 @@ const AddToBagButton: React.FC<AddToBagButtonProps> = ({ product, selectedWeight
   const [isAdding, setIsAdding] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   
-  const currentQuantity = getItemQuantity(product.id, selectedWeight);
+  const currentQuantity = getItemQuantity(product._id, selectedWeight);
 
   const handleAddToCart = async () => {
     setIsAdding(true);
@@ -35,9 +36,9 @@ const AddToBagButton: React.FC<AddToBagButtonProps> = ({ product, selectedWeight
 
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity <= 0) {
-      updateQuantity(product.id, selectedWeight, 0);
+      updateQuantity(product._id, selectedWeight, 0);
     } else {
-      updateQuantity(product.id, selectedWeight, newQuantity);
+      updateQuantity(product._id, selectedWeight, newQuantity);
     }
   };
 
@@ -68,7 +69,7 @@ const AddToBagButton: React.FC<AddToBagButtonProps> = ({ product, selectedWeight
         </div>
         
         <div className="text-xs text-emerald-300">
-          ${(product.prices.find(p => p.weight === selectedWeight)?.amount || '0')} / {selectedWeight}
+          ${(product.priceOptions.find(p => p.unit === selectedWeight)?.price || '0')} / {selectedWeight}
         </div>
       </div>
     );
@@ -81,12 +82,12 @@ const AddToBagButton: React.FC<AddToBagButtonProps> = ({ product, selectedWeight
       disabled={isAdding}
       className={`
         relative overflow-hidden w-full border border-emerald-500 bg-emerald-900/20 
-        hover:bg-emerald-600 text-white group cursor-pointer transition-all duration-300
+        hover:bg-emerald-500 text-white group cursor-pointer transition-all duration-300
         ${isAdding ? 'scale-95' : 'scale-100'}
-        ${showSuccess ? 'bg-green-600 border-green-500' : ''}
+        ${showSuccess ? 'bg-green-500 border-green-500' : ''}
       `}
     >
-      <span className="absolute inset-0 bg-emerald-500 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0" />
+      <span className="absolute inset-0 bg-green-500 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0" />
       
       <span className="relative z-10 px-4 py-2 flex justify-center items-center gap-2">
         {showSuccess ? (

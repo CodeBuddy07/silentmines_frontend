@@ -2,52 +2,45 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Price } from "@/app/(home)/_components/DealOfTheWeek";
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '../ui/button';
 import Link from 'next/link';
-import MediaSlider from './mediaSlider';
 import AddToBagButton from '@/app/(home)/_components/addToBagButton';
+import { Price } from '@/types';
 
 interface ProductCardProps {
-    image: string;
+    id?: string;
+    image: string[];
     discount?: number;
     category: string;
     subcategory?: string;
     name: string;
-    prices: Price[];
+    priceOptions: Price[];
+    dealoftheweek: boolean,
+    bestSeller: boolean,
+    type: string,
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
+    id,
     image,
     discount,
     category,
     subcategory,
     name,
-    prices,
+    priceOptions,
+    dealoftheweek,
+    bestSeller,
+    type,
+
 }) => {
+    
     const [isHovered, setIsHovered] = useState(false);
-    const [selectedWeight, setSelectedWeight] = useState<string>(prices[0]?.weight || '');
-
-    console.log(`Rendering ProductCard for ${discount} and id ${name}`);
-
-    // Combine all media (images and videos) for the MediaSlider
-    const allMedia = [
-        ...[
-            "/original.mov",
-            "https://sample-videos.com/zip/10/mp4/360/sample2.mp4"
-        ].map(vid => ({ type: 'video' as const, src: vid })),
-        ...[
-            "/demo_product-2.png",
-            "/demo_product-3.png",
-            "/demo_product-4.png",
-            "/demo_product-5.png"
-        ].map(img => ({ type: 'image' as const, src: img }))
-    ];
+    const [selectedWeight, setSelectedWeight] = useState<string>(priceOptions[0]?.unit || '');
 
     // Get current price based on selected weight
-    const currentPrice = prices.find(p => p.weight === selectedWeight)?.amount || prices[0]?.amount || '0';
+    const currentPrice = priceOptions.find(p => p.unit === selectedWeight)?.price || priceOptions[0]?.price || '0';
 
     return (
         <Card
@@ -58,17 +51,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
             {/* Product Image - Not wrapped in Link to prevent click conflicts */}
             <div className="relative overflow-hidden">
                 <div className="relative w-full h-64">
-                    {/* Option 1: Use MediaSlider - uncomment to enable */}
-                    {/* <MediaSlider
-                        media={allMedia}
-                        alt={name}
-                        discount={discount}
-                        className="w-full"
-                    /> */}
 
                     {/* Option 2: Simple Image */}
                     <Image
-                        src={image}
+                        src={image[0]} // Display the first image from the array
                         alt={name}
                         fill
                         className={`object-cover transition-transform duration-700 ${isHovered ? 'scale-110' : 'scale-100'}`}
@@ -83,7 +69,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
                 {/* View Details Link - Positioned over image */}
                 <Link
-                    href={`/products/${name}`}
+                    href={`/products/${id}`}
                     className="absolute inset-0 z-10 bg-black/0 hover:bg-black/10 transition-all duration-300 flex items-center justify-center opacity-0 hover:opacity-100"
                 >
                     <Button
@@ -99,12 +85,22 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 {/* Top Info */}
                 <div className="space-y-4">
                     <div className="flex flex-wrap gap-2 text-xs">
-                        <Badge variant="secondary" className="bg-white/10 text-white/80 hover:bg-white/20">
-                            {category}
-                        </Badge>
-                        {subcategory && (
+
+                        {dealoftheweek && (
                             <Badge variant="secondary" className="bg-white/10 text-white/80 hover:bg-white/20">
-                                {subcategory}
+                                {dealoftheweek ? 'Deal of the Week' : ''}
+                            </Badge>
+                        )}
+
+                        {bestSeller && (
+                            <Badge variant="secondary" className="bg-white/10 text-white/80 hover:bg-white/20">
+                                {bestSeller ? 'Best Seller' : ''}
+                            </Badge>
+                        )}
+
+                        {type && (
+                            <Badge variant="secondary" className="bg-white/10 text-white/80 hover:bg-white/20">
+                                {type.charAt(0).toUpperCase() + type.slice(1)}
                             </Badge>
                         )}
                     </div>
@@ -122,16 +118,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
                         {/* Weight Options */}
                         <div className="flex flex-wrap gap-2">
-                            {prices.map((price, index) => (
+                            {priceOptions.map((price, index) => (
                                 <button
                                     key={index}
-                                    onClick={() => setSelectedWeight(price.weight)}
-                                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${selectedWeight === price.weight
+                                    onClick={() => setSelectedWeight(price.unit)}
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${selectedWeight === price.unit
                                         ? 'bg-green-500 text-white shadow-lg shadow-green-500/30'
                                         : 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white'
                                         }`}
                                 >
-                                    {price.weight}
+                                    {price.unit}
                                 </button>
                             ))}
                         </div>
@@ -142,7 +138,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                             <div className="flex items-center gap-2">
                                 {discount && (
                                     <span className="text-white/60 line-through text-sm">
-                                        ${Math.round(parseInt(currentPrice) * (1 + discount / 100))}
+                                        ${Math.round(Number(currentPrice) / (1 - discount / 100))}
                                     </span>
                                 )}
                                 <span className="text-green-400 font-bold text-lg">${currentPrice}</span>
@@ -158,7 +154,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                         <Button
 
                             variant="outline"
-                            className="relative overflow-hidden w-full  border-white/20 bg-white/10 hover:text-white hover:bg-white/20 text-white group cursor-pointer"
+                            className="relative overflow-hidden w-full  border-emerald-500 bg-emerald-900/20  hover:text-white hover:bg-white/20 text-white group cursor-pointer"
                         >
                             <span className="absolute inset-0 bg-green-500 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0" />
                             <span className="relative z-10 px-4 py-2">View Details</span>
@@ -168,16 +164,20 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
                     <AddToBagButton
                         product={{
-                            id: name, // Replace with actual id if available
-                            image,
+                            _id: name, // Replace with actual id if available
+                            photoUrls: image,
                             discount: discount ?? 0,
                             category,
-                            subcategory: subcategory ?? '',
                             name,
-                            prices,
+                            priceOptions,
+                            subcategory: subcategory || '',
                             description: `Premium ${category} - ${name}`, // Generate description
-                            videos: ["/original.mov", "https://sample-videos.com/zip/10/mp4/360/sample2.mp4"], // Add videos
-                            gallery: ["/demo_product-2.png", "/demo_product-3.png", "/demo_product-4.png", "/demo_product-5.png"], // Add gallery
+                            videoUrls: [],
+                            bestSeller, // or set appropriately
+                            createdAt: new Date().toISOString(), // or use actual date
+                            dealoftheweek, // or set appropriately
+                            type: '', // set appropriately if needed
+                            updatedAt: new Date().toISOString(), // or use actual date
                         }}
                         selectedWeight={selectedWeight}
                     />
