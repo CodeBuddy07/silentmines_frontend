@@ -17,7 +17,8 @@ const Page = () => {
         try {
             const response = await fetch("http://localhost:5001/api/review/allreview");
             const data = await response.json();
-            setReviews(data);
+            setReviews(data.reviews);
+            console.log(data);
         } catch (error) {
             console.error("Error fetching reviews:", error);
         } finally {
@@ -29,6 +30,7 @@ const Page = () => {
         fetchReviews();
     }, []);
 
+    // Handle status change (Approve or Reject)
     const handleStatusChange = async (id: string, newStatus: "approved" | "rejected") => {
         try {
             const response = await fetch(`http://localhost:5001/api/review/approve/${id}`, {
@@ -43,15 +45,42 @@ const Page = () => {
                 throw new Error("Failed to update review status");
             }
 
+            // Update the review status in the state
             setReviews((prev: any) =>
                 prev.map((review: any) =>
                     review._id === id ? { ...review, status: newStatus } : review
                 )
             );
+
             toast.success("Review updated successfully");
+
+            // If rejected, call the delete function
+            if (newStatus === "rejected") {
+                await handleDeleteReview(id);
+            }
         } catch (error) {
             console.error("Error updating review:", error);
             toast.error("Failed to update review");
+        }
+    };
+
+    // Handle the deletion of a review
+    const handleDeleteReview = async (id: string) => {
+        try {
+            const response = await fetch(`http://localhost:5001/api/review/delete/${id}`, {
+                method: "DELETE",
+            });
+
+            if (response.ok) {
+                // If the review is successfully deleted from the database, remove it from the state
+                setReviews((prev) => prev.filter((review: any) => review._id !== id));
+                toast.success("Review deleted successfully");
+            } else {
+                throw new Error("Failed to delete review");
+            }
+        } catch (error) {
+            console.error("Error deleting review:", error);
+            toast.error("Failed to delete review");
         }
     };
 
@@ -65,14 +94,14 @@ const Page = () => {
                 ) : reviews.length === 0 ? (
                     <div className="text-gray-500 text-sm">No reviews yet.</div>
                 ) : (
-                    reviews.map((review:any) => (
+                    reviews.map((review: any) => (
                         <div
-                            key={review._id}  // Correct comment syntax here
+                            key={review._id} 
                             className="flex items-start gap-4 border-b border-white/10 pb-4 last:border-0 last:pb-0"
                         >
                             <Image
-                                src={review.imageURL || "/default-image.png"}  // Handle empty src
-                                alt={review.clientName || "Reviewer's profile image"}  // Added alt text
+                                src={review.imageURL || "/default-image.png"} 
+                                alt={review.clientName || "Reviewer's profile image"} 
                                 width={50}
                                 height={50}
                                 className="rounded-full border border-white/20 object-cover"
@@ -91,14 +120,12 @@ const Page = () => {
                                                 i + 1 <= Math.floor(review.rating)
                                                     ? "fill-current"
                                                     : i + 0.5 <= review.rating
-                                                        ? "fill-current opacity-50"
-                                                        : "opacity-20"
+                                                    ? "fill-current opacity-50"
+                                                    : "opacity-20"
                                             }
                                         />
                                     ))}
-                                    <span className="ml-1 text-xs text-gray-400">
-                                        {review.rating}
-                                    </span>
+                                    <span className="ml-1 text-xs text-gray-400">{review.rating}</span>
                                 </div>
                                 <p className="text-sm text-gray-300 mt-1">{review.description}</p>
 

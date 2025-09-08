@@ -358,37 +358,16 @@ const AddProductForm = () => {
                                             <SelectValue placeholder="e.g. jar, packwood" />
                                         </SelectTrigger>
                                         <SelectContent className="bg-[#1a2a1a] text-white">
-                                            <SelectItem value="flower">Flower</SelectItem>
-                                            <SelectItem value="tier-1-(EXOTIC) ">Tier 1 (EXOTIC)</SelectItem>
-                                            <SelectItem value="tier-2-(TOP-SHELF)">Tier 2 (TOP SHELF)</SelectItem>
-                                            <SelectItem value="tier-3-(CHEAP)">Tier 3 (CHEAP)</SelectItem>
-                                            <SelectItem value="snowcaps">Snowcaps</SelectItem>
-                                            <SelectItem value="moonrocks">Moonrocks</SelectItem>
+                                            {cat.subcategories.map((subcat: any) => (
+                                                <SelectItem key={subcat._id} value={subcat.name}>
+                                                    {subcat.name}
+                                                </SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                 </div>
                             ) : null
                         )}
-
-                        {/* <div>
-                            <div className="flex-1">
-                                <Label>Sub Category</Label>
-                                <Select onValueChange={setType}>
-                                    <SelectTrigger className="bg-[#1a2a1a] mt-3 w-full text-white">
-                                        <SelectValue placeholder="e.g. jar, packwood" />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-[#1a2a1a] text-white">
-                                        <SelectItem value="flower">Flower</SelectItem>
-                                        <SelectItem value="tier-1-(EXOTIC) ">Tier 1 (EXOTIC)</SelectItem>
-                                        <SelectItem value="tier-2-(TOP-SHELF)">Tier 2 (TOP SHELF)</SelectItem>
-                                        <SelectItem value="tier-3-(CHEAP)">Tier 3 (CHEAP)</SelectItem>
-                                        <SelectItem value="snowcaps">Snowcaps</SelectItem>
-                                        <SelectItem value="moonrocks">Moonrocks</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div> */}
-
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
                             <div className="space-y-1">
                                 <Label>Price</Label>

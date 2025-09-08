@@ -160,7 +160,8 @@ const Page = () => {
 
     try {
       const result = await axios.put(`http://localhost:5001/api/timeslot/${selectedTimeSlot._id}`, { time: editedTime });
-
+      console.log(result);
+      
       setSelectedTimeSlot(null);
       setEditedTime('');
     } catch (error) {
