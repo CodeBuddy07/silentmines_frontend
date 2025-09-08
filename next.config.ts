@@ -7,12 +7,7 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: "http",
-        hostname: "**",
-      },
-    ],
+    domains: ['localhost'], // Add 'localhost' to the domains list
   },
 };
 
