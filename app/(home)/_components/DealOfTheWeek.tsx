@@ -1,5 +1,6 @@
 
 import ProductCard from '@/components/shared/productCard';
+import SectionHeader from '@/components/shared/sectionHeader';
 import { Button } from '@/components/ui/button';
 import useAxios from '@/hooks/useAxios';
 import { Product } from '@/types';
@@ -19,7 +20,7 @@ export const DealSection = () => {
 
     const getData = async () => {
         const res = await useAxios.get(`/products/bestselling`);
-        setProducts(res.data.data.slice(0,4));
+        setProducts(res.data.data.slice(0, 4));
     }
 
     useEffect(() => {
@@ -30,15 +31,31 @@ export const DealSection = () => {
     return (
         <section className={`bg-black text-white py-20 px-4 w-full `}>
             <div className="max-w-7xl mx-auto">
-                {/* Section Header */}
-                {/* <SectionHeader
-                    title={title}
-                    subtitle={subtitle}
-                /> */}
 
                 {/* Products Grid */}
+
+                <SectionHeader
+                    title={"Deal Of The Week"}
+                    subtitle={"Shop only the highest quality products. Out of this world THC - select any combination of flowers to build your top-notch supply."}
+                />
+
+                {
+                    products.length === 0 && (
+                        <div className="text-center py-16 bg-black">
+                            <div className="text-gray-400 mb-4">
+                                <svg className="mx-auto h-16 w-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8V4a1 1 0 00-1-1H7a1 1 0 00-1 1v1M9 7h6" />
+                                </svg>
+                            </div>
+                            <h3 className="text-xl font-medium text-gray-300 mb-2">No products found</h3>
+                            <p className="text-gray-400 mb-6">No products available in this category.</p>
+                        </div>
+                    )
+                }
+
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-                    {products.map((product : Product) => (
+                    {products.map((product: Product) => (
                         <ProductCard
                             key={product._id}
                             id={product._id}

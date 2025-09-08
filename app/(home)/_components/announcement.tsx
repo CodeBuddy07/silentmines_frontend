@@ -38,7 +38,7 @@ export const AnnouncementSection = () => {
           <p className="text-center">PAPA&apos;S TAKING THE AREA FAM TO THE MOON 🚀</p>
         </div> */}
 
-        {parse(announcement.announcement?.replaceAll('Ruhul','Tulee') || '' )}
+        {parse(announcement.announcement || '' )}
 
       </div>
     </section>

@@ -36,7 +36,6 @@ const CategoryPage = () => {
     setProducts(res.data.data);
     setTotalPages(res.data.totalPages);
     setTotalItems(res.data.totalItems);
-    console.log(res.data);
   }
 
 

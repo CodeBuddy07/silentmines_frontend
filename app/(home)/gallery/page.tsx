@@ -46,15 +46,16 @@ const CategoryPage = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
 
 
   const getData = async () => {
+    setLoading(true);
     const res = await useAxios.get(`/products?page=${currentPage}&limit=${itemsPerPage}`);
     setProducts(res.data.data);
     setTotalPages(res.data.totalPages);
     setTotalItems(res.data.totalItems);
-
-    console.log(res.data);
+    setLoading(false)
   }
 
 
@@ -63,7 +64,6 @@ const CategoryPage = () => {
   }, [currentPage,itemsPerPage]);
 
 
-  console.log(products);
 
 
   // Reset to first page when changing filters or items per page
@@ -102,7 +102,7 @@ const CategoryPage = () => {
   return (
     <>
       {
-        products.length === 0 ? (
+        loading ? (
           <LoadingScreen />
         ) : (
           <div className="min-h-screen bg-black/60 backdrop-blur-[1px]">

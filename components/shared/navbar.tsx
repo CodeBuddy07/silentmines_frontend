@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import OrderPopup from '@/app/(home)/_components/OrderForm';
-import { ProductCategory } from '@/types';
+import { Product, ProductCategory } from '@/types';
 import useAxios from '@/hooks/useAxios';
 
 interface SearchSuggestion {
@@ -25,8 +25,8 @@ const Navbar = () => {
   const [mobileSubMenuOpen, setMobileSubMenuOpen] = useState<string | null>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const dropdownTimeoutRef = useRef<NodeJS.Timeout>(null);
-
   const [categories, setCategories] = useState<ProductCategory[]>([]);
+  const [searchedProducts, setSearchedProducts] = useState<Product[]>([]);
 
   const getCategories = async () => {
     const res = await useAxios.get(`/categories`);
@@ -36,8 +36,6 @@ const Navbar = () => {
   useEffect(() => {
     getCategories();
   }, []);
-
-  console.log(categories);
 
   // Build navigation items from dummy categories
   const buildNavItems = () => {
@@ -86,12 +84,14 @@ const Navbar = () => {
       });
     });
 
-    // Add some additional suggestions
-    suggestions.push(
-      { id: 'search-1', title: 'Premium Bouquets', category: 'Special', url: '/premium' },
-      { id: 'search-2', title: 'Same Day Delivery', category: 'Service', url: '/same-day' },
-      { id: 'search-3', title: 'Corporate Orders', category: 'Business', url: '/corporate' }
-    );
+    searchedProducts.forEach(product => {
+      suggestions.push({
+        id: `prod-${product._id}`,
+        title: product.name,
+        category: product.category,
+        url: `/products/${product._id}`
+      });
+    });
 
     return suggestions;
   };
@@ -148,7 +148,7 @@ const Navbar = () => {
     } else {
       setSuggestions([]);
     }
-  }, [searchQuery]);
+  }, [searchQuery, searchedProducts]);
 
   // Close search when clicking outside
   useEffect(() => {
@@ -175,11 +175,17 @@ const Navbar = () => {
     setMobileSubMenuOpen(mobileSubMenuOpen === itemName ? null : itemName);
   };
 
-  const handleSearchSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleSearchSubmit = async() => {
     if (searchQuery.trim()) {
       console.log('Searching for:', searchQuery);
-      // Handle search submission here
-      setIsSearchOpen(false);
+      try {
+        const response = await useAxios.get('/products/search', { params: { search: searchQuery } });
+        const results = response.data.data;
+        setSearchedProducts(results);
+      } catch (error) {
+        console.error('Error during search navigation:', error);
+      }
+      
     }
   };
 
@@ -187,7 +193,7 @@ const Navbar = () => {
     console.log('Navigating to:', suggestion.url);
     setSearchQuery('');
     setIsSearchOpen(false);
-    // Handle navigation here
+    window.location.href = suggestion.url;
   };
 
   return (
@@ -422,8 +428,8 @@ const Navbar = () => {
                 <input
                   type="text"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit(e)}
+                  onChange={(e) => {setSearchQuery(e.target.value); handleSearchSubmit();}}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
                   placeholder="Search products, categories..."
                   className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900 transition-all duration-200"
                   autoFocus
@@ -469,26 +475,6 @@ const Navbar = () => {
               </div>
             )}
 
-            {/* Popular searches when no query */}
-            {!searchQuery && (
-              <div className="p-4">
-                <h3 className="text-sm font-medium text-gray-900 mb-3">Popular Searches</h3>
-                <div className="flex flex-wrap gap-2">
-                  {['Fresh Flowers', 'Wedding Flowers', 'Potted Plants', 'Gift Sets'].map((term, index) => (
-                    <button
-                      key={term}
-                      onClick={() => setSearchQuery(term)}
-                      className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-all duration-200 transform hover:scale-105"
-                      style={{
-                        animationDelay: `${index * 100}ms`
-                      }}
-                    >
-                      {term}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       )}

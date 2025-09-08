@@ -26,16 +26,17 @@ const ReviewsPage: React.FC = () => {
 
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(12);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
 
 
   const getData = async () => {
     const res = await useAxios.get(`/review/approvedreview?page=${currentPage}&limit=${itemsPerPage}`);
-    setReviews(res.data);
+    setReviews(res.data.approvedReviews);
+    console.log(res);
     setTotalPages(res.data.totalPages);
-    setTotalItems(res.data.totalReviews);
+    setTotalItems(res.data.totalapprovedReviews);
   }
 
 

@@ -77,8 +77,6 @@ const AddProductForm = () => {
         try {
             const req = await axios.post('http://localhost:5001/api/products', formData);
             const response = req;
-            console.log(response);
-
             if (response.data.status === 201) {
                 toast.success('Product added successfully!');
             } else {

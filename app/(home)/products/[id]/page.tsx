@@ -27,7 +27,6 @@ const Page = ({
     const res = await useAxios.get(`/products/${id}`);
     setProduct(res.data);
     setSelectedWeight(res.data?.priceOptions[0]?.unit);
-    console.log(res.data);
   }
 
   useEffect(() => {

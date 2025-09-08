@@ -47,13 +47,11 @@ export default function OrderPopup({ children }: OrderPopupProps) {
   const getTodayTimeSlot = async () => {
     const res = await useAxios.get(`/timeslot/today`);
     setTodayTimeSlots(res.data);
-    console.log(res.data);
   }
 
   const getTomorrowTimeSlot = async () => {
     const res = await useAxios.get(`/timeslot/tomorrow`);
     setTomorrowTimeSlots(res.data);
-    console.log(res.data);
   }
 
   useEffect(() => {
