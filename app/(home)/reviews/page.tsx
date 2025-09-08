@@ -45,13 +45,6 @@ const ReviewsPage: React.FC = () => {
   }, [currentPage, itemsPerPage]);
 
 
-  const handleItemsPerPageChange = (newItemsPerPage: number) => {
-    setItemsPerPage(newItemsPerPage);
-    setCurrentPage(1);
-    getData();
-  };
-
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
