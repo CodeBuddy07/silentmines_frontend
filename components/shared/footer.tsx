@@ -61,7 +61,7 @@ const Footer = () => {
 
               <li className="flex space-x-4 mt-3">
                 <a
-                  href="https://telegram.org"
+                  href="https://t.me/greenthumbsCS"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-green-400 text-lg"
@@ -69,7 +69,7 @@ const Footer = () => {
                   <img src="/telegram_logo.avif" alt="Element" className="w-6 h-6  rounded-2xl" />
                 </a>
                 <a
-                  href="https://signal.org"
+                  href="https://signal.me/#eu/sd-v2cNc3i1IsKlKsL8S3Mf38b60RplD84Op8ejV_7yKD-pKJmBPn4o-Fd6OO4Is"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-green-400 text-lg"

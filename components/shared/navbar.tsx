@@ -45,11 +45,11 @@ const Navbar = () => {
 
     const categoryItems = categories.map((category) => ({
       name: category.name,
-      href: `/categories/${category.name.toLowerCase().replaceAll(/\s+/g, '_')}`,
+      href: `/categories/${category.name}`,
       // Only show subcategories in dropdown for preview, but they won't have separate pages
       sub: category.subcategories.length > 0 ? category.subcategories.map(sub => ({
         name: sub.name,
-        href: `/categories/${category.name.toLowerCase().replaceAll(/\s+/g, '_')}` // Same href as parent, filtering happens on the page
+        href: `/categories/${category.name}` // Same href as parent, filtering happens on the page
       })) : undefined
     }));
 
@@ -71,7 +71,7 @@ const Navbar = () => {
         id: `cat-${category._id}`,
         title: category.name,
         category: 'Category',
-        url: `/categories/${category.name.toLowerCase().replaceAll(/\s+/g, '_')}`
+        url: `/categories/${category.name}`
       });
 
       category.subcategories.forEach(sub => {
@@ -79,7 +79,7 @@ const Navbar = () => {
           id: `sub-${sub._id}`,
           title: sub.name,
           category: category.name,
-          url: `/categories/${category.name.toLowerCase().replaceAll(/\s+/g, '_')}` // Same URL, filtering will happen on the page
+          url: `/categories/${category.name}` // Same URL, filtering will happen on the page
         });
       });
     });

@@ -45,7 +45,7 @@ export const PremiumSelectedFlower = () => {
                         </div>
                     )
                 }
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
                     {products.map((product) => (
                         <ProductCard
@@ -66,7 +66,7 @@ export const PremiumSelectedFlower = () => {
 
                 {/* Shop More Button */}
                 <div className="text-center">
-                    <Link href={"/"}>
+                    <Link href={"/gallery"}>
                         <Button
                             size="lg"
                             className="bg-green-500/10 hover:bg-green-500/20 border border-white/20 text-white hover:text-white hover:scale-105 transition-all duration-300 group"

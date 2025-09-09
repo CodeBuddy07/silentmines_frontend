@@ -149,7 +149,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
                 {/* Add to Bag Button */}
                 <div className='w-full flex flex-col justify-center items-center gap-2 mt-5'>
-                    <Link href={`/products/${name}`} className="w-full">
+                    <Link href={`/products/${id}`} className="w-full">
 
                         <Button
 

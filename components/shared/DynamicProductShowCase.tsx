@@ -15,6 +15,8 @@ interface DynamicProductShowCaseProps {
     totalPages: number;
     totalItems?: number;
     setCurrentPage: (page: number) => void;
+    setActiveSubCategory: (subCategorySlug: string | null) => void;
+    activeSubCategory: string | null;
 }
 
 // Main Gallery Component
@@ -27,9 +29,9 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
     totalPages,
     setCurrentPage,
     totalItems = 0,
+    setActiveSubCategory,
+    activeSubCategory
 }) => {
-
-    const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
 
     const handleSubCategoryChange = (subCategorySlug: string | null) => {
         setActiveSubCategory(subCategorySlug);
@@ -90,39 +92,30 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
                         <div className="flex flex-wrap gap-2 py-6 justify-center">
                             {/* All Products Tab */}
                             <Button
-                                variant={!activeSubCategory || activeSubCategory === 'all' ? "default" : "outline"}
-                                className={`px-6 py-2 rounded-full transition-all duration-300 ${!activeSubCategory || activeSubCategory === 'all'
+                                variant={!activeSubCategory || activeSubCategory === '' ? "default" : "outline"}
+                                className={`px-6 py-2 rounded-full transition-all duration-300 ${!activeSubCategory || activeSubCategory === ''
                                         ? "bg-green-600 text-white border-green-600 shadow-lg shadow-green-600/20"
                                         : "bg-transparent text-gray-300 border-gray-600 hover:border-green-500 hover:text-green-400"
                                     }`}
-                                onClick={() => handleSubCategoryChange('all')}
+                                onClick={() => handleSubCategoryChange('')}
                             >
                                 All Products
-                                <span className="ml-2 text-xs opacity-75">
-                                    ({products.length})
-                                </span>
                             </Button>
 
                             {/* Subcategory Tabs */}
                             {category.subcategories.map((subCategory: Subcategory) => {
-                                const subCategoryCount = products.filter((p: Product) =>
-                                    p.subcategory?.replaceAll(' ', '_').toLowerCase() === subCategory.name.replaceAll(' ', '_').toLowerCase()
-                                ).length;
-
                                 return (
                                     <Button
                                         key={subCategory._id}
-                                        variant={activeSubCategory === subCategory.name.replaceAll(' ', '_').toLowerCase() ? "default" : "outline"}
-                                        className={`px-6 py-2 rounded-full transition-all duration-300 ${activeSubCategory === subCategory.name.replaceAll(' ', '_').toLowerCase()
+                                        variant={activeSubCategory === subCategory.name ? "default" : "outline"}
+                                        className={`px-6 py-2 rounded-full transition-all duration-300 ${activeSubCategory === subCategory.name
                                                 ? "bg-green-600 text-white border-green-600 shadow-lg shadow-green-600/20"
                                                 : "bg-transparent text-gray-300 border-gray-600 hover:border-green-500 hover:text-green-400"
                                             }`}
-                                        onClick={() => handleSubCategoryChange(subCategory.name.replaceAll(' ', '_').toLowerCase())}
+                                        onClick={() => handleSubCategoryChange(subCategory.name)}
                                     >
                                         {subCategory.name}
-                                        <span className="ml-2 text-xs opacity-75">
-                                            ({subCategoryCount})
-                                        </span>
+                                       
                                     </Button>
                                 );
                             })}
@@ -139,17 +132,17 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
                         <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-3">
                                 <span className="text-green-400 font-medium">
-                                    Filtered by: {category.subcategories?.find((sub: Subcategory) => sub.name.replaceAll(' ', '_').toLowerCase() === activeSubCategory)?.name}
+                                    Filtered by: {category.subcategories?.find((sub: Subcategory) => sub.name === activeSubCategory)?.name}
                                 </span>
                                 <span className="text-xs text-gray-400">
-                                    {totalItems} products found
+                                    {products.length} products found
                                 </span>
                             </div>
                             <Button
                                 variant="outline"
                                 size="sm"
                                 className="text-black border-gray-600 hover:border-green-500"
-                                onClick={() => handleSubCategoryChange('all')}
+                                onClick={() => handleSubCategoryChange('')}
                             >
                                 Clear Filter
                             </Button>
@@ -161,7 +154,7 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-gray-900/80 backdrop-blur-sm border border-gray-700 p-4 rounded-lg shadow-lg">
                     <div className="flex items-center space-x-4">
                         <span className="text-sm font-medium text-gray-300">
-                            Showing {itemsPerPage} products
+                            Showing {products.length} products
                         </span>
                     </div>
 
@@ -213,11 +206,11 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
                         </div>
                         <h3 className="text-xl font-medium text-gray-300 mb-2">No products found</h3>
                         <p className="text-gray-400 mb-6">
-                            {activeSubCategory && activeSubCategory !== 'all'
+                            {activeSubCategory && activeSubCategory !== ''
                                 ? `No products available in this subcategory.`
                                 : `No products available in this category.`}
                         </p>
-                        {activeSubCategory && activeSubCategory !== 'all' && (
+                        {activeSubCategory && activeSubCategory !== '' && (
                             <Button
                                 variant="outline"
                                 className=" border-green-600 bg-transparent hover:bg-green-500 text-white"
@@ -245,7 +238,7 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
                             Page {currentPage} of {totalPages} • Showing {products.length} products
                             {activeSubCategory && activeSubCategory !== 'all' && (
                                 <span className="ml-2 text-green-400">
-                                    in {category.subcategories?.find((sub: Subcategory) => sub.name.replaceAll(' ', '_').toLowerCase() === activeSubCategory)?.name.replaceAll(' ', '_').toLowerCase()}
+                                    in {category.subcategories?.find((sub: Subcategory) => sub.name === activeSubCategory)?.name}
                                 </span>
                             )}
                         </p>

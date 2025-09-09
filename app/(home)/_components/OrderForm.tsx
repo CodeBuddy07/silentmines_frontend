@@ -17,6 +17,7 @@ import { Textarea } from '@/components/ui/textarea';
 import Link from 'next/link';
 import { TimeSlot } from '@/types';
 import useAxios from '@/hooks/useAxios';
+import { toast } from 'sonner';
 
 
 interface OrderFormData {
@@ -32,6 +33,7 @@ interface OrderPopupProps {
 
 export default function OrderPopup({ children }: OrderPopupProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { cart, updateQuantity, removeFromCart, clearCart, getCartTotal, getCartItemCount } = useCart();
 
   const [formData, setFormData] = useState<OrderFormData>({
@@ -78,6 +80,44 @@ export default function OrderPopup({ children }: OrderPopupProps) {
     }
   };
 
+  function formatDateTime(dateString: string) {
+    const [day, time] = dateString.split('-'); // Split the input string into 'today/tomorrow' and time
+
+    // Get the current date
+    const now = new Date();
+
+    // Initialize target date as today
+    let targetDate = new Date(now);
+
+    // If it's tomorrow, add one day
+    if (day === 'tomorrow') {
+      targetDate.setDate(now.getDate() + 1);
+    }
+
+    // Extract hours and minutes from the time string (e.g., '0800' -> hours = 8, minutes = 0)
+    const hours = parseInt(time.slice(0, 2), 10);
+    const minutes = parseInt(time.slice(2, 4), 10);
+
+    // Set the hours and minutes for the target date
+    targetDate.setHours(hours);
+    targetDate.setMinutes(minutes);
+    targetDate.setSeconds(0); // Optionally reset seconds to 0
+
+    // Format the time to 12-hour format with AM/PM
+    const options: Intl.DateTimeFormatOptions = { hour: "2-digit", minute: "2-digit", hour12: true };
+    const formattedTime = new Intl.DateTimeFormat('en-US', options).format(targetDate);
+
+    // Return the final formatted string
+    if (day === 'today') {
+      return `Today at ${formattedTime}`;
+    } else if (day === 'tomorrow') {
+      return `Tomorrow at ${formattedTime}`;
+    }
+    return '';
+  }
+
+
+
   const handleSubmit = async () => {
     if (cart.length === 0) {
       alert('Please add items to your cart');
@@ -96,35 +136,55 @@ export default function OrderPopup({ children }: OrderPopupProps) {
     const orderData = {
       cart: cart,
       total: getCartTotal(),
-      pickupTime: formData.pickupTime,
+      pickupTime: formatDateTime(formData.pickupTime),
       phoneNumber: formData.phoneNumber,
       orderNotes: formData.orderNotes,
       orderDate: new Date().toISOString(),
       orderId: `ORDER-${Date.now()}`,
+      cartItems: cart.map(item => ({
+        name: item.name,
+        weight: item.weight,
+        quantity: item.quantity,
+        price: item.price,
+      })),
     };
 
     try {
-      // Here you would typically send the order to your backend
-      console.log('Order submitted:', orderData);
 
-      // For now, just show success message
-      alert(`Order submitted successfully!\n\nOrder ID: ${orderData.orderId}\nTotal: $${orderData.total.toFixed(2)}\nPickup: ${formData.pickupTime}\n\nYou will receive a confirmation on Signal.`);
-
-      // Reset form and close dialog
-      setFormData({
-        pickupDate: 'today',
-        pickupTime: '',
-        phoneNumber: '',
-        orderNotes: '',
+      setLoading(true);
+      // Call the API route to send the order email
+      const response = await fetch('/api/sendOrderEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ orderData }),
       });
-      clearCart();
-      setIsOpen(false);
 
+      if (response.ok) {
+        setLoading(false);
+        const data = await response.json();
+        toast.success(`Order submitted successfully!`);
+        setFormData({
+          pickupDate: 'today',
+          pickupTime: '',
+          phoneNumber: '',
+          orderNotes: '',
+        });
+        clearCart();
+        setIsOpen(false);
+      } else {
+        setLoading(false);
+        const errorData = await response.json();
+        toast.error(`Error: ${errorData.error}`);
+      }
     } catch (error) {
+      setLoading(false);
       console.error('Error submitting order:', error);
-      alert('There was an error submitting your order. Please try again.');
+      toast.error('There was an error submitting your order. Please try again.');
     }
   };
+
 
   const handleInputChange = (field: keyof OrderFormData, value: string) => {
     setFormData(prev => ({
@@ -386,7 +446,7 @@ export default function OrderPopup({ children }: OrderPopupProps) {
                 disabled={cart.length === 0}
                 className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm md:text-base py-2 sm:py-2.5 md:py-3 min-h-[36px] sm:min-h-[40px]"
               >
-                <span className="truncate">Submit Order</span>
+                <span className="truncate">{loading? "Submitting...": "Submit Order"}</span>
               </Button>
             </div>
           </div>

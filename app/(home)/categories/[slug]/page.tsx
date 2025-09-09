@@ -20,6 +20,7 @@ const CategoryPage = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<ProductCategory[]>([]);
+  const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
 
   const getCategories = async () => {
     const res = await useAxios.get(`/categories`);
@@ -27,12 +28,12 @@ const CategoryPage = () => {
   }
 
   const category = useMemo(() => {
-    return categories?.find(cat => cat.name.replaceAll(' ', '_').toLowerCase() === categorySlug) || null;
+    return categories?.find(cat => cat.name === categorySlug) || null;
   }, [categories, categorySlug]); 
 
 
   const getData = async () => {
-    const res = await useAxios.get(`/products/category/${categorySlug}?page=${currentPage}&limit=${itemsPerPage}`);
+    const res = await useAxios.get(`/products/category/${categorySlug}?page=${currentPage}&limit=${itemsPerPage}&subcategory=${activeSubCategory? activeSubCategory : ''}`);
     setProducts(res.data.data);
     setTotalPages(res.data.totalPages);
     setTotalItems(res.data.totalItems);
@@ -42,13 +43,17 @@ const CategoryPage = () => {
   useEffect(() => {
     getData();
     getCategories();
-  }, [currentPage, itemsPerPage]);
+  }, [currentPage, itemsPerPage, activeSubCategory]);
 
   const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    console.log('sdsd',newItemsPerPage);
     setItemsPerPage(newItemsPerPage);
     setCurrentPage(1);
     getData();
   };
+
+  // console.log(products.filter((p)=> {p.subcategory.replaceAll(' ', '_').toLowerCase() == activeSubCategory?.replaceAll(' ', '_').toLowerCase();}));
+  // console.log(products.filter((p)=> {p.subcategory === activeSubCategory; console.log('frontend',activeSubCategory);}));
 
   // Loading state (simulate loading)
   if (!category) {
@@ -76,6 +81,9 @@ const CategoryPage = () => {
 
   return (
     <DynamicProductShowCase
+
+      activeSubCategory={activeSubCategory}
+      setActiveSubCategory={setActiveSubCategory}
       products={products}
       category={category}
       currentPage={currentPage}
