@@ -13,16 +13,24 @@ export interface Price {
 }
 
 interface ProductCardProps {
-    image: string;
-    discount: number;
+    bestSeller: boolean;
     category: string;
     subcategory: string;
+    createdAt: string;
+    dealoftheweek: boolean;
+    description: string;
+    discount: number;
     name: string;
-    priceOptions: Price[]; // This should always be an array of Price objects
+    photoUrls: string[];
+    priceOptions: Price[];
+    type: string;
+    updatedAt: string;
+    videoUrls: string[];
+    _id: string;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
-    image,
+    photoUrls: image,
     discount,
     category,
     subcategory,
@@ -30,7 +38,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
     priceOptions,
 }) => {
     const [isHovered, setIsHovered] = useState(false);
-
+    // console.log(subcategory);
+    
     // Ensure prices is always an array
     const productPrices = Array.isArray(priceOptions) ? priceOptions : [];
     return (
@@ -43,7 +52,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <div className="relative overflow-hidden">
                 <div className="relative w-full h-64">
                     <Image
-                        src={image || defaultProductImage}
+                        src={image[0] || defaultProductImage}
                         alt={name}
                         fill
                         className={`object-cover transition-transform duration-700 ${isHovered ? 'scale-110' : 'scale-100'}`}

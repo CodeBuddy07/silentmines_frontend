@@ -21,7 +21,7 @@ import CategoryModel from '@/components/dashboard/categoryModel/CategoryModel';
 import TypesModal from '@/components/dashboard/typesModel/TypesModel';
 import axios from 'axios';
 
-export const baseUrl = 'http://localhost:5001/api';
+const baseUrl = 'http://localhost:5001/api';
 
 const AddProductForm = () => {
     const [productName, setProductName] = useState('');
@@ -40,7 +40,8 @@ const AddProductForm = () => {
     const [isTypesOpen, setIsTypesOpen] = useState(false);
     const [newType, setNewType] = useState({ title: "" });
     const [types, setTypes] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [subCategory, setSubCategory] = useState('');
 
     const [dealOfTheWeek, setDealOfTheWeek] = useState(false);
     const [bestSeller, setBestSeller] = useState(false);
@@ -85,10 +86,11 @@ const AddProductForm = () => {
         formData.append('name', productName);
         formData.append('description', description);
         formData.append('category', category);
+        formData.append("subcategory", subCategory);
         formData.append('type', type);
         formData.append('discount', discount);
         formData.append('priceOptions', JSON.stringify(priceList));
-        formData.append('dealofftheweek', dealOfTheWeek ? 'true' : 'false');;
+        formData.append('dealofftheweek', dealOfTheWeek ? 'true' : 'false');
         formData.append('bestSeller', bestSeller ? 'true' : 'false');
 
         photos.forEach(photo => formData.append('photos', photo));
@@ -99,16 +101,20 @@ const AddProductForm = () => {
         });
 
         try {
+            setLoading(true);
             const req = await axios.post(`${baseUrl}/products`, formData);
             const response = req;
             console.log(response);
 
-            if (response.data.status === 201) {
+            if (response.status === 201) {
+                setLoading(false);
                 toast.success('Product added successfully!');
             } else {
+                setLoading(false);
                 toast.error('Error adding product');
             }
         } catch (error) {
+            setLoading(false);
             console.error('Error uploading data:', error);
             toast.error('An unexpected error occurred');
         }
@@ -234,17 +240,17 @@ const AddProductForm = () => {
                         />
 
                         <Button className="bg-[#00A63E] cursor-pointer" onClick={() => setIsTypesOpen(true)}>
-                            Add Tages
+                            Add Type's
                         </Button>
 
                         <TypesModal
                             open={isTypesOpen}
                             setOpen={setIsTypesOpen}
-                            title="Add Tags"
+                            title="Add Type's"
                             fields={[
                                 {
                                     name: "title",
-                                    placeholder: "Tags Title",
+                                    placeholder: "Type's Title",
                                     value: newType.title,
                                     onChange: (val) => setNewType({ title: val }),
                                 },
@@ -353,7 +359,7 @@ const AddProductForm = () => {
                             category === cat.name && cat.subcategories.length > 0 ? (
                                 <div className="flex-1" key={cat._id}>
                                     <Label>Sub Category</Label>
-                                    <Select onValueChange={setType}>
+                                    <Select onValueChange={setSubCategory}>
                                         <SelectTrigger className="bg-[#1a2a1a] mt-3 w-full text-white">
                                             <SelectValue placeholder="e.g. jar, packwood" />
                                         </SelectTrigger>
@@ -484,7 +490,7 @@ const AddProductForm = () => {
                         </div>
 
                         <Button type='submit' className="w-full bg-green-600 hover:bg-green-700">
-                            Submit
+                            {loading ? 'Adding...' : 'Add Product'}
                         </Button>
                     </form>
                 </TabsContent>

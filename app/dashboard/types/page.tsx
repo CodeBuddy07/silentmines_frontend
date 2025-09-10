@@ -17,7 +17,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Label } from '@/components/ui/label';
 import DeleteProductModal from '@/components/dashboard/deleteProductModal/deleteProductModal';
 import axios from 'axios';
-import { baseUrl } from '../page';
+import { baseUrl } from '@/lib/useAxiosSecure';
 
 export default function Page() {
     const [tags, setTags] = useState<any[]>([]);
@@ -81,7 +81,7 @@ export default function Page() {
 
     return (
         <div className="p-6">
-            <Header title="Manage Tags" subTitle="Manage all tags" />
+            <Header title="Manage Types" subTitle="Manage all types" />
 
             <div className="bg-[#0f1b0f]/60 backdrop-blur-md border border-white/10 p-6 rounded-xl mt-6 shadow space-y-4">
                 <Table>

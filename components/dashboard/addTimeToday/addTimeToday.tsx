@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import axios from "axios";  // Import axios
-import { baseUrl } from "@/app/dashboard/page";
 import { toast } from "sonner";
+import { baseUrl } from "@/lib/useAxiosSecure";
 
 interface AddTimeModalProps {
     open: boolean;
@@ -16,7 +16,7 @@ interface AddTimeModalProps {
 
 const AddTimeModal: React.FC<AddTimeModalProps> = ({ open, setOpen }) => {
     const [day, setDay] = useState<string>("today");
-    const [time, setTime] = useState<string>("14:00 AM");
+    const [time, setTime] = useState<string>("07:00 AM");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 

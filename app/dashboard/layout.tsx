@@ -2,6 +2,7 @@
 import { Sidebar } from "@/components/sidebar"
 import type { Metadata } from "next"
 import { Toaster } from "sonner"
+
 export const metadata: Metadata = {
   title: "The Green Thumb | Dashboard",
   description: "Admin Dashboard for Product Management",

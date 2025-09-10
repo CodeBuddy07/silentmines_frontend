@@ -4,13 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from 'sonner';
 import axios from 'axios';
-import { baseUrl } from '@/app/dashboard/page';
+import { baseUrl } from '@/lib/useAxiosSecure';
 
 // Modal Component
 const AddTimeTomorrow = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [day, setDay] = useState('tomorrow');
-    const [time, setTime] = useState('14:00 AM');
+    const [time, setTime] = useState('07:00 AM');
 
     const handleSaveTime = async (day: string, time: string) => {
         try {

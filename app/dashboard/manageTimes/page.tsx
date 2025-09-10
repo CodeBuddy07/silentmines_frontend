@@ -1,121 +1,19 @@
-// "use client";
 
-// import { useState } from "react";
-// import { Button } from "@/components/ui/button";
-// import { Checkbox } from "@/components/ui/checkbox";
-// import { Textarea } from "@/components/ui/textarea";
-// import Header from "@/components/dashboard/header/header";
-// import { toast } from "sonner";
-
-// const allTimeSlots = [
-//   "12:00 PM",
-//   "1:00 PM",
-//   "2:00 PM",
-//   "3:00 PM",
-//   "4:00 PM",
-//   "5:00 PM",
-//   "6:00 PM",
-//   "7:00 PM",
-//   "8:00 PM",
-//   "9:00 PM",
-//   "10:00 PM",
-// ];
-
-// // sections you want
-// const sections = ["TODAY", "TOMORROW"];
-
-// const Page = () => {
-//   const [availableTimes, setavailableTimes] = useState<Record<string, string[]>>({});
-//   const [reason, setReason] = useState("");
-
-//   const toggleTime = (section: string, time: string) => {
-//     setavailableTimes((prev) => {
-//       const current = prev[section] || [];
-//       return {
-//         ...prev,
-//         [section]: current.includes(time)
-//           ? current.filter((t) => t !== time)
-//           : [...current, time],
-//       };
-//     });
-//   };
-
-//   const saveTimes = () => {
-//     if (!reason.trim()) {
-//       toast.error("Please provide a reason.");
-//       return;
-//     }
-//     toast.success("Block time updated successfully");
-//     console.log("Available Times:", availableTimes);
-//     console.log("Reason:", reason);
-//   };
-
-//   return (
-//     <div className="space-y-6">
-//       <Header
-//         title="Manage Times"
-//         subTitle="Select pickup times when you are NOT available."
-//       />
-
-//       <div className="flex flex-wrap gap-2">
-
-//         {sections.map((section) => (
-//           <section
-//             key={section}
-//             className="bg-[#0f1b0f]/60 flex-1 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow space-y-4"
-//           >
-//             <h2 className="text-lg font-semibold text-white">{section}</h2>
-
-//             {allTimeSlots.map((slot) => (
-//               <label
-//                 key={slot}
-//                 className="flex items-center gap-3 cursor-pointer hover:bg-white/5 p-2 rounded transition"
-//               >
-//                 <Checkbox
-//                   checked={availableTimes[section]?.includes(slot) || false}
-//                   onCheckedChange={() => toggleTime(section, slot)}
-//                 />
-//                 <span className="text-white font-medium">
-//                   {section} {slot}
-//                 </span>
-//               </label>
-//             ))}
-//           </section>
-//         ))}
-//       </div>
-
-//       {/* Reason textarea */}
-//       <div className="bg-[#0f1b0f]/60 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow space-y-2">
-//         <label className="text-white font-medium">
-//           Reason for unavailability
-//         </label>
-//         <Textarea
-//           placeholder="e.g., Doctor's appointment, holiday, personal matters..."
-//           className="bg-white/10 border-white/20 text-white placeholder-gray-400 min-h-[100px] mt-4"
-//           value={reason}
-//           onChange={(e) => setReason(e.target.value)}
-//         />
-//         <div className="pt-4">
-//           <Button onClick={saveTimes} className="bg-red-600 hover:bg-red-700">
-//             Save Available Times
-//           </Button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Page;
 'use client';
 
 import AddTimeToday from "@/components/dashboard/addTimeToday/addTimeToday";
 import AddTimeTomorrow from "@/components/dashboard/addTimeTomorrow/addTimeTomorrow";
+import DeleteProductModal from "@/components/dashboard/deleteProductModal/deleteProductModal";
 import Header from "@/components/dashboard/header/header";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { baseUrl } from "@/lib/useAxiosSecure";
+
 import axios from "axios";
-import { PencilIcon } from "lucide-react";
+
+import {  Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+
 
 const Page = () => {
   const [isAddTimeOpen, setIsAddTimeOpen] = useState(false);
@@ -124,7 +22,18 @@ const Page = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<any>(null);
   const [editedTime, setEditedTime] = useState<string>('');
+  const [deleteModal, setDeleteModal] = useState(false);
 
+
+  const handleDeleteTime = async (timeSlotId: string) => {
+
+    const response = await axios.delete(`${baseUrl}/timeslot/${timeSlotId}`);
+
+    if (response.status === 201) {
+      setTodayTimes(todayTimes.filter((timeSlot: any) => timeSlot._id !== timeSlotId));
+      setTomorrowTimes(tomorrowTimes.filter((timeSlot: any) => timeSlot._id !== timeSlotId));
+    }
+  }
   // Fetch the time slots for today and tomorrow
   useEffect(() => {
     const fetchTimes = async () => {
@@ -143,13 +52,13 @@ const Page = () => {
     };
 
     fetchTimes();
-  }, []);
+  }, [handleDeleteTime]);
 
   // Handle Edit Button click
-  const handleEditClick = (timeSlot: any) => {
-    setSelectedTimeSlot(timeSlot);
-    setEditedTime(timeSlot.time);
-  };
+  // const handleEditClick = (timeSlot: any) => {
+  //   setSelectedTimeSlot(timeSlot);
+  //   setEditedTime(timeSlot.time);
+  // };
 
   // Handle saving the edited time
   const handleSaveEditedTime = async () => {
@@ -161,7 +70,7 @@ const Page = () => {
     try {
       const result = await axios.put(`http://localhost:5001/api/timeslot/${selectedTimeSlot._id}`, { time: editedTime });
       console.log(result);
-      
+
       setSelectedTimeSlot(null);
       setEditedTime('');
     } catch (error) {
@@ -213,14 +122,15 @@ const Page = () => {
                     {todayTimes.map((timeSlot: { _id: string; time: string }) => (
                       <li
                         key={timeSlot._id}
-                        className="flex justify-between items-center cursor-pointer hover:bg-white/5 transition-all ease-in-out duration-200 p-3 rounded-md"
+                        className="flex justify-between items-center hover:bg-white/5 transition-all ease-in-out duration-200 p-3 rounded-md"
                       >
                         <span className="text-white">{timeSlot.time}</span>
                         <Button
-                          onClick={() => handleEditClick(timeSlot)}
-                          className="p-1 bg-transparent text-white border border-white/20 hover:bg-white/10 rounded-md"
+                          onClick={() => handleDeleteTime(timeSlot._id)}
+                          size="icon" variant="destructive"
+                          className="p-1 bg-transparent text-white border cursor-pointer border-white/20 hover:bg-white/10 rounded-md"
                         >
-                          <PencilIcon className="h-5 w-5" />
+                          <Trash2 className="h-5 w-5" />
                         </Button>
                       </li>
                     ))}
@@ -241,10 +151,11 @@ const Page = () => {
                       >
                         <span className="text-white">{timeSlot.time}</span>
                         <Button
-                          onClick={() => handleEditClick(timeSlot)}
-                          className="p-1 bg-transparent text-white border border-white/20 hover:bg-white/10 rounded-md"
+                          onClick={() => handleDeleteTime(timeSlot._id)}
+                          size="icon" variant="destructive"
+                          className="p-1 bg-transparent text-white border cursor-pointer border-white/20 hover:bg-white/10 rounded-md"
                         >
-                          <PencilIcon className="h-5 w-5" />
+                          <Trash2 className="h-5 w-5" />
                         </Button>
                       </li>
                     ))}
@@ -257,6 +168,19 @@ const Page = () => {
           )}
         </div>
       </div>
+
+      <DeleteProductModal
+        open={deleteModal}
+        onClose={() => setDeleteModal(false)}
+        onConfirm={() => {
+          if (selectedTimeSlot) {
+            handleDeleteTime(selectedTimeSlot._id);
+            setDeleteModal(false);
+          }
+        }}
+        productName={'this time slot'}
+      />
+
 
       {/* Edit Time Modal */}
       {selectedTimeSlot && (

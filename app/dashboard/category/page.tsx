@@ -17,8 +17,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Label } from '@/components/ui/label';
 import DeleteProductModal from '@/components/dashboard/deleteProductModal/deleteProductModal';
 import axios from 'axios';
-import { baseUrl } from '../page';
 import { Skeleton } from '@/components/ui/skeleton';
+import { baseUrl } from '@/lib/useAxiosSecure';
 
 type Subcategory = { _id: number; name: string };
 type Category = {

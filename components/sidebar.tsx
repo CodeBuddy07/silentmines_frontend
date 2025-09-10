@@ -22,9 +22,9 @@ const navigationItems = [
     icon: AlignEndVertical,
   },
   {
-    id: "tags",
-    label: "Manage Tags",
-    href: "/dashboard/tags",
+    id: "type",
+    label: "Manage Types",
+    href: "/dashboard/types",
     icon: CannabisIcon,
   },
   {
@@ -62,8 +62,40 @@ export function Sidebar({ className }: SidebarProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const handleLogout = () => {
-    toast.success("Logged out successfully!")
-  }
+    try {
+      // Clear token from localStorage
+      localStorage.removeItem('token');
+
+      // Clear auth_token from cookies
+      // Method 1: Using document.cookie (works in all browsers)
+      document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+      // If you have subdomains, also clear for the domain
+      // document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname;
+
+      sessionStorage.clear();
+
+      // Show success message
+      toast.success("Logged out successfully!");
+
+      // Redirect to login page after a brief delay
+      setTimeout(() => {
+        window.location.href = '/log-in'; // or use your router's navigation
+        // For Next.js router: router.push('/login');
+        // For React Router: navigate('/login');
+      }, 1000);
+
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error("An error occurred during logout");
+
+      // Force redirect even if there's an error
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1000);
+    }
+  };
+
 
   return (
     <>

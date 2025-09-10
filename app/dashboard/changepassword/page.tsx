@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
 import Header from "@/components/dashboard/header/header";
 import axios from "axios";
-import { baseUrl } from "../page";
 import { toast } from "sonner";
+import { baseUrl } from "@/lib/useAxiosSecure";
 
 export default function UpdatePasswordPage() {
   const [form, setForm] = useState({
