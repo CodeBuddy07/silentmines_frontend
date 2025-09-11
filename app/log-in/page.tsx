@@ -4,12 +4,48 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
+import axios from "axios" // Import axios for API calls
+import { toast, Toaster } from "sonner"
 
 export default function AdminLoginPage() {
-    const [credentials, setCredentials] = useState({ username: "", password: "" })
+    const [credentials, setCredentials] = useState({ email: "", password: "" })
+    const [isLoading, setIsLoading] = useState(false) // To manage loading state
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+
+        // Check if credentials are empty
+        if (!credentials.email || !credentials.password) {
+            toast.error("Please fill in both fields.")
+            return
+        }
+
+        setIsLoading(true)
+
+        try {
+            const response = await axios.post("http://localhost:5001/api/admin/login", {
+                email: credentials.email,
+                password: credentials.password,
+            })
+            console.log('sadas', response);
+
+            if (response.status === 200) {
+
+                toast.success("Login successful!")
+
+                document.cookie = `auth_token=${response.data.token}`;
+
+                window.location.href = "/dashboard";
+
+                localStorage.setItem('token', response.data.token);
+            }else{
+                toast.error(response.data.message || "Login failed. Please try again.")
+            }
+        } catch (error: any) {
+            toast.error(error.response.data.message || "Login failed. Please try again.")
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
@@ -20,13 +56,14 @@ export default function AdminLoginPage() {
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
-                        <Label htmlFor="username" className="text-white">Username</Label>
+                        <Label htmlFor="username" className="text-white">Email</Label>
                         <Input
-                            id="username"
+                            id="email"
                             className="mt-1 bg-[#1a2a1a] border border-green-800 text-white placeholder-gray-400"
-                            value={credentials.username}
-                            onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
-                            placeholder="admin"
+                            value={credentials.email}
+                            onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
+                            placeholder="admin@example.com"
+                            required
                         />
                     </div>
 
@@ -39,27 +76,19 @@ export default function AdminLoginPage() {
                             value={credentials.password}
                             onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
                             placeholder="••••••••"
+                            required
                         />
                     </div>
-                    <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white">
-                        Login
+                    <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white" disabled={isLoading}>
+                        {isLoading ? "Logging in..." : "Login"}
                     </Button>
                 </form>
-
-                <div className="text-center mt-4">
-                    <a
-                        href="/forget-password"
-                        className="text-green-400 hover:text-green-600 font-semibold text-sm"
-                    >
-                        Forget Password?
-                    </a>
-                </div>
-
 
                 <div className="text-center text-xs text-gray-500 mt-6">
                     © {new Date().getFullYear()} The Green Thumb. All rights reserved.
                 </div>
             </div>
+            <Toaster richColors/>
         </div>
     )
 }
