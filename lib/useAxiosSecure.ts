@@ -2,11 +2,11 @@ import axios from 'axios';
 
 export const axiosSecure = axios.create({
     //baseURL: 'https://joyscelond-backend.onrender.com',
-    baseURL: 'http://localhost:5001/api',
+    baseURL: 'https://server.greenlove.fun',
     withCredentials: true,
 });
 
-export const baseUrl = 'http://localhost:5001/api';
+export const baseUrl = 'https://server.greenlove.fun/api';
 
 
 // Request interceptor

@@ -20,7 +20,7 @@ const Page = () => {
 
     const fetchReviews = async () => {
         try {
-            const response = await fetch(`http://localhost:5001/api/review/allreview?page=${currentPage}&limit=5`);
+            const response = await fetch(`https://server.greenlove.fun/api/review/allreview?page=${currentPage}&limit=5`);
             const data = await response.json();
             setReviews(data.reviews);
             setTotalPages(data.totalPages);

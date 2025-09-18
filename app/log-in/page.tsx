@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import axios from "axios" // Import axios for API calls
 import { toast, Toaster } from "sonner"
+import axiosSecure from "@/lib/useAxiosSecure"
 
 export default function AdminLoginPage() {
     const [credentials, setCredentials] = useState({ email: "", password: "" })
@@ -23,7 +24,7 @@ export default function AdminLoginPage() {
         setIsLoading(true)
 
         try {
-            const response = await axios.post("http://localhost:5001/api/admin/login", {
+            const response = await axiosSecure.post("https://server.greenlove.fun/api/admin/login", {
                 email: credentials.email,
                 password: credentials.password,
             })
