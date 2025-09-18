@@ -29,8 +29,7 @@ jobs:
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
-          # password: ${{ secrets.VPS_PASSWORD }}  # Use this temporarily
-          key: ${{ secrets.VPS_SSH_KEY }}      # Comment out for now
+          key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
           source: ".next,public,package*.json,next.config.js"
           target: "/var/www/greenlove.fun/"
@@ -42,47 +41,43 @@ jobs:
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
-          #password: ${{ secrets.VPS_PASSWORD }}  # Use this temporarily
-          key: ${{ secrets.VPS_SSH_KEY }}      # Comment out for now
+          key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+            #!/bin/bash
+            set -e
+
             cd /var/www/greenlove.fun
-            
-            # Fix file ownership
-            chown -R root:root .
-            
-            # Check if package.json exists
-            if [ ! -f "package.json" ]; then
-              echo "❌ package.json not found!"
-              exit 1
+
+            echo "✅ Ensuring Node and PM2 are installed..."
+            if ! command -v node >/dev/null; then
+              curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+              apt install -y nodejs
             fi
-            
-            # Install production dependencies
-            echo "📦 Installing dependencies..."
+
+            if ! command -v pm2 >/dev/null; then
+              npm install -g pm2
+            fi
+
+            echo "📦 Installing production dependencies..."
             npm ci --production
-            
-            # Check if .next directory exists
-            if [ ! -d ".next" ]; then
-              echo "❌ .next directory not found! Build may have failed."
-              exit 1
-            fi
-            
-            # Stop existing process if running
-            pm2 delete silentmines-frontend 2>/dev/null || echo "No existing process to stop"
-            
-            # Kill anything using port 3000
-            sudo fuser -k 3000/tcp 2>/dev/null || echo "Port 3000 was free"
-            
-            # Wait a moment for port to be released
+
+            echo "🛑 Stopping existing process..."
+            pm2 delete silentmines-frontend || echo "No existing process to stop"
+
+            echo "🔌 Killing port 3000 if occupied..."
+            fuser -k 3000/tcp || echo "Port 3000 was free"
+
             sleep 2
-            
-            # Start the application with PM2
-            echo "🚀 Starting Next.js application..."
+
+            echo "🚀 Starting Next.js application with PM2..."
             pm2 start npm --name "silentmines-frontend" -- start
-            
-            # Wait and check status
+
+            # Make PM2 startup persistent
+            pm2 save
+            pm2 startup systemd -u $USER --hp $HOME || true
+
             sleep 5
+
+            echo "🔍 Checking application status..."
             pm2 status silentmines-frontend
-            
-            # Check if app responds on port 3000
-            echo "🔍 Testing local connection..."
             curl -f http://localhost:3000 || echo "⚠️  App not responding on port 3000"
