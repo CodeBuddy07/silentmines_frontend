@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const axiosSecure = axios.create({
     //baseURL: 'https://joyscelond-backend.onrender.com',
-    baseURL: 'https://server.greenlove.fun',
+    baseURL: 'https://server.greenlove.fun/api',
     withCredentials: true,
 });
 
