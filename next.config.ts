@@ -1,13 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
+    experimental: {
     serverActions: {
       bodySizeLimit: '50mb',
     },
   },
   images: {
-    domains: ['localhost'], // Add 'localhost' to the domains list
+    domains: ['localhost','greenlove.fun'], // Add 'localhost' to the domains list
   },
 };
 

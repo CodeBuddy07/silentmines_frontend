@@ -10,24 +10,45 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "18"
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Build project (Next.js Export)
+      - name: Build project
         run: npm run build
 
-      - name: Deploy to VPS
+      - name: Deploy app files to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          source: "out/*"
-          target: "/var/www/greenlove.fun"
+          source: ".next,public,package*.json,next.config.js"
+          target: "/var/www/greenlove.fun/"
+          rm: true
+
+      - name: Restart Next.js server on VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /var/www/greenlove.fun
+            
+            # Install production dependencies
+            npm ci --production
+            
+            # Restart the application with PM2
+            pm2 restart silentmines-frontend || pm2 start npm --name "silentmines-frontend" -- start
+            
+            # Check if app is running
+            sleep 3
+            pm2 status silentmines-frontend
