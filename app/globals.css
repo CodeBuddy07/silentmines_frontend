@@ -139,13 +139,14 @@
   }
 
   .marquee-content {
-    display: inline-block;
-    white-space: no-wrap;
-    min-width: 200%;
-    animation: marquee-scroll 60s linear infinite;
-    will-change: transform;
-    transition: animation-duration 0.5s ease;
-  }
+  display: inline-block;
+  white-space: nowrap; /* Corrected */
+  min-width: 200%;
+  animation: marquee-scroll 60s linear infinite;
+  will-change: transform;
+  transition: animation-duration 0.5s ease;
+}
+
 
   .slow .marquee-content {
     animation-duration: 90s !important;
