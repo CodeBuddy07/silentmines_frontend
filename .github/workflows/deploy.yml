@@ -29,26 +29,60 @@ jobs:
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
+          password: ${{ secrets.VPS_PASSWORD }}  # Use this temporarily
+          # key: ${{ secrets.VPS_SSH_KEY }}      # Comment out for now
+          port: 22
           source: ".next,public,package*.json,next.config.js"
           target: "/var/www/greenlove.fun/"
           rm: true
+          debug: true
 
       - name: Restart Next.js server on VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
+          password: ${{ secrets.VPS_PASSWORD }}  # Use this temporarily
+          # key: ${{ secrets.VPS_SSH_KEY }}      # Comment out for now
           script: |
             cd /var/www/greenlove.fun
             
+            # Fix file ownership
+            chown -R root:root .
+            
+            # Check if package.json exists
+            if [ ! -f "package.json" ]; then
+              echo "❌ package.json not found!"
+              exit 1
+            fi
+            
             # Install production dependencies
+            echo "📦 Installing dependencies..."
             npm ci --production
             
-            # Restart the application with PM2
-            pm2 restart silentmines-frontend || pm2 start npm --name "silentmines-frontend" -- start
+            # Check if .next directory exists
+            if [ ! -d ".next" ]; then
+              echo "❌ .next directory not found! Build may have failed."
+              exit 1
+            fi
             
-            # Check if app is running
-            sleep 3
+            # Stop existing process if running
+            pm2 delete silentmines-frontend 2>/dev/null || echo "No existing process to stop"
+            
+            # Kill anything using port 3000
+            sudo fuser -k 3000/tcp 2>/dev/null || echo "Port 3000 was free"
+            
+            # Wait a moment for port to be released
+            sleep 2
+            
+            # Start the application with PM2
+            echo "🚀 Starting Next.js application..."
+            pm2 start npm --name "silentmines-frontend" -- start
+            
+            # Wait and check status
+            sleep 5
             pm2 status silentmines-frontend
+            
+            # Check if app responds on port 3000
+            echo "🔍 Testing local connection..."
+            curl -f http://localhost:3000 || echo "⚠️  App not responding on port 3000"
