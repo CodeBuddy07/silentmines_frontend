@@ -12,22 +12,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node (for lockfile generation if needed)
+      - name: Setup Node (for lockfile/cache if needed)
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: npm
 
+      # Sync the *latest source* to the VPS (not the build artifacts)
       - name: Deploy source to VPS (rsync)
         uses: burnett01/rsync-deployments@7.0.1
         with:
-          switches: -avz --delete --exclude='.git' --exclude='node_modules'
+          switches: -avz --delete --exclude='.git' --exclude='node_modules' --exclude='.next'
           path: .
           remote_path: /var/www/greenlove.fun
           remote_host: ${{ secrets.VPS_HOST }}
           remote_user: ${{ secrets.VPS_USER }}
           remote_key: ${{ secrets.VPS_SSH_KEY }}
 
+      # Build and (re)start on the VPS with PM2, forcing the correct CWD
       - name: Build & restart on VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -36,22 +38,48 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             set -e
-            cd /var/www/greenlove.fun
 
+            APP_DIR="/var/www/greenlove.fun"
+            APP_NAME="silentmines-frontend"
+            APP_PORT="3000"
+
+            cd "$APP_DIR"
+
+            echo "✅ Ensuring Node 20 is installed..."
             if ! command -v node >/dev/null; then
               curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
               sudo apt-get install -y nodejs
             fi
 
-            if ! command -v pm2 >/dev/null; then npm i -g pm2; fi
-
-            npm ci
-            npm run build
-
-            if pm2 list | grep -q "silentmines-frontend"; then
-              pm2 reload silentmines-frontend
-            else
-              pm2 start npm --name "silentmines-frontend" -- start
+            echo "✅ Ensuring PM2 is installed..."
+            if ! command -v pm2 >/dev/null; then
+              sudo npm install -g pm2
             fi
 
+            echo "📦 Installing dependencies from lockfile..."
+            npm ci
+
+            echo "🏗️  Building Next.js app..."
+            npm run build
+
+            echo "🛑 Removing any existing PM2 process to reset CWD..."
+            pm2 delete "$APP_NAME" || true
+
+            echo "🚀 Starting app with PM2 from ${APP_DIR}..."
+            # NODE_ENV=production is recommended for Next.js
+            NODE_ENV=production pm2 start "npm -- start" \
+              --name "$APP_NAME" \
+              --cwd "$APP_DIR" \
+              --update-env
+
+            echo "💾 Saving PM2 process list & enabling startup..."
             pm2 save
+            pm2 startup systemd -u $USER --hp $HOME || true
+
+            echo "🔍 Health check on port ${APP_PORT}..."
+            sleep 3
+            if ! curl -fsS "http://localhost:${APP_PORT}" >/dev/null; then
+              echo "⚠️  App not responding on port ${APP_PORT} (check logs: pm2 logs ${APP_NAME})"
+            else
+              echo "✅ App is up on port ${APP_PORT}"
+            fi
