@@ -38,7 +38,7 @@ const Header = () => {
                         (item) => (
                             <Link
                                 key={item}
-                                href={`/categories/${item == "Flower" ? "flowers" : item.toLowerCase()}`}
+                                href={`/categories/${item}`}
                             >
                                 <Button
                                     key={item}

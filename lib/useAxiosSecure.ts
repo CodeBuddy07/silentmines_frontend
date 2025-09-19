@@ -6,8 +6,6 @@ export const axiosSecure = axios.create({
     withCredentials: true,
 });
 
-export const baseUrl = 'https://server.greenlove.fun/api';
-
 
 // Request interceptor
 axiosSecure.interceptors.request.use(

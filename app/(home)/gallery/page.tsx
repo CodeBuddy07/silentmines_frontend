@@ -211,6 +211,7 @@ const CategoryPage = () => {
                   {products.map((product: Product) => (
                     <ProductCard
                       key={product._id}
+                      id={product._id}
                       type={product.type}
                       image={product.photoUrls}
                       discount={product.discount}
