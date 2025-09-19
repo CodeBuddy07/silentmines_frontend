@@ -42,6 +42,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
     // Get current price based on selected weight
     const currentPrice = priceOptions.find(p => p.unit === selectedWeight)?.price || priceOptions[0]?.price || '0';
 
+    console.log("Image Data:  ",image);
+
     return (
         <Card
             className="pt-0 backdrop-blur-sm border border-white/10 overflow-hidden bg-green-600/5 transition-all duration-500 hover:scale-105 hover:shadow-xl hover:shadow-green-800/40 flex flex-col"
