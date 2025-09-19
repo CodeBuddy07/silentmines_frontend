@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
     // Add explicit remote patterns for IP + port and (optionally) your HTTPS domain
     remotePatterns: [
       {
-        protocol: "https",
+        protocol: "http",
         hostname: "148.230.85.23",
         port: "5000",
         pathname: "/uploads/**", // allow everything under /uploads
