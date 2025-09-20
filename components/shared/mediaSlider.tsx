@@ -180,7 +180,7 @@ const MediaSlider: React.FC<MediaSliderProps> = ({
           {media[currentSlide]?.type === 'video' ? (
             <div className="relative w-full h-full">
               <video
-                src={media[currentSlide].src}
+                src={media[currentSlide].src.replace('http://148.230.85.23:5000', 'https://server.greenlove.fun')}
                 className="w-full h-full object-cover "
                 controls={!isDragging}
                 muted
@@ -236,7 +236,7 @@ const MediaSlider: React.FC<MediaSliderProps> = ({
             >
               {mediaItem.type === 'video' ? (
                 <div className="relative w-full h-full bg-gradient-to-br from-emerald-950/40 to-emerald-900/60">
-                  <video src={mediaItem.src} className="w-full h-full object-cover" />
+                  <video src={mediaItem.src.replace('http://148.230.85.23:5000', 'https://server.greenlove.fun')} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-[1px]">
                     <div className="bg-white/90 backdrop-blur-sm rounded-full p-1 sm:p-1.5 lg:p-2 shadow-lg">
                       <Play className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-emerald-600 fill-emerald-600" />

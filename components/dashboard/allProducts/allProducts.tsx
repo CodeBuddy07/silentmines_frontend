@@ -360,7 +360,7 @@ const AllProducts = () => {
                                                 {selectedProduct.videoUrls?.map((url: any, index: number) => (
                                                     <div key={index} className="relative aspect-video">
                                                         <video
-                                                            src={url}
+                                                            src={url.replace('http://148.230.85.23:5000', 'https://server.greenlove.fun')}
                                                             controls
                                                             className={`rounded w-full h-full object-cover ${videosToDelete.includes(index) ? 'opacity-50 border-2 border-red-500' : ''}`}
                                                         />
