@@ -103,10 +103,25 @@ const AddProductForm = () => {
             setLoading(true);
             const req = await axiosSecure.post(`/products`, formData);
             const response = req;
-            console.log(response);
+
 
             if (response.status === 201) {
                 setLoading(false);
+
+                // resting the from 
+                setProductName('');
+                setDescription('');
+                setCategory('');
+                setSubCategory('');
+                setType('');
+                setDiscount('');
+                setPriceList([]);
+                setDealOfTheWeek(false);
+                setBestSeller(false);
+                setPhotos([]);
+                setVideos([]);
+
+
                 toast.success('Product added successfully!');
             } else {
                 setLoading(false);
