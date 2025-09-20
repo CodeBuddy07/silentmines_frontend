@@ -11,7 +11,9 @@ import { Label } from "@radix-ui/react-label";
 import { toast } from "sonner";
 import Pagination from "@/components/shared/pagination";
 import axiosSecure from "@/lib/useAxiosSecure";
-import Image from 'next/image'; // Import Image from Next.js
+import Image from "next/image";
+
+
 
 const AllProducts = () => {
     const [products, setProducts] = useState<any[]>([]);
@@ -60,6 +62,7 @@ const AllProducts = () => {
         formData.append("dealoftheweek", updatedProduct.dealoftheweek.toString());
         formData.append("bestSeller", updatedProduct.bestSeller.toString());
 
+
         // Append image files
         imageFiles.forEach((file) => formData.append("photos", file));
 
@@ -95,13 +98,14 @@ const AllProducts = () => {
     const fetchCategories = async () => {
         try {
             const response = await axiosSecure.get(`/categories`);
+
             if (response.data) {
-                setCategories(response.data);
+                setCategories(response.data)
             }
         } catch (error) {
             console.error('Error fetching categories:', error);
         }
-    };
+    }
 
     const fetchProducts = async () => {
         try {
@@ -118,13 +122,14 @@ const AllProducts = () => {
         try {
             const response = await axiosSecure.get(`/types`);
             console.log(response.data);
+
             if (response.data) {
-                setType(response.data);
+                setType(response.data)
             }
         } catch (error) {
             console.error('Error fetching types:', error);
         }
-    };
+    }
 
     useEffect(() => {
         fetchCategories();
@@ -198,6 +203,8 @@ const AllProducts = () => {
         }
     };
 
+
+
     useEffect(() => {
         fetchTypes();
         if (selectedProduct?.subcategory) {
@@ -222,6 +229,8 @@ const AllProducts = () => {
                     </div>
                 ))}
 
+
+
                 {/* Delete Confirmation Modal */}
                 <DeleteProductModal
                     open={deleteModal}
@@ -230,6 +239,7 @@ const AllProducts = () => {
                     productName={selectedProduct?.name}
                 />
 
+                {/* Edit Product Modal */}
                 {/* Edit Product Modal */}
                 <Dialog open={editModal} onOpenChange={setEditModal}>
                     <DialogContent className="max-w-[95vw] sm:max-w-[90vw] md:max-w-4xl lg:max-w-5xl xl:max-w-6xl bg-black text-white border border-black p-3 sm:p-4 md:p-6 max-h-[95vh] overflow-y-auto">
@@ -274,6 +284,8 @@ const AllProducts = () => {
                                             </SelectContent>
                                         </Select>
                                     </div>
+
+
                                     {/* Product Description */}
                                     <div className="space-y-2">
                                         <Label className="text-sm font-medium text-white">Description</Label>
@@ -286,6 +298,128 @@ const AllProducts = () => {
                                             className="w-full bg-white/10 border border-white/20 px-3 py-2 rounded-md text-white text-sm sm:text-base resize-none"
                                             required
                                         />
+                                    </div>
+                                </div>
+
+                                {/* Category and Discount Section */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                                    {/* Discount */}
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-white">Discount (%)</label>
+                                        <input
+                                            type="number"
+                                            value={selectedProduct.discount}
+                                            onChange={(e) =>
+                                                setSelectedProduct({ ...selectedProduct, discount: e.target.value })
+                                            }
+                                            className="w-full bg-white/10 border border-white/20 px-3 py-2 rounded-md text-white text-sm sm:text-base"
+                                            required
+                                        />
+                                    </div>
+
+                                    {/* Category */}
+                                    <div className="space-y-2">
+                                        <Label className="text-sm font-medium text-white">Category</Label>
+                                        <Select
+                                            value={selectedProduct.category}
+                                            onValueChange={(value) =>
+                                                setSelectedProduct({ ...selectedProduct, category: value })
+                                            }
+                                        >
+                                            <SelectTrigger className="w-full bg-white/10 border border-white/20 px-3 py-2 rounded-md text-white text-sm sm:text-base">
+                                                <SelectValue placeholder="Select Category" />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-[#1a1a1a] text-white">
+                                                {categories.map((category: any) => (
+                                                    <SelectItem key={category._id} value={category.name}>
+                                                        {category.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    {/* Sub Category - Dynamic */}
+                                    {categories.map(
+                                        (cat: any) =>
+                                            selectedProduct?.category === cat.name && cat.subcategories.length > 0 ? (
+                                                <div className="space-y-2" key={cat._id}>
+                                                    <Label className="text-sm font-medium text-white">Sub Category</Label>
+                                                    <Select
+                                                        value={subCategory}
+                                                        onValueChange={setSubCategory}
+                                                    >
+                                                        <SelectTrigger className="w-full bg-white/10 border border-white/20 px-3 py-2 rounded-md text-white text-sm sm:text-base">
+                                                            <SelectValue placeholder="e.g. jar, packwood" />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="bg-black/90 border border-white/20 text-white">
+                                                            {cat.subcategories.map((subcat: any) => (
+                                                                <SelectItem key={subcat._id} value={subcat.name}>
+                                                                    {subcat.name}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+                                            ) : null
+                                    )}
+                                </div>
+
+                                {/* Price Options Section */}
+                                <div className="space-y-3">
+                                    <label className="text-sm font-medium text-white">Price Options</label>
+                                    <div className="space-y-2">
+                                        {selectedProduct.priceOptions?.map((price: any, idx: number) => (
+                                            <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                <input
+                                                    type="text"
+                                                    value={price.unit}
+                                                    onChange={(e) => {
+                                                        const updatedPrices = [...selectedProduct.priceOptions];
+                                                        updatedPrices[idx].unit = e.target.value;
+                                                        setSelectedProduct({ ...selectedProduct, priceOptions: updatedPrices });
+                                                    }}
+                                                    placeholder="Unit (e.g., 1g, 3.5g)"
+                                                    className="w-full bg-white/10 border border-white/20 px-3 py-2 rounded-md text-white text-sm sm:text-base"
+                                                />
+                                                <input
+                                                    type="number"
+                                                    value={price.price}
+                                                    onChange={(e) => {
+                                                        const updatedPrices = [...selectedProduct.priceOptions];
+                                                        updatedPrices[idx].price = e.target.value;
+                                                        setSelectedProduct({ ...selectedProduct, priceOptions: updatedPrices });
+                                                    }}
+                                                    placeholder="Price"
+                                                    className="w-full bg-white/10 border border-white/20 px-3 py-2 rounded-md text-white text-sm sm:text-base"
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Product Flags Section */}
+                                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center">
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="checkbox"
+                                            defaultChecked={selectedProduct.dealoftheweek}
+                                            onChange={(e) => setDealOfTheWeek(e.target.checked)}
+                                            className="w-4 h-4"
+                                            id="dealofweek"
+                                        />
+                                        <Label htmlFor="dealofweek" className="text-sm">Deal of the Week</Label>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="checkbox"
+                                            defaultChecked={selectedProduct.bestSeller}
+                                            onChange={(e) => setBestSeller(e.target.checked)}
+                                            className="w-4 h-4"
+                                            id="bestseller"
+                                        />
+                                        <Label htmlFor="bestseller" className="text-sm">Best Selling</Label>
                                     </div>
                                 </div>
 
@@ -302,7 +436,7 @@ const AllProducts = () => {
                                                         <Image
                                                             src={url}
                                                             alt={`Product ${index + 1}`}
-                                                            width={500}
+                                                            width={500} // Add a width and height for better optimization
                                                             height={500}
                                                             className={`rounded object-cover w-full h-full ${photosToDelete.includes(index) ? 'opacity-50 border-2 border-red-500' : ''}`}
                                                         />
@@ -334,7 +468,7 @@ const AllProducts = () => {
                                                         <Image
                                                             src={URL.createObjectURL(file)}
                                                             alt={`New ${idx + 1}`}
-                                                            width={500}
+                                                            width={500} // Specify a width and height for optimization
                                                             height={500}
                                                             className="rounded object-cover w-full h-full"
                                                         />
@@ -360,7 +494,7 @@ const AllProducts = () => {
                                                 {selectedProduct.videoUrls?.map((url: any, index: number) => (
                                                     <div key={index} className="relative aspect-video">
                                                         <video
-                                                            src={url.replace('http://148.230.85.23:5000', 'https://server.greenlove.fun')}
+                                                            src={url}
                                                             controls
                                                             className={`rounded w-full h-full object-cover ${videosToDelete.includes(index) ? 'opacity-50 border-2 border-red-500' : ''}`}
                                                         />
@@ -429,6 +563,8 @@ const AllProducts = () => {
                         )}
                     </DialogContent>
                 </Dialog>
+
+
             </div>
 
             <div className="flex items-center justify-center w-full">
@@ -441,7 +577,9 @@ const AllProducts = () => {
                 )}
             </div>
         </>
+
     );
 };
 
 export default AllProducts;
+
