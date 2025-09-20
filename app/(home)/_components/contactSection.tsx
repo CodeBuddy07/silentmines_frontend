@@ -2,6 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image"; // Importing the Next.js Image component
 
 interface ContactSectionProps {
     className?: string;
@@ -48,7 +49,13 @@ const ContactSection: React.FC<ContactSectionProps> = ({ className = "" }) => {
                         className="w-full sm:w-auto bg-[#3a76f0] hover:bg-[#2c61d8] cursor-pointer text-white px-6 py-4 rounded-xl flex items-center gap-4 shadow-md hover:shadow-lg"
                         onClick={() => window.open("https://signal.me/#eu/sd-v2cNc3i1IsKlKsL8S3Mf38b60RplD84Op8ejV_7yKD-pKJmBPn4o-Fd6OO4Is", "_blank")}
                     >
-                        <img src="/signal_logo.png" alt="Signal" className="w-6 h-6  rounded-2xl" />
+                        <Image 
+                            src="/signal_logo.png" 
+                            alt="Signal" 
+                            width={24} 
+                            height={24} 
+                            className="rounded-2xl" 
+                        />
                         <span className="font-semibold">Signal</span>
                         <span className="text-sm opacity-90">(For the fastest response)</span>
                     </Button>
@@ -58,9 +65,14 @@ const ContactSection: React.FC<ContactSectionProps> = ({ className = "" }) => {
                         className="w-full sm:w-auto bg-[#229ED9] hover:bg-[#1b8ec2] cursor-pointer text-white px-7 py-4 rounded-xl flex items-center gap-4 shadow-md hover:shadow-lg"
                         onClick={() => window.open("https://t.me/greenthumbsCS", "_blank")}
                     >
-                        <img src="/telegram_logo.avif" alt="telegram" className="w-6 h-6  rounded-2xl" />
+                        <Image 
+                            src="/telegram_logo.avif" 
+                            alt="Telegram" 
+                            width={24} 
+                            height={24} 
+                            className="rounded-2xl" 
+                        />
                         <span className="font-semibold">Telegram</span>
-                      
                     </Button>
                 </div>
 

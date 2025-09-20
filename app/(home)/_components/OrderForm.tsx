@@ -18,7 +18,7 @@ import Link from 'next/link';
 import { TimeSlot } from '@/types';
 import useAxios from '@/hooks/useAxios';
 import { toast } from 'sonner';
-
+import Image from 'next/image'; // Importing Image from Next.js for optimization
 
 interface OrderFormData {
   pickupDate: 'today' | 'tomorrow';
@@ -116,8 +116,6 @@ export default function OrderPopup({ children }: OrderPopupProps) {
     return '';
   }
 
-
-
   const handleSubmit = async () => {
     if (cart.length === 0) {
       alert('Please add items to your cart');
@@ -150,7 +148,6 @@ export default function OrderPopup({ children }: OrderPopupProps) {
     };
 
     try {
-
       setLoading(true);
       // Call the API route to send the order email
       const response = await fetch('/api/sendOrderEmail', {
@@ -185,7 +182,6 @@ export default function OrderPopup({ children }: OrderPopupProps) {
     }
   };
 
-
   const handleInputChange = (field: keyof OrderFormData, value: string) => {
     setFormData(prev => ({
       ...prev,
@@ -202,7 +198,7 @@ export default function OrderPopup({ children }: OrderPopupProps) {
         {children}
       </DialogTrigger>
 
-      <DialogContent className="w-[96vw]  sm:w-[90vw] md:w-[80vw] lg:w-[70vw] xl:max-w-2xl h-[80vh]  p-0 overflow-y-auto bg-black/90 backdrop-blur-xl border-emerald-500/30 text-white shadow-2xl shadow-emerald-500/20 mx-2 sm:mx-4">
+      <DialogContent className="w-[96vw] sm:w-[90vw] md:w-[80vw] lg:w-[70vw] xl:max-w-2xl h-[80vh] p-0 overflow-y-auto bg-black/90 backdrop-blur-xl border-emerald-500/30 text-white shadow-2xl shadow-emerald-500/20 mx-2 sm:mx-4">
         <div className="flex flex-col h-full">
           <DialogHeader className="flex-shrink-0 p-3 sm:p-4 md:p-6 border-b border-emerald-500/20">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
@@ -256,10 +252,12 @@ export default function OrderPopup({ children }: OrderPopupProps) {
                         className="flex items-center gap-1 sm:gap-2 md:gap-3 p-1.5 sm:p-2 md:p-3 bg-emerald-800/20 rounded-lg"
                       >
                         {item.image && (
-                          <img
+                          <Image
                             src={item.image}
                             alt={item.name}
-                            className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg object-cover flex-shrink-0"
+                            width={40}
+                            height={40}
+                            className="rounded-lg object-cover flex-shrink-0"
                           />
                         )}
 
@@ -311,130 +309,129 @@ export default function OrderPopup({ children }: OrderPopupProps) {
                     ))}
                   </div>
                 )}
-
-                {/* Cart Summary */}
-                {cart.length > 0 && (
-                  <div className="bg-emerald-600/10 p-2 sm:p-3 md:p-4 rounded-lg border border-emerald-500/30">
-                    <h4 className="font-semibold text-emerald-400 mb-1 sm:mb-2 text-xs sm:text-sm md:text-base">Order Summary</h4>
-                    <div className="space-y-0.5 sm:space-y-1">
-                      {cart.map((item) => (
-                        <div key={`${item.productId}-${item.weight}`} className="flex justify-between text-xs gap-2">
-                          <span className="text-emerald-200/80 truncate flex-1 text-xs sm:text-sm">
-                            {item.name} ({item.weight}) × {item.quantity}
-                          </span>
-                          <span className="text-emerald-400 flex-shrink-0 text-xs sm:text-sm">
-                            ${(item.price * item.quantity).toFixed(2)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="border-t border-emerald-500/30 mt-1 sm:mt-2 pt-1 sm:pt-2">
-                      <div className="flex justify-between font-semibold text-emerald-400 text-xs sm:text-sm md:text-base">
-                        <span>Total</span>
-                        <span>${cartTotal.toFixed(2)}</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
 
-              {/* Pickup Time Selection */}
-              <div className="space-y-2 sm:space-y-3">
-                <Label className="text-xs sm:text-sm font-medium text-emerald-300 flex items-center gap-2">
-                  <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
-                  Choose your pickup time:
-                </Label>
-
-                <div className="bg-emerald-900/10 p-2 sm:p-3 md:p-4 rounded-lg border border-emerald-500/30">
-                  {/* Day Selection Buttons */}
-                  <div className="flex gap-1 sm:gap-2 md:gap-3 mb-2 sm:mb-3 md:mb-4">
-                    <button
-                      type="button"
-                      onClick={() => handleInputChange('pickupDate', 'today')}
-                      className={`flex-1 px-2 sm:px-3 md:px-6 py-1 sm:py-1.5 md:py-2 text-xs sm:text-sm rounded-md border transition-all ${formData.pickupDate === 'today'
-                        ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
-                        : 'border-emerald-500/30 text-white hover:border-emerald-400 hover:text-emerald-300'
-                        }`}
-                    >
-                      TODAY
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleInputChange('pickupDate', 'tomorrow')}
-                      className={`flex-1 px-2 sm:px-3 md:px-6 py-1 sm:py-1.5 md:py-2 text-xs sm:text-sm rounded-md border transition-all ${formData.pickupDate === 'tomorrow'
-                        ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
-                        : 'border-emerald-500/30 text-white hover:border-emerald-400 hover:text-emerald-300'
-                        }`}
-                    >
-                      TOMORROW
-                    </button>
-                  </div>
-
-                  {/* Time Grid - Ultra Responsive */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 sm:gap-2 md:gap-3">
-                    {getTimesForSelectedDay().map((time) => (
-                      <button
-                        key={time.value}
-                        type="button"
-                        onClick={() => handleInputChange('pickupTime', time.value)}
-                        className={`relative px-1 sm:px-2 md:px-4 py-1.5 sm:py-2 rounded-md border transition-all text-xs sm:text-sm font-medium ${formData.pickupTime === time.value
-                          ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
-                          : 'border-emerald-500/30 text-white hover:border-emerald-400 hover:text-emerald-300 hover:bg-emerald-800/10'
-                          }`}
-                      >
-                        {/* Green dot indicator for selected item */}
-                        {formData.pickupTime === time.value && (
-                          <div className="absolute left-1 sm:left-1.5 md:left-2 top-1/2 transform -translate-y-1/2 w-1 h-1 sm:w-1.5 sm:h-1.5 md:w-2 md:h-2 bg-emerald-400 rounded-full"></div>
-                        )}
-                        <span className={`${formData.pickupTime === time.value ? 'ml-2 sm:ml-3 md:ml-4' : ''} truncate block`}>
-                          {time.label}
+              {/* Cart Summary */}
+              {cart.length > 0 && (
+                <div className="bg-emerald-600/10 p-2 sm:p-3 md:p-4 rounded-lg border border-emerald-500/30">
+                  <h4 className="font-semibold text-emerald-400 mb-1 sm:mb-2 text-xs sm:text-sm md:text-base">Order Summary</h4>
+                  <div className="space-y-0.5 sm:space-y-1">
+                    {cart.map((item) => (
+                      <div key={`${item.productId}-${item.weight}`} className="flex justify-between text-xs gap-2">
+                        <span className="text-emerald-200/80 truncate flex-1 text-xs sm:text-sm">
+                          {item.name} ({item.weight}) × {item.quantity}
                         </span>
-                      </button>
+                        <span className="text-emerald-400 flex-shrink-0 text-xs sm:text-sm">
+                          ${(item.price * item.quantity).toFixed(2)}
+                        </span>
+                      </div>
                     ))}
                   </div>
+                  <div className="border-t border-emerald-500/30 mt-1 sm:mt-2 pt-1 sm:pt-2">
+                    <div className="flex justify-between font-semibold text-emerald-400 text-xs sm:text-sm md:text-base">
+                      <span>Total</span>
+                      <span>${cartTotal.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Pickup Time Selection */}
+            <div className="space-y-2 sm:space-y-3">
+              <Label className="text-xs sm:text-sm font-medium text-emerald-300 flex items-center gap-2">
+                <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+                Choose your pickup time:
+              </Label>
+
+              <div className="bg-emerald-900/10 p-2 sm:p-3 md:p-4 rounded-lg border border-emerald-500/30">
+                {/* Day Selection Buttons */}
+                <div className="flex gap-1 sm:gap-2 md:gap-3 mb-2 sm:mb-3 md:mb-4">
+                  <button
+                    type="button"
+                    onClick={() => handleInputChange('pickupDate', 'today')}
+                    className={`flex-1 px-2 sm:px-3 md:px-6 py-1 sm:py-1.5 md:py-2 text-xs sm:text-sm rounded-md border transition-all ${formData.pickupDate === 'today'
+                      ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
+                      : 'border-emerald-500/30 text-white hover:border-emerald-400 hover:text-emerald-300'
+                      }`}
+                  >
+                    TODAY
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleInputChange('pickupDate', 'tomorrow')}
+                    className={`flex-1 px-2 sm:px-3 md:px-6 py-1 sm:py-1.5 md:py-2 text-xs sm:text-sm rounded-md border transition-all ${formData.pickupDate === 'tomorrow'
+                      ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
+                      : 'border-emerald-500/30 text-white hover:border-emerald-400 hover:text-emerald-300'
+                      }`}
+                  >
+                    TOMORROW
+                  </button>
+                </div>
+
+                {/* Time Grid - Ultra Responsive */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 sm:gap-2 md:gap-3">
+                  {getTimesForSelectedDay().map((time) => (
+                    <button
+                      key={time.value}
+                      type="button"
+                      onClick={() => handleInputChange('pickupTime', time.value)}
+                      className={`relative px-1 sm:px-2 md:px-4 py-1.5 sm:py-2 rounded-md border transition-all text-xs sm:text-sm font-medium ${formData.pickupTime === time.value
+                        ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
+                        : 'border-emerald-500/30 text-white hover:border-emerald-400 hover:text-emerald-300 hover:bg-emerald-800/10'
+                        }`}
+                    >
+                      {/* Green dot indicator for selected item */}
+                      {formData.pickupTime === time.value && (
+                        <div className="absolute left-1 sm:left-1.5 md:left-2 top-1/2 transform -translate-y-1/2 w-1 h-1 sm:w-1.5 sm:h-1.5 md:w-2 md:h-2 bg-emerald-400 rounded-full"></div>
+                      )}
+                      <span className={`${formData.pickupTime === time.value ? 'ml-2 sm:ml-3 md:ml-4' : ''} truncate block`}>
+                        {time.label}
+                      </span>
+                    </button>
+                  ))}
                 </div>
               </div>
+            </div>
 
+            {/* Order Notes */}
+            <div className="space-y-1 sm:space-y-2">
+              <Label htmlFor="notes" className="text-xs sm:text-sm font-medium text-emerald-300 flex items-center gap-2">
+                <NotebookPen className="w-3 h-3 sm:w-4 sm:h-4" />
+                Order Notes
+              </Label>
+              <Textarea
+                id="notes"
+                placeholder="Any special instructions or requests?"
+                value={formData.orderNotes}
+                onChange={(e) => handleInputChange('orderNotes', e.target.value)}
+                className="bg-emerald-900/20 border-emerald-500/40 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/30 min-h-[60px] sm:min-h-[80px] text-xs sm:text-sm"
+                rows={2}
+              />
+            </div>
 
-              {/* Order Notes */}
-              <div className="space-y-1 sm:space-y-2">
-                <Label htmlFor="notes" className="text-xs sm:text-sm font-medium text-emerald-300 flex items-center gap-2">
-                  <NotebookPen className="w-3 h-3 sm:w-4 sm:h-4" />
-                  Order Notes
-                </Label>
-                <Textarea
-                  id="notes"
-                  placeholder="Any special instructions or requests?"
-                  value={formData.orderNotes}
-                  onChange={(e) => handleInputChange('orderNotes', e.target.value)}
-                  className="bg-emerald-900/20 border-emerald-500/40 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/30 min-h-[60px] sm:min-h-[80px] text-xs sm:text-sm"
-                  rows={2}
-                />
-              </div>
+            {/* Phone Number Input */}
+            <div className="space-y-2">
+              <Label htmlFor="phone" className="text-sm font-medium text-emerald-300 flex items-center gap-2">
+                <Phone className="w-4 h-4" />
+                Signal Phone Number
+              </Label>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="+1 (555) 123-4567"
+                value={formData.phoneNumber}
+                onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+                className="bg-emerald-900/20 border-emerald-500/40 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/30 text-xs sm:text-sm"
+                required
+              />
+              <p className="text-xs text-emerald-200/70">
+                We'll send your order confirmation via Signal
+              </p>
 
-              {/* Phone Number Input */}
-              <div className="space-y-2">
-                <Label htmlFor="phone" className="text-sm font-medium text-emerald-300 flex items-center gap-2">
-                  <Phone className="w-4 h-4" />
-                  Signal Phone Number
-                </Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="+1 (555) 123-4567"
-                  value={formData.phoneNumber}
-                  onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
-                  className="bg-emerald-900/20 border-emerald-500/40 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/30 text-xs sm:text-sm"
-                  required
-                />
-                <p className="text-xs text-emerald-200/70">
-                  We'll send your order confirmation via Signal
-                </p>
-
-                <p className="text-xs text-emerald-200/70">
-                  You must have Signal app downloaded to complete this order. Please download at <Link href={"https://signal.org/download/"} className='text-blue-500 underline'>Signal.org</Link> if you haven't already.
-                </p>
-              </div>
+              <p className="text-xs text-emerald-200/70">
+                You must have Signal app downloaded to complete this order. Please download at <Link href={"https://signal.org/download/"} className='text-blue-500 underline'>Signal.org</Link> if you haven't already.
+              </p>
             </div>
           </div>
 
@@ -446,7 +443,7 @@ export default function OrderPopup({ children }: OrderPopupProps) {
                 disabled={cart.length === 0}
                 className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm md:text-base py-2 sm:py-2.5 md:py-3 min-h-[36px] sm:min-h-[40px]"
               >
-                <span className="truncate">{loading? "Submitting...": "Submit Order"}</span>
+                <span className="truncate">{loading ? "Submitting..." : "Submit Order"}</span>
               </Button>
             </div>
           </div>

@@ -7,6 +7,14 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "500mb",
     },
   },
+  async rewrites() {
+    return [
+      {
+        source: '/uploads/:path*',
+        destination: `https://server.greenlove.fun/uploads/:path*`,
+      },
+    ];
+  },
   images: {
     // Keep any domains you already use…
     domains: ["localhost", "greenlove.fun"],

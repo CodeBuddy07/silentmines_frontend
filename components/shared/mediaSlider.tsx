@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image'; // Importing the Next.js Image component
 
 interface MediaItem {
   type: 'image' | 'video';
@@ -180,24 +181,27 @@ const MediaSlider: React.FC<MediaSliderProps> = ({
             <div className="relative w-full h-full">
               <video
                 src={media[currentSlide].src}
-                className="w-full h-full object-cover pointer-events-none"
+                className="w-full h-full object-cover "
                 controls={!isDragging}
                 muted
                 loop
                 autoPlay
-                controlsList='nodownload'
+                controlsList="nodownload"
                 playsInline
                 onTouchStart={(e) => e.stopPropagation()}
               />
             </div>
           ) : (
-            <img
-              src={media[currentSlide]?.src}
-              alt={alt}
-              className="w-full h-full object-cover pointer-events-none select-none"
-              loading="lazy"
-              draggable={false}
-            />
+            <div className="w-full h-full">
+              <Image
+                src={media[currentSlide]?.src}
+                alt={alt}
+                layout="fill" // Makes sure the image fills the container
+                objectFit="cover" // Ensures the image covers the area without distortion
+                loading="lazy"
+                draggable={false}
+              />
+            </div>
           )}
         </div>
 
@@ -240,10 +244,11 @@ const MediaSlider: React.FC<MediaSliderProps> = ({
                   </div>
                 </div>
               ) : (
-                <img
+                <Image
                   src={mediaItem.src}
                   alt={`Thumbnail ${index + 1}`}
-                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                  layout="fill" // Use layout to make the image fill the space
+                  objectFit="cover"
                   loading="lazy"
                 />
               )}

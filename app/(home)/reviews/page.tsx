@@ -1,10 +1,11 @@
-"use client";
+'use client';
 import React, { JSX, useEffect, useState } from 'react';
 import { Star, User, Calendar, Plus, X } from 'lucide-react';
 import useAxios from '@/hooks/useAxios';
 import { Review } from '@/types';
 import { toast } from 'sonner';
 import Pagination from '@/components/shared/pagination';
+import Image from 'next/image'; // Import Next.js Image component
 
 interface ReviewFormData {
   name: string;
@@ -24,12 +25,10 @@ const ReviewsPage: React.FC = () => {
   });
   const [reviews, setReviews] = useState<Review[]>([]);
 
-
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
-
 
   const getData = async () => {
     const res = await useAxios.get(`/review/approvedreview?page=${currentPage}&limit=${itemsPerPage}`);
@@ -37,13 +36,11 @@ const ReviewsPage: React.FC = () => {
     console.log(res);
     setTotalPages(res.data.totalPages);
     setTotalItems(res.data.totalapprovedReviews);
-  }
-
+  };
 
   useEffect(() => {
     getData();
   }, [currentPage, itemsPerPage]);
-
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -92,22 +89,16 @@ const ReviewsPage: React.FC = () => {
         formDataToSend.append('image', formData.image);
       }
 
-      // Replace with your actual API endpoint
       const response = await useAxios.post('/review/submit', formDataToSend);
 
-      if (response.status === 200) {
+      if (response.status !== 200) {
         throw new Error('Failed to submit review');
       }
 
       getData();
-
-      // Close dialog and reset form
       setIsDialogOpen(false);
       resetForm();
-
-      // You might want to show a success message here
       toast.success('Review submitted successfully!');
-
     } catch (error) {
       console.error('Error submitting review:', error);
       toast.error((error as any).response?.data?.message || 'Failed to submit review. Please try again.');
@@ -141,36 +132,10 @@ const ReviewsPage: React.FC = () => {
     return stars;
   };
 
-  // // Loading state (simulate loading)
-  // if (!reviews || reviews.length === 0) {
-  //   return (
-  //     <div className="min-h-screen bg-black/60 backdrop-blur-[1px] flex items-center justify-center">
-  //       <div className="text-center">
-  //         <div className="text-red-400 mb-4">
-  //           <svg className="mx-auto h-16 w-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-  //             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-  //           </svg>
-  //         </div>
-  //         <h3 className="text-xl font-medium text-gray-300 mb-2">No reviews yet!</h3>
-  //         <p className="text-gray-400 mb-6">Be the first to review.</p>
-  //         <button
-  //           onClick={() => window.history.back()}
-  //           className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-  //         >
-  //           Go Back
-  //         </button>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
   const getAverageRating = (): number => {
     const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
     return Math.round((totalRating / reviews.length) * 10) / 10;
   };
-
-
-
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -219,10 +184,12 @@ const ReviewsPage: React.FC = () => {
                 {/* Avatar */}
                 <div className="flex-shrink-0">
                   {review.image ? (
-                    <img
+                    <Image
                       src={review.image}
                       alt={review.clientName}
-                      className="w-12 h-12 rounded-full object-cover ring-2 ring-green-500/20"
+                      width={48}
+                      height={48}
+                      className="rounded-full object-cover ring-2 ring-green-500/20"
                     />
                   ) : (
                     <div className="w-12 h-12 bg-gradient-to-br from-green-600 to-green-700 rounded-full flex items-center justify-center">
@@ -305,8 +272,6 @@ const ReviewsPage: React.FC = () => {
                     placeholder="Enter your name"
                   />
                 </div>
-
-
 
                 {/* Rating Field */}
                 <div>
