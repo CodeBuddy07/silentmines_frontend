@@ -30,7 +30,7 @@ const Navbar = () => {
 
   const getCategories = async () => {
     const res = await useAxios.get(`/categories`);
-    setCategories(res.data.reverse());
+    setCategories(res.data);
   }
 
   useEffect(() => {
