@@ -94,7 +94,7 @@ const Page = () => {
                                     {/* Header with image and basic info */}
                                     <div className="flex items-center gap-3">
                                         <Image
-                                            src={review.imageURL || "/default-image.png"}
+                                            src={review.image || "/default-image.png"}
                                             alt={review.clientName || "Reviewer's profile image"}
                                             width={40}
                                             height={40}
@@ -169,7 +169,7 @@ const Page = () => {
                                 {/* Tablet and Desktop Layout */}
                                 <div className="hidden sm:flex items-start gap-3 md:gap-4">
                                     <Image
-                                        src={review.imageURL || "/default-image.png"}
+                                        src={review.image || "/default-image.png"}
                                         alt={review.clientName || "Reviewer's profile image"}
                                         width={50}
                                         height={50}

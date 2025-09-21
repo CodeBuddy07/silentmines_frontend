@@ -35,7 +35,7 @@ const ReviewsPage: React.FC = () => {
     setReviews(res.data.approvedReviews);
     console.log(res);
     setTotalPages(res.data.totalPages);
-    setTotalItems(res.data.totalapprovedReviews);
+    setTotalItems(res.data.approvedReviews.length);
   };
 
   useEffect(() => {
@@ -91,7 +91,9 @@ const ReviewsPage: React.FC = () => {
 
       const response = await useAxios.post('/review/submit', formDataToSend);
 
-      if (response.status !== 200) {
+      console.log(response);
+
+      if (response.status !== 201) {
         throw new Error('Failed to submit review');
       }
 

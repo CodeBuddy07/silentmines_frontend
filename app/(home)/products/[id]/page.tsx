@@ -10,6 +10,7 @@ import AddToBagButton from '../../_components/addToBagButton';
 import MediaSlider from '@/components/shared/mediaSlider';
 import useAxios from '@/hooks/useAxios';
 import { Product } from '@/types';
+import LoadingScreen from '@/components/shared/LoadingScreen';
 
 const Page = ({
   params,
@@ -19,7 +20,7 @@ const Page = ({
 
   const { id } = use(params);
   const { getCartItemCount } = useCart();
-
+  const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState<Product>({} as Product);
   const [selectedWeight, setSelectedWeight] = useState<string>('');
 
@@ -27,6 +28,7 @@ const Page = ({
     const res = await useAxios.get(`/products/${id}`);
     setProduct(res.data);
     setSelectedWeight(res.data?.priceOptions[0]?.unit);
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -34,7 +36,7 @@ const Page = ({
   }, []);
 
   // Loading state (simulate loading)
-  if (!product || Object.keys(product).length === 0) {
+  if (!loading && (!product || Object.keys(product).length === 0)) {
     return (
       <div className="min-h-screen bg-black/60 backdrop-blur-[1px] flex items-center justify-center">
         <div className="text-center">
@@ -54,6 +56,11 @@ const Page = ({
         </div>
       </div>
     );
+  }
+
+
+  if (loading) {
+    return <LoadingScreen/>;
   }
 
 

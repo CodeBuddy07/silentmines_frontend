@@ -16,22 +16,33 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    // Keep any domains you already use…
-    domains: ["localhost", "greenlove.fun"],
-
-    // Add explicit remote patterns for IP + port and (optionally) your HTTPS domain
+    // Replace deprecated domains with remotePatterns
     remotePatterns: [
+      // For local development
       {
         protocol: "http",
-        hostname: "148.230.85.23",
+        hostname: "localhost",
         port: "5000",
-        pathname: "/uploads/**", // allow everything under /uploads
+        pathname: "/uploads/**",
       },
-      // If you also serve images via your domain (recommended for HTTPS prod):
+      // For production domain
       {
         protocol: "https",
         hostname: "server.greenlove.fun",
         pathname: "/uploads/**",
+      },
+      // For IP address access (if needed)
+      {
+        protocol: "http",
+        hostname: "148.230.85.23",
+        port: "5000",
+        pathname: "/uploads/**",
+      },
+      // For your main domain if serving images from there
+      {
+        protocol: "https",
+        hostname: "greenlove.fun",
+        pathname: "/**",
       },
     ],
   },

@@ -16,11 +16,11 @@ interface MediaSliderProps {
   className?: string;
 }
 
-const MediaSlider: React.FC<MediaSliderProps> = ({ 
-  media, 
-  alt = "Media", 
-  discount, 
-  className = "" 
+const MediaSlider: React.FC<MediaSliderProps> = ({
+  media,
+  alt = "Media",
+  discount,
+  className = ""
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -28,6 +28,17 @@ const MediaSlider: React.FC<MediaSliderProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [dragDistance, setDragDistance] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
+  const [controlsVisible, setControlsVisible] = useState(true);  // Track visibility of controls
+  let timeout: ReturnType<typeof setTimeout>;
+
+  const handleActivity = () => {
+    setControlsVisible(true); // Show controls on activity
+    clearTimeout(timeout); // Clear previous timeout
+
+    timeout = setTimeout(() => {
+      setControlsVisible(false); // Hide controls after 0.25 seconds of inactivity
+    }, 900); // 0.25 seconds of inactivity
+  };
 
   // Minimum swipe distance (in pixels)
   const minSwipeDistance = 50;
@@ -48,7 +59,7 @@ const MediaSlider: React.FC<MediaSliderProps> = ({
 
   const onTouchMove = (e: React.TouchEvent) => {
     if (!touchStart) return;
-    
+
     const currentTouch = e.targetTouches[0].clientX;
     const distance = touchStart - currentTouch;
     setDragDistance(distance);
@@ -88,7 +99,7 @@ const MediaSlider: React.FC<MediaSliderProps> = ({
 
   const onMouseMove = (e: React.MouseEvent) => {
     if (!touchStart || !isDragging) return;
-    
+
     const distance = touchStart - e.clientX;
     setDragDistance(distance);
     setTouchEnd(e.clientX);
@@ -122,6 +133,17 @@ const MediaSlider: React.FC<MediaSliderProps> = ({
     e.preventDefault();
   };
 
+  useEffect(() => {
+    window.addEventListener('mousemove', handleActivity);
+    window.addEventListener('touchstart', handleActivity);
+
+    return () => {
+      window.removeEventListener('mousemove', handleActivity);
+      window.removeEventListener('touchstart', handleActivity);
+      clearTimeout(timeout); // Clear timeout on component unmount
+    };
+  }, []);
+
   if (!media || media.length === 0) {
     return (
       <div className={`aspect-square bg-emerald-900/10 backdrop-blur-xl border border-emerald-500/30 rounded-2xl flex items-center justify-center ${className}`}>
@@ -133,7 +155,7 @@ const MediaSlider: React.FC<MediaSliderProps> = ({
   return (
     <div className={`space-y-3 sm:space-y-4 ${className}`}>
       {/* Main Media Display */}
-      <div 
+      <div
         ref={sliderRef}
         className="relative aspect-square bg-gradient-to-br from-emerald-950/20 to-emerald-900/30 backdrop-blur-xl border border-emerald-500/20 rounded-3xl overflow-hidden shadow-2xl shadow-emerald-500/10 hover:shadow-emerald-500/20 transition-all duration-300 cursor-grab active:cursor-grabbing select-none"
         onTouchStart={onTouchStart}
@@ -145,12 +167,12 @@ const MediaSlider: React.FC<MediaSliderProps> = ({
         onMouseLeave={onMouseUp}
         onContextMenu={onContextMenu}
       >
-        {/* Discount Badge */}
+        {/* Discount Badge
         {discount && discount > 0 && (
           <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-bold shadow-xl shadow-emerald-500/40 backdrop-blur-sm border border-emerald-400/30">
             <span className="drop-shadow-sm">{discount}% OFF</span>
           </div>
-        )}
+        )} */}
 
         {/* Navigation Buttons */}
         {media.length > 1 && (
@@ -171,7 +193,7 @@ const MediaSlider: React.FC<MediaSliderProps> = ({
         )}
 
         {/* Media Content */}
-        <div 
+        <div
           className="w-full h-full transition-transform duration-300 ease-out"
           style={{
             transform: isDragging ? `translateX(-${dragDistance * 0.3}px)` : 'translateX(0)',
@@ -181,14 +203,14 @@ const MediaSlider: React.FC<MediaSliderProps> = ({
             <div className="relative w-full h-full">
               <video
                 src={media[currentSlide].src.replace('http://148.230.85.23:5000', 'https://server.greenlove.fun')}
-                className="w-full h-full object-cover "
-                controls={!isDragging}
+                className="w-full h-full object-cover"
+                controls={controlsVisible} // Toggle controls visibility based on state
                 muted
                 loop
                 autoPlay
                 controlsList="nodownload"
                 playsInline
-                onTouchStart={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}  // Prevent touch events from triggering
               />
             </div>
           ) : (

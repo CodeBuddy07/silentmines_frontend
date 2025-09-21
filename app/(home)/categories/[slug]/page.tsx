@@ -2,6 +2,7 @@
 "use client";
 
 import DynamicProductShowCase from '@/components/shared/DynamicProductShowCase';
+import LoadingScreen from '@/components/shared/LoadingScreen';
 import useAxios from '@/hooks/useAxios';
 import { Product, ProductCategory } from '@/types';
 import { useParams } from 'next/navigation';
@@ -13,7 +14,7 @@ import { useEffect, useMemo, useState } from 'react';
 const CategoryPage = () => {
   const params = useParams();
   const categorySlug = params.slug as string;
-
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
   const [totalPages, setTotalPages] = useState(0);
@@ -25,6 +26,7 @@ const CategoryPage = () => {
   const getCategories = async () => {
     const res = await useAxios.get(`/categories`);
     setCategories(res.data);
+    setLoading(false);
   }
 
   const category = useMemo(() => {
@@ -56,7 +58,7 @@ const CategoryPage = () => {
   // console.log(products.filter((p)=> {p.subcategory === activeSubCategory; console.log('frontend',activeSubCategory);}));
 
   // Loading state (simulate loading)
-  if (!category) {
+  if (!loading && !category) {
     return (
       <div className="min-h-screen bg-black/60 backdrop-blur-[1px] flex items-center justify-center">
         <div className="text-center">
@@ -77,6 +79,10 @@ const CategoryPage = () => {
       </div>
     );
   }
+
+  if (loading) {
+    return <LoadingScreen/>
+  }
   
 
   return (
@@ -85,7 +91,7 @@ const CategoryPage = () => {
       activeSubCategory={activeSubCategory}
       setActiveSubCategory={setActiveSubCategory}
       products={products}
-      category={category}
+      category={category!}
       currentPage={currentPage}
       itemsPerPage={itemsPerPage}
       handleItemsPerPageChange={handleItemsPerPageChange}
