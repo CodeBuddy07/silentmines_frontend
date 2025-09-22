@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
         secure: false, // use TLS
         auth: {
             user: 'resend', // Replace with your Resend email address
-            pass: 're_Ei1Uav8U_2naL4MZeBMQFv3iSDY88EBhY', // Replace with your Resend SMTP API key
+            pass: 're_gyd2HyWR_NYpVYu8ctmkqxKNv5576dhQd', // Replace with your Resend SMTP API key
         },
     });
 
@@ -53,8 +53,8 @@ export async function POST(req: NextRequest) {
         `;
 
     const mailOptions = {
-        from: 'orders@greenlove.fun', // Replace with your Resend email address
-        to: 'laxdrgreenthumb@proton.me', // Admin's email
+        from: 'The Green Thumb <orders@greenlove.fun>', // Replace with your Resend email address
+        to: 'rjruhul05@gmail.com', // Admin's email
         subject: `New Order: ${orderData.orderId}`,
         html: emailContent,
     };
