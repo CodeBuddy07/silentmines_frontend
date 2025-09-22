@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
 
     const mailOptions = {
         from: 'The Green Thumb <orders@greenlove.fun>', // Replace with your Resend email address
-        to: 'rjruhul05@gmail.com', // Admin's email
+        to: 'laxdrgreenthumb@proton.me', // Admin's email
         subject: `New Order: ${orderData.orderId}`,
         html: emailContent,
     };
