@@ -15,6 +15,7 @@ import axiosSecure from "@/lib/useAxiosSecure";
 
 
 import dynamic from 'next/dynamic';  // to load Jodit on client side only
+import Image from "next/image";
 
 
 
@@ -510,9 +511,11 @@ const AllProducts = () => {
                                             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-3 xl:grid-cols-4 gap-2">
                                                 {selectedProduct.photoUrls?.map((url: any, index: number) => (
                                                     <div key={index} className="relative aspect-square">
-                                                        <img
+                                                       <Image
                                                             src={url}
                                                             alt={`Product ${index + 1}`}
+                                                            width={500} // Add a width and height for better optimization
+                                                            height={500}
                                                             className={`rounded object-cover w-full h-full ${photosToDelete.includes(index) ? 'opacity-50 border-2 border-red-500' : ''}`}
                                                         />
                                                         <button
@@ -541,9 +544,11 @@ const AllProducts = () => {
                                             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-3 xl:grid-cols-4 gap-2 mt-2">
                                                 {imageFiles.map((file, idx) => (
                                                     <div key={idx} className="relative aspect-square">
-                                                        <img
+                                                        <Image
                                                             src={URL.createObjectURL(file)}
                                                             alt={`New ${idx + 1}`}
+                                                            width={500} // Add a width and height for better optimization
+                                                            height={500}
                                                             className="rounded object-cover w-full h-full"
                                                         />
                                                         <button
@@ -569,7 +574,7 @@ const AllProducts = () => {
                                                 {selectedProduct.videoUrls?.map((url: any, index: number) => (
                                                     <div key={index} className="relative aspect-video">
                                                         <video
-                                                            src={url}
+                                                            src={url.replace('http://148.230.85.23:5000', 'https://server.greenlove.fun')}
                                                             controls
                                                             className={`rounded w-full h-full object-cover ${videosToDelete.includes(index) ? 'opacity-50 border-2 border-red-500' : ''}`}
                                                         />
