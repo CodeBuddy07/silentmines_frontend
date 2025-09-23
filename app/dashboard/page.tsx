@@ -1,8 +1,6 @@
 'use client';
-
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Trash2, X } from 'lucide-react';
@@ -20,6 +18,15 @@ import { toast } from 'sonner';
 import CategoryModel from '@/components/dashboard/categoryModel/CategoryModel';
 import TypesModal from '@/components/dashboard/typesModel/TypesModel';
 import axiosSecure from '@/lib/useAxiosSecure';
+
+
+import dynamic from 'next/dynamic';  // to load Jodit on client side only
+
+
+// JoditEditor must be dynamically imported to prevent SSR issues
+const JoditEditor = dynamic(() => import('jodit-react'), { ssr: false });
+
+
 
 
 const AddProductForm = () => {
@@ -42,8 +49,10 @@ const AddProductForm = () => {
     const [loading, setLoading] = useState(false);
     const [subCategory, setSubCategory] = useState('');
 
+
     const [dealOfTheWeek, setDealOfTheWeek] = useState(false);
     const [bestSeller, setBestSeller] = useState(false);
+
 
     const addCategory = async () => {
         if (!newCategory.name) {
@@ -51,11 +60,13 @@ const AddProductForm = () => {
             return;
         }
 
+
         try {
             const response = await axiosSecure.post(`/categories`, {
                 name: newCategory.name,
                 description: newCategory.description,
             });
+
 
             if (response.status === 201) {
                 toast.success('Category added successfully!');
@@ -70,6 +81,7 @@ const AddProductForm = () => {
         }
     };
 
+
     const handleFileChange = (files: FileList | null, type: 'photo' | 'video') => {
         if (!files) return;
         const fileArray = Array.from(files);
@@ -78,8 +90,10 @@ const AddProductForm = () => {
             : setVideos([...videos, ...fileArray]);
     };
 
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
 
         const formData = new FormData();
         formData.append('name', productName);
@@ -92,36 +106,25 @@ const AddProductForm = () => {
         formData.append('dealofftheweek', dealOfTheWeek ? 'true' : 'false');
         formData.append('bestSeller', bestSeller ? 'true' : 'false');
 
+
         photos.forEach(photo => formData.append('photos', photo));
         videos.forEach(video => formData.append('videos', video));
+
 
         formData.forEach((value, key) => {
             console.log(key, value);
         });
 
+
         try {
             setLoading(true);
             const req = await axiosSecure.post(`/products`, formData);
             const response = req;
+            console.log(response);
 
 
             if (response.status === 201) {
                 setLoading(false);
-
-                // resting the from 
-                setProductName('');
-                setDescription('');
-                setCategory('');
-                setSubCategory('');
-                setType('');
-                setDiscount('');
-                setPriceList([]);
-                setDealOfTheWeek(false);
-                setBestSeller(false);
-                setPhotos([]);
-                setVideos([]);
-
-
                 toast.success('Product added successfully!');
             } else {
                 setLoading(false);
@@ -134,6 +137,7 @@ const AddProductForm = () => {
         }
     };
 
+
     const handleAddPriceUnit = () => {
         if (!priceInput || !unitInput) return;
         setPriceList([...priceList, { price: priceInput, unit: unitInput }]);
@@ -141,9 +145,11 @@ const AddProductForm = () => {
         setUnitInput('');
     };
 
+
     const handleDeletePriceUnit = (index: number) => {
         setPriceList(priceList.filter((_, i) => i !== index));
     };
+
 
     const addType = async () => {
         if (!newType.title) {
@@ -151,10 +157,12 @@ const AddProductForm = () => {
             return;
         }
 
+
         try {
             const response = await axiosSecure.post(`/types`, {
                 name: newType.title
             })
+
 
             if (response.status === 201) {
                 toast.success('Type added successfully!');
@@ -166,16 +174,20 @@ const AddProductForm = () => {
         } catch (error) {
             console.error('Error adding category:', error);
 
+
             toast.error('An error occurred while adding the category');
         }
+
 
         setIsTypesOpen(false);
         setNewType({ title: "" });
     };
 
+
     const fetchCategories = async () => {
         try {
             const response = await axiosSecure.get(`/categories`);
+
 
             if (response.data) {
                 setCategories(response.data)
@@ -185,9 +197,11 @@ const AddProductForm = () => {
         }
     }
 
+
     const fetchTypes = async () => {
         try {
             const response = await axiosSecure.get(`/types`);
+
 
             if (response.data) {
                 setTypes(response.data)
@@ -197,14 +211,17 @@ const AddProductForm = () => {
         }
     }
 
+
     useEffect(() => {
         fetchTypes();
         fetchCategories();
     }, [])
 
+
     return (
         <div>
             <Header title="Add New Product" subTitle="Fill in the product details below" />
+
 
             <Tabs defaultValue="add">
                 <div className='flex items-center justify-between'>
@@ -223,11 +240,13 @@ const AddProductForm = () => {
                         </TabsTrigger>
                     </TabsList>
 
+
                     <div className='flex items-center gap-2'>
                         <Button
                             className='bg-[#00A63E] cursor-pointer'
                             onClick={() => setIsCategoryOpen(true)}
                         >Add Category</Button>
+
 
                         {/* Category Model */}
                         <CategoryModel
@@ -253,9 +272,11 @@ const AddProductForm = () => {
                             onSave={addCategory}
                         />
 
+
                         <Button className="bg-[#00A63E] cursor-pointer" onClick={() => setIsTypesOpen(true)}>
                             Add Type's
                         </Button>
+
 
                         <TypesModal
                             open={isTypesOpen}
@@ -274,8 +295,10 @@ const AddProductForm = () => {
                     </div>
                 </div>
 
+
                 <TabsContent value="add">
                     <form onSubmit={handleSubmit} className="p-6 bg-[#0f1b0f]/60 rounded-xl shadow-lg border border-white/10 text-white space-y-6">
+
 
                         <div className="space-y-1">
                             <Label>Name</Label>
@@ -287,7 +310,8 @@ const AddProductForm = () => {
                             />
                         </div>
 
-                        <div className="space-y-1">
+
+                        {/* <div className="space-y-1">
                             <Label>Description</Label>
                             <Textarea
                                 placeholder="Write a short description..."
@@ -295,7 +319,32 @@ const AddProductForm = () => {
                                 onChange={(e) => setDescription(e.target.value)}
                                 className="bg-[#1a2a1a] mt-3 text-white"
                             />
+                        </div> */}
+
+
+                        <div className="space-y-1">
+                            <Label>Description</Label>
+                            <div className="bg-[#1a2a1a] mt-3 rounded-md text-black">
+                                <JoditEditor
+                                    value={description}
+                                    onBlur={(newContent) => setDescription(newContent)}
+                                    onChange={() => { }}
+                                    config={{
+                                        theme: 'dark',
+                                        style: {
+                                            backgroundColor: '#1a2a1a',
+                                            color: 'white',
+                                            fontFamily: 'Arial, sans-serif',
+                                            fontSize: '14px',
+                                        },
+                                        height: 300
+                                    }}
+                                />
+                            </div>
                         </div>
+
+
+
 
                         <div className="space-y-1">
                             <Label>Discount (%)</Label>
@@ -310,6 +359,7 @@ const AddProductForm = () => {
                             />
                         </div>
 
+
                         <div className="flex gap-6 items-center mt-4">
                             <div className="flex items-center gap-2">
                                 <input
@@ -321,6 +371,7 @@ const AddProductForm = () => {
                                 <Label>Deal of the Week</Label>
                             </div>
 
+
                             <div className="flex items-center gap-2">
                                 <input
                                     type="checkbox"
@@ -331,7 +382,6 @@ const AddProductForm = () => {
                                 <Label>Best Selling</Label>
                             </div>
                         </div>
-
 
 
                         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-4">
@@ -351,6 +401,7 @@ const AddProductForm = () => {
                                 </Select>
                             </div>
 
+
                             <div className="flex-1">
                                 <Label>Type (optional)</Label>
                                 <Select onValueChange={setType}>
@@ -367,6 +418,7 @@ const AddProductForm = () => {
                                 </Select>
                             </div>
                         </div>
+
 
                         {/* show sub category dynamically */}
                         {categories.map((cat: any) =>
@@ -418,6 +470,7 @@ const AddProductForm = () => {
                             </div>
                         </div>
 
+
                         {priceList.length > 0 && (
                             <div className="space-y-3">
                                 <Label className="text-sm text-white">Price Options</Label>
@@ -446,6 +499,7 @@ const AddProductForm = () => {
                             </div>
                         )}
 
+
                         <div className='flex gap-3'>
                             <div className="flex-1">
                                 <Label>Upload Photos</Label>
@@ -473,6 +527,7 @@ const AddProductForm = () => {
                                     ))}
                                 </div>
                             </div>
+
 
                             <div className="flex-1">
                                 <Label>Upload Videos</Label>
@@ -503,6 +558,7 @@ const AddProductForm = () => {
                             </div>
                         </div>
 
+
                         <Button type='submit' className="w-full bg-green-600 hover:bg-green-700">
                             {loading ? 'Adding...' : 'Add Product'}
                         </Button>
@@ -514,8 +570,11 @@ const AddProductForm = () => {
             </Tabs>
 
 
+
+
         </div>
     );
 };
+
 
 export default AddProductForm;

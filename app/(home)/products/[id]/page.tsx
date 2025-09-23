@@ -11,6 +11,8 @@ import MediaSlider from '@/components/shared/mediaSlider';
 import useAxios from '@/hooks/useAxios';
 import { Product } from '@/types';
 import LoadingScreen from '@/components/shared/LoadingScreen';
+import parse from 'html-react-parser';
+
 
 const Page = ({
   params,
@@ -216,7 +218,7 @@ const Page = ({
                 About This Product
               </h3>
               <p className="text-gray-300 leading-relaxed mb-6 text-sm sm:text-base">
-                {product.description}
+                 {parse(product.description || '' )}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 pt-4 border-t border-emerald-500/20">
