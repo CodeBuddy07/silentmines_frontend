@@ -19,7 +19,7 @@ export const DealSection = () => {
     const [products, setProducts] = useState<Product[]>([]);
 
     const getData = async () => {
-        const res = await useAxios.get(`/products/bestselling`);
+        const res = await useAxios.get(`/products/dealoftheweek`);
         setProducts(res.data.data.slice(0, 4));
     }
 
