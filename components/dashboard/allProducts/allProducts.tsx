@@ -1,5 +1,6 @@
 "use client";
 
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
@@ -11,8 +12,15 @@ import { Label } from "@radix-ui/react-label";
 import { toast } from "sonner";
 import Pagination from "@/components/shared/pagination";
 import axiosSecure from "@/lib/useAxiosSecure";
-import Image from "next/image";
 
+
+import dynamic from 'next/dynamic';  // to load Jodit on client side only
+
+
+
+
+// JoditEditor must be dynamically imported to prevent SSR issues
+const JoditEditor = dynamic(() => import('jodit-react'), { ssr: false });
 
 
 const AllProducts = () => {
@@ -37,15 +45,29 @@ const AllProducts = () => {
     const [loading, setLoading] = useState(false);
     const [type, setType] = useState();
 
+
+    // Add this function to handle description changes
+    const handleDescriptionChange = (newContent: string) => {
+        if (selectedProduct) {
+            setSelectedProduct({
+                ...selectedProduct,
+                description: newContent
+            });
+        }
+    };
+
+
     const handleUpdateProduct = async (e: any) => {
         e.preventDefault();
 
+
         const updatedProduct = {
             ...selectedProduct,
-            dealoftheweek: dealOfTheWeek,
+            dealofftheweek: dealOfTheWeek,
             bestSeller: bestSeller,
             subcategory: subCategory
         };
+
 
         // Prepare FormData if needed
         const formData = new FormData();
@@ -66,12 +88,15 @@ const AllProducts = () => {
         // Append image files
         imageFiles.forEach((file) => formData.append("photos", file));
 
+
         // Append video files
         videoFiles.forEach((file) => formData.append("videos", file));
+
 
         try {
             setLoading(true);
             const response = await axiosSecure.put(`/products/${updatedProduct._id}`, formData);
+
 
             if (response.status === 200) {
                 console.log("Product updated successfully:", response.data);
@@ -95,9 +120,11 @@ const AllProducts = () => {
         }
     };
 
+
     const fetchCategories = async () => {
         try {
             const response = await axiosSecure.get(`/categories`);
+
 
             if (response.data) {
                 setCategories(response.data)
@@ -107,9 +134,13 @@ const AllProducts = () => {
         }
     }
 
+
     const fetchProducts = async () => {
         try {
+            console.log('inside fetch');
             const response = await axiosSecure.get(`/products?page=${currentPage}&limit=6`);
+
+
             setProducts(response.data.data);
             setTotalPages(response.data.totalPages);
             setTotalItems(response.data.totalItems);
@@ -118,10 +149,12 @@ const AllProducts = () => {
         }
     };
 
+
     const fetchTypes = async () => {
         try {
             const response = await axiosSecure.get(`/types`);
             console.log(response.data);
+
 
             if (response.data) {
                 setType(response.data)
@@ -131,15 +164,18 @@ const AllProducts = () => {
         }
     }
 
+
     useEffect(() => {
         fetchCategories();
         fetchProducts();
     }, [editModal, currentPage]);
 
+
     const handleDelete = (product: any) => {
         setSelectedProduct(product);
         setDeleteModal(true);
     };
+
 
     const handleAddPriceUnit = () => {
         if (!priceInput || !unitInput) return;
@@ -148,9 +184,11 @@ const AllProducts = () => {
         setUnitInput('');
     };
 
+
     const handleDeletePriceUnit = (index: number) => {
         setPriceList(priceList.filter((_, i) => i !== index));
     };
+
 
     const handleEdit = (product: any) => {
         setSelectedProduct(product);
@@ -160,16 +198,20 @@ const AllProducts = () => {
         setVideosToDelete([]);
     };
 
+
     const confirmDelete = async () => {
         const response = await axiosSecure.delete(`/products/${selectedProduct._id}`);
+
 
         if (response.status === 200) {
             setProducts(products.filter((p) => p._id !== selectedProduct._id));
             toast.success("Product deleted successfully!");
         }
 
+
         setDeleteModal(false);
     };
+
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
@@ -178,12 +220,14 @@ const AllProducts = () => {
         }
     };
 
+
     const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (files) {
             setVideoFiles([...videoFiles, ...Array.from(files)]);
         }
     };
+
 
     // Function to mark a photo for deletion
     const markPhotoForDeletion = (index: number) => {
@@ -193,6 +237,7 @@ const AllProducts = () => {
             setPhotosToDelete([...photosToDelete, index]);
         }
     };
+
 
     // Function to mark a video for deletion
     const markVideoForDeletion = (index: number) => {
@@ -204,13 +249,13 @@ const AllProducts = () => {
     };
 
 
-
     useEffect(() => {
         fetchTypes();
         if (selectedProduct?.subcategory) {
             setSubCategory(selectedProduct.subcategory);
         }
     }, [selectedProduct]);
+
 
     return (
         <>
@@ -230,7 +275,6 @@ const AllProducts = () => {
                 ))}
 
 
-
                 {/* Delete Confirmation Modal */}
                 <DeleteProductModal
                     open={deleteModal}
@@ -239,13 +283,14 @@ const AllProducts = () => {
                     productName={selectedProduct?.name}
                 />
 
-                {/* Edit Product Modal */}
+
                 {/* Edit Product Modal */}
                 <Dialog open={editModal} onOpenChange={setEditModal}>
                     <DialogContent className="max-w-[95vw] sm:max-w-[90vw] md:max-w-4xl lg:max-w-5xl xl:max-w-6xl bg-black text-white border border-black p-3 sm:p-4 md:p-6 max-h-[95vh] overflow-y-auto">
                         <DialogHeader className="pb-2 sm:pb-4">
                             <DialogTitle className="text-lg sm:text-xl md:text-2xl">Update Product</DialogTitle>
                         </DialogHeader>
+
 
                         {selectedProduct && (
                             <form onSubmit={handleUpdateProduct} className="space-y-3 sm:space-y-4 md:space-y-6">
@@ -284,22 +329,48 @@ const AllProducts = () => {
                                             </SelectContent>
                                         </Select>
                                     </div>
+                                </div>
 
 
-                                    {/* Product Description */}
-                                    <div className="space-y-2">
-                                        <Label className="text-sm font-medium text-white">Description</Label>
-                                        <textarea
-                                            value={selectedProduct.description}
-                                            onChange={(e) =>
-                                                setSelectedProduct({ ...selectedProduct, description: e.target.value })
-                                            }
-                                            rows={3}
-                                            className="w-full bg-white/10 border border-white/20 px-3 py-2 rounded-md text-white text-sm sm:text-base resize-none"
-                                            required
+                                {/* Product Description - Full Width */}
+                                <div className="space-y-2">
+                                    <Label className="text-sm font-medium text-white">Description</Label>
+                                    <div className="bg-[#1a2a1a] rounded-md overflow-hidden">
+                                        <JoditEditor
+                                            value={selectedProduct.description || ''}
+                                            onBlur={handleDescriptionChange}
+                                            onChange={() => { }} // We handle changes in onBlur to avoid excessive re-renders
+                                            config={{
+                                                theme: 'dark',
+                                                height: 300,
+                                                style: {
+                                                    backgroundColor: '#1a2a1a',
+                                                    color: 'white',
+                                                    fontFamily: 'Arial, sans-serif',
+                                                    fontSize: '14px',
+                                                },
+                                                toolbar: true,
+                                                spellcheck: true,
+                                                language: 'en',
+                                                toolbarButtonSize: 'middle',
+                                                showCharsCounter: false,
+                                                showWordsCounter: false,
+                                                showXPathInStatusbar: false,
+                                                askBeforePasteHTML: false,
+                                                askBeforePasteFromWord: false,
+                                                buttons: [
+                                                    'bold', 'italic', 'underline', '|',
+                                                    'ul', 'ol', '|',
+                                                    'font', 'fontsize', '|',
+                                                    'paragraph', 'align', '|',
+                                                    'link', 'image', '|',
+                                                    'undo', 'redo'
+                                                ]
+                                            }}
                                         />
                                     </div>
                                 </div>
+
 
                                 {/* Category and Discount Section */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
@@ -316,6 +387,7 @@ const AllProducts = () => {
                                             required
                                         />
                                     </div>
+
 
                                     {/* Category */}
                                     <div className="space-y-2">
@@ -338,6 +410,7 @@ const AllProducts = () => {
                                             </SelectContent>
                                         </Select>
                                     </div>
+
 
                                     {/* Sub Category - Dynamic */}
                                     {categories.map(
@@ -364,6 +437,7 @@ const AllProducts = () => {
                                             ) : null
                                     )}
                                 </div>
+
 
                                 {/* Price Options Section */}
                                 <div className="space-y-3">
@@ -398,6 +472,7 @@ const AllProducts = () => {
                                     </div>
                                 </div>
 
+
                                 {/* Product Flags Section */}
                                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center">
                                     <div className="flex items-center gap-2">
@@ -411,6 +486,7 @@ const AllProducts = () => {
                                         <Label htmlFor="dealofweek" className="text-sm">Deal of the Week</Label>
                                     </div>
 
+
                                     <div className="flex items-center gap-2">
                                         <input
                                             type="checkbox"
@@ -423,6 +499,7 @@ const AllProducts = () => {
                                     </div>
                                 </div>
 
+
                                 {/* Media Management Section */}
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
                                     {/* Images Section */}
@@ -433,11 +510,9 @@ const AllProducts = () => {
                                             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-3 xl:grid-cols-4 gap-2">
                                                 {selectedProduct.photoUrls?.map((url: any, index: number) => (
                                                     <div key={index} className="relative aspect-square">
-                                                        <Image
+                                                        <img
                                                             src={url}
                                                             alt={`Product ${index + 1}`}
-                                                            width={500} // Add a width and height for better optimization
-                                                            height={500}
                                                             className={`rounded object-cover w-full h-full ${photosToDelete.includes(index) ? 'opacity-50 border-2 border-red-500' : ''}`}
                                                         />
                                                         <button
@@ -452,6 +527,7 @@ const AllProducts = () => {
                                             </div>
                                         </div>
 
+
                                         {/* New Image Upload */}
                                         <div className="space-y-2">
                                             <Label className="text-sm font-medium text-white">Upload New Images</Label>
@@ -465,11 +541,9 @@ const AllProducts = () => {
                                             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-3 xl:grid-cols-4 gap-2 mt-2">
                                                 {imageFiles.map((file, idx) => (
                                                     <div key={idx} className="relative aspect-square">
-                                                        <Image
+                                                        <img
                                                             src={URL.createObjectURL(file)}
                                                             alt={`New ${idx + 1}`}
-                                                            width={500} // Specify a width and height for optimization
-                                                            height={500}
                                                             className="rounded object-cover w-full h-full"
                                                         />
                                                         <button
@@ -485,6 +559,7 @@ const AllProducts = () => {
                                         </div>
                                     </div>
 
+
                                     {/* Videos Section */}
                                     <div className="space-y-3">
                                         {/* Existing Videos */}
@@ -494,7 +569,7 @@ const AllProducts = () => {
                                                 {selectedProduct.videoUrls?.map((url: any, index: number) => (
                                                     <div key={index} className="relative aspect-video">
                                                         <video
-                                                            src={url.replace('http://148.230.85.23:5000', 'https://server.greenlove.fun')}
+                                                            src={url}
                                                             controls
                                                             className={`rounded w-full h-full object-cover ${videosToDelete.includes(index) ? 'opacity-50 border-2 border-red-500' : ''}`}
                                                         />
@@ -510,6 +585,7 @@ const AllProducts = () => {
                                             </div>
                                         </div>
 
+
                                         {/* New Video Upload */}
                                         <div className="space-y-2 mt-10">
                                             <Label className="text-sm font-medium text-white">Upload New Videos</Label>
@@ -524,7 +600,7 @@ const AllProducts = () => {
                                                 {videoFiles.map((file, idx) => (
                                                     <div key={idx} className="relative aspect-video">
                                                         <video
-                                                            src={URL.createObjectURL(file).replace('http://148.230.85.23:5000', 'https://server.greenlove.fun')}
+                                                            src={URL.createObjectURL(file)}
                                                             controls
                                                             className="rounded w-full h-full object-cover"
                                                         />
@@ -541,6 +617,7 @@ const AllProducts = () => {
                                         </div>
                                     </div>
                                 </div>
+
 
                                 {/* Footer Actions */}
                                 <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0 pt-4 sm:pt-6 border-t border-white/10">
@@ -563,9 +640,8 @@ const AllProducts = () => {
                         )}
                     </DialogContent>
                 </Dialog>
-
-
             </div>
+
 
             <div className="flex items-center justify-center w-full">
                 {totalPages! > 1 && products.length > 0 && (
@@ -577,9 +653,8 @@ const AllProducts = () => {
                 )}
             </div>
         </>
-
     );
 };
 
-export default AllProducts;
 
+export default AllProducts;
