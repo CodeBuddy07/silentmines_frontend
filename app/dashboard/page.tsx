@@ -103,7 +103,7 @@ const AddProductForm = () => {
         formData.append('type', type);
         formData.append('discount', discount);
         formData.append('priceOptions', JSON.stringify(priceList));
-        formData.append('dealofftheweek', dealOfTheWeek ? 'true' : 'false');
+        formData.append('dealoftheweek', dealOfTheWeek ? 'true' : 'false');
         formData.append('bestSeller', bestSeller ? 'true' : 'false');
 
 
