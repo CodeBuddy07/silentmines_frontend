@@ -290,19 +290,19 @@ const AllProducts = () => {
 
 
                                     {/* Product Description */}
-                                    <div className="space-y-2">
+                                    <div className="space-y-2 w-full lg:col-span-2">
                                         <Label className="text-sm font-medium text-white">Description</Label>
                                         {/* <textarea
-                                            value={selectedProduct.description}
-                                            onChange={(e) =>
-                                                setSelectedProduct({ ...selectedProduct, description: e.target.value })
-                                            }
-                                            rows={3}
-                                            className="w-full bg-white/10 border border-white/20 px-3 py-2 rounded-md text-white text-sm sm:text-base resize-none"
-                                            required
-                                        /> */}
+        value={selectedProduct.description}
+        onChange={(e) =>
+            setSelectedProduct({ ...selectedProduct, description: e.target.value })
+        }
+        rows={3}
+        className="w-full bg-white/10 border border-white/20 px-3 py-2 rounded-md text-white text-sm sm:text-base resize-none"
+        required
+    /> */}
                                         <JoditEditor
-                                            className="w-full  border border-white/20 rounded-md  text-sm sm:text-base resize-y"
+                                            className="w-full max-w-full border border-white/20 rounded-md text-sm sm:text-base resize-y"
                                             value={selectedProduct.description}
                                             onBlur={(newContent) => setSelectedProduct({ ...selectedProduct, description: newContent })}
                                             onChange={() => { }}
@@ -318,6 +318,7 @@ const AllProducts = () => {
                                             }}
                                         />
                                     </div>
+
                                 </div>
 
                                 {/* Category and Discount Section */}
