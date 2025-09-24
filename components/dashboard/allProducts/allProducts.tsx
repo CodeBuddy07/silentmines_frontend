@@ -302,6 +302,7 @@ const AllProducts = () => {
                                             required
                                         /> */}
                                         <JoditEditor
+                                            className="w-full  border border-white/20 rounded-md  text-sm sm:text-base resize-y"
                                             value={selectedProduct.description}
                                             onBlur={(newContent) => setSelectedProduct({ ...selectedProduct, description: newContent })}
                                             onChange={() => { }}
