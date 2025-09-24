@@ -12,6 +12,9 @@ import { toast } from "sonner";
 import Pagination from "@/components/shared/pagination";
 import axiosSecure from "@/lib/useAxiosSecure";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const JoditEditor = dynamic(() => import('jodit-react'), { ssr: false });
 
 
 
@@ -289,7 +292,7 @@ const AllProducts = () => {
                                     {/* Product Description */}
                                     <div className="space-y-2">
                                         <Label className="text-sm font-medium text-white">Description</Label>
-                                        <textarea
+                                        {/* <textarea
                                             value={selectedProduct.description}
                                             onChange={(e) =>
                                                 setSelectedProduct({ ...selectedProduct, description: e.target.value })
@@ -297,6 +300,21 @@ const AllProducts = () => {
                                             rows={3}
                                             className="w-full bg-white/10 border border-white/20 px-3 py-2 rounded-md text-white text-sm sm:text-base resize-none"
                                             required
+                                        /> */}
+                                        <JoditEditor
+                                            value={selectedProduct.description}
+                                            onBlur={(newContent) => setSelectedProduct({ ...selectedProduct, description: newContent })}
+                                            onChange={() => { }}
+                                            config={{
+                                                theme: 'dark',
+                                                style: {
+                                                    backgroundColor: '#1a2a1a',
+                                                    color: 'white',
+                                                    fontFamily: 'Arial, sans-serif',
+                                                    fontSize: '14px',
+                                                },
+                                                height: 300
+                                            }}
                                         />
                                     </div>
                                 </div>
