@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
         auth: {
             user: 'resend', // Replace with your Resend email address
             pass: 're_gyd2HyWR_NYpVYu8ctmkqxKNv5576dhQd', // Replace with your Resend SMTP API key
+            //pass: 're_cHg9CKHi_LJcFyySACaDhnjo6n3DAVetm'
         },
     });
 
@@ -55,6 +56,8 @@ export async function POST(req: NextRequest) {
     const mailOptions = {
         from: 'The Green Thumb <orders@greenlove.fun>', // Replace with your Resend email address
         to: 'laxdrgreenthumb@proton.me', // Admin's email
+        //from: 'onboarding@resend.dev',
+        //to: 'delivered@resend.dev',
         subject: `New Order: ${orderData.orderId}`,
         html: emailContent,
     };
