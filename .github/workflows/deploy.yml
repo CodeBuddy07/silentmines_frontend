@@ -65,6 +65,9 @@ jobs:
             echo "🛑 Removing any existing PM2 process to reset CWD..."
             pm2 delete "$APP_NAME" || true
 
+            echo "Kill the process occupying port 3000"
+            sudo fuser -k 3000/tcp || true
+
             echo "🚀 Starting app with PM2 from ${APP_DIR}..."
             # NODE_ENV=production is recommended for Next.js
             NODE_ENV=production pm2 start "npm -- start" \
