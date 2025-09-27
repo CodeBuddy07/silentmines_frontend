@@ -26,7 +26,7 @@ const Header = () => {
                     className="text-3xl sm:text-5xl md:text-7xl text-white leading-tight"
                     style={{ fontFamily: "var(--font-planet-cosmos)" }}
                 >
-                    The Green Thumb* Test
+                    The Green Thumb*
                 </h1>
 
                 <div
