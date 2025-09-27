@@ -80,41 +80,41 @@ export default function OrderPopup({ children }: OrderPopupProps) {
     }
   };
 
-  function formatDateTime(dateString: string) {
-    const [day, time] = dateString.split('-'); // Split the input string into 'today/tomorrow' and time
+  // function formatDateTime(dateString: string) {
+  //   const [day, time] = dateString.split('-'); // Split the input string into 'today/tomorrow' and time
 
-    // Get the current date
-    const now = new Date();
+  //   // Get the current date
+  //   const now = new Date();
 
-    // Initialize target date as today
-    let targetDate = new Date(now);
+  //   // Initialize target date as today
+  //   let targetDate = new Date(now);
 
-    // If it's tomorrow, add one day
-    if (day === 'tomorrow') {
-      targetDate.setDate(now.getDate() + 1);
-    }
+  //   // If it's tomorrow, add one day
+  //   if (day === 'tomorrow') {
+  //     targetDate.setDate(now.getDate() + 1);
+  //   }
 
-    // Extract hours and minutes from the time string (e.g., '0800' -> hours = 8, minutes = 0)
-    const hours = parseInt(time.slice(0, 2), 10);
-    const minutes = parseInt(time.slice(2, 4), 10);
+  //   // Extract hours and minutes from the time string (e.g., '0800' -> hours = 8, minutes = 0)
+  //   const hours = parseInt(time.slice(0, 2), 10);
+  //   const minutes = parseInt(time.slice(2, 4), 10);
 
-    // Set the hours and minutes for the target date
-    targetDate.setHours(hours);
-    targetDate.setMinutes(minutes);
-    targetDate.setSeconds(0); // Optionally reset seconds to 0
+  //   // Set the hours and minutes for the target date
+  //   targetDate.setHours(hours);
+  //   targetDate.setMinutes(minutes);
+  //   targetDate.setSeconds(0); // Optionally reset seconds to 0
 
-    // Format the time to 12-hour format with AM/PM
-    const options: Intl.DateTimeFormatOptions = { hour: "2-digit", minute: "2-digit", hour12: true };
-    const formattedTime = new Intl.DateTimeFormat('en-US', options).format(targetDate);
+  //   // Format the time to 12-hour format with AM/PM
+  //   const options: Intl.DateTimeFormatOptions = { hour: "2-digit", minute: "2-digit", hour12: true };
+  //   const formattedTime = new Intl.DateTimeFormat('en-US', options).format(targetDate);
 
-    // Return the final formatted string
-    if (day === 'today') {
-      return `Today at ${formattedTime}`;
-    } else if (day === 'tomorrow') {
-      return `Tomorrow at ${formattedTime}`;
-    }
-    return '';
-  }
+  //   // Return the final formatted string
+  //   if (day === 'today') {
+  //     return `Today at ${formattedTime}`;
+  //   } else if (day === 'tomorrow') {
+  //     return `Tomorrow at ${formattedTime}`;
+  //   }
+  //   return '';
+  // }
 
   const handleSubmit = async () => {
     if (cart.length === 0) {
@@ -134,7 +134,7 @@ export default function OrderPopup({ children }: OrderPopupProps) {
     const orderData = {
       cart: cart,
       total: getCartTotal(),
-      pickupTime: formatDateTime(formData.pickupTime),
+      pickupTime: formData.pickupTime,
       phoneNumber: formData.phoneNumber,
       orderNotes: formData.orderNotes,
       orderDate: new Date().toISOString(),
