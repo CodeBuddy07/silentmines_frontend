@@ -67,7 +67,7 @@ export default function OrderPopup({ children }: OrderPopupProps) {
 
     // Filter out unavailable slots
     return selectedTimeSlots.filter(slot => slot.isAvailable).map(slot => ({
-      value: `${slot.day}-${slot.time.replace(":", "").toLowerCase()}`,  // Creating a value based on day and time
+      value: slot.time,  // Creating a value based on day and time
       label: slot.time, // Showing time label from backend data
     }));
   };
