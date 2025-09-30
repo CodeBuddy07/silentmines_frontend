@@ -170,7 +170,7 @@ const Page = ({
               </div>
 
               {/* Desktop: Side-by-side Layout */}
-              <div className="hidden sm:flex justify-between items-center gap-4">
+              <div className="hidden sm:flex justify-between items-center gap-4 max-w-[700px] flex-wrap">
                 <div className="flex items-center gap-3">
                   {product.priceOptions.map((price) => (
                     <button
