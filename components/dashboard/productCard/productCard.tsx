@@ -41,8 +41,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
     const [isHovered, setIsHovered] = useState(false);
     // console.log(subcategory);
     
-    // Ensure prices is always an array
-    const productPrices = Array.isArray(priceOptions) ? priceOptions : [];
+    // Ensure prices is always an array and exclude zero-price options
+    const productPrices = Array.isArray(priceOptions) ? priceOptions.filter(p => p.price > 0) : [];
     return (
         <Card
             className="pt-0 backdrop-blur-sm border border-white/10 overflow-hidden bg-green-600/5 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/50 group flex flex-col"
