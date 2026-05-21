@@ -76,6 +76,9 @@ const CategoryPage = () => {
 
 
 
+  const startItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+
   // Loading state (simulate loading)
   if (!category) {
     return (
@@ -179,9 +182,12 @@ const CategoryPage = () => {
 
               {/* Controls Bar */}
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-gray-900/80 backdrop-blur-sm border border-gray-700 p-4 rounded-lg shadow-lg">
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center gap-3 flex-wrap">
                   <span className="text-sm font-medium text-gray-300">
-                    Total {totalItems} products
+                    {totalItems === 0
+                      ? 'No products'
+                      : <>Showing <span className="text-white font-semibold">{startItem}–{endItem}</span> of <span className="text-green-400 font-semibold">{totalItems}</span> products</>
+                    }
                   </span>
                 </div>
 
@@ -248,7 +254,9 @@ const CategoryPage = () => {
               {products.length > 0 && (
                 <div className="text-center mt-8 p-4 bg-gray-900/80 backdrop-blur-sm border border-gray-700 rounded-lg shadow-lg">
                   <p className="text-sm text-gray-300">
-                    Page {currentPage} of {totalPages} • Showing {products.length} products
+                    Page <span className="text-white font-medium">{currentPage}</span> of <span className="text-white font-medium">{totalPages}</span>
+                    {' · '}
+                    Showing <span className="text-white font-medium">{startItem}–{endItem}</span> of <span className="text-green-400 font-semibold">{totalItems}</span> products
                   </p>
                 </div>
               )}
