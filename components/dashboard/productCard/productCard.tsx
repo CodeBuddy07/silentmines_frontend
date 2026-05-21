@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import defaultProductImage from "@/public/image_not_available.png";
+import { normalizeMediaUrl } from '@/lib/utils';
 
 // Price type to match the structure you're using for prices
 export interface Price {
@@ -52,15 +53,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <div className="relative overflow-hidden">
                 <div className="relative w-full h-64">
                     <Image
-                        src={image[0] || defaultProductImage}
+                        src={image[0] ? normalizeMediaUrl(image[0]) : defaultProductImage}
                         alt={name}
                         fill
                         className={`object-cover transition-transform duration-700 ${isHovered ? 'scale-110' : 'scale-100'}`}
                     />
                 </div>
-                <Badge className="absolute top-4 right-4 bg-red-600 hover:bg-red-600 text-white">
-                    {discount}% OFF
-                </Badge>
+                {discount > 0 && (
+                    <Badge className="absolute top-4 right-4 bg-red-600 hover:bg-red-600 text-white">
+                        {discount}% OFF
+                    </Badge>
+                )}
             </div>
 
             <CardContent className="p-6 flex flex-col flex-1 justify-between">
