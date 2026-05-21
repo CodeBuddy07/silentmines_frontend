@@ -46,10 +46,9 @@ const Navbar = () => {
     const categoryItems = categories.map((category) => ({
       name: category.name,
       href: `/categories/${category.name}`,
-      // Only show subcategories in dropdown for preview, but they won't have separate pages
       sub: category.subcategories.length > 0 ? category.subcategories.map(sub => ({
         name: sub.name,
-        href: `/categories/${category.name}` // Same href as parent, filtering happens on the page
+        href: `/categories/${category.name}?subcategory=${encodeURIComponent(sub.name)}`
       })) : undefined
     }));
 
@@ -79,7 +78,7 @@ const Navbar = () => {
           id: `sub-${sub._id}`,
           title: sub.name,
           category: category.name,
-          url: `/categories/${category.name}` // Same URL, filtering will happen on the page
+          url: `/categories/${category.name}?subcategory=${encodeURIComponent(sub.name)}`
         });
       });
     });
@@ -265,11 +264,11 @@ const Navbar = () => {
                           </div>
                         </Link>
 
-                        {/* Subcategories - these show info but link to main category page */}
+                        {/* Subcategories */}
                         {item.sub.map((subItem: any, index: number) => (
                           <Link
                             key={subItem.name}
-                            href={item.href || '#'}
+                            href={subItem.href || '#'}
                             className={`
                             block px-4 py-3 text-sm transition-all duration-200 transform hover:translate-x-1
                             text-gray-300 hover:text-green-500 hover:bg-green-600/10
@@ -388,11 +387,11 @@ const Navbar = () => {
                         <div className="font-medium">View All {item.name}</div>
                       </Link>
 
-                      {/* Subcategories for Mobile - all link to main category */}
+                      {/* Subcategories for Mobile */}
                       {item.sub.map((subItem:any, subIndex: any) => (
                         <Link
                           key={subItem.name}
-                          href={item.href || '#'}
+                          href={subItem.href || '#'}
                           onClick={() => setIsMenuOpen(false)}
                           className={`
                           block px-3 py-2 rounded-md text-sm transition-all duration-200 transform

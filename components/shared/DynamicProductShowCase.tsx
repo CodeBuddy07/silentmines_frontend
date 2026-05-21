@@ -40,6 +40,9 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
 
     // Remove the useEffect that was syncing with prop changes
 
+    const startItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+    const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+
     return (
         <div className="min-h-screen bg-black/60 backdrop-blur-[1px]">
             {/* Rotating Quality Badge */}
@@ -129,22 +132,22 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
                 {/* Active Filter Display */}
                 {activeSubCategory && activeSubCategory !== 'all' && (
                     <div className="mb-6 p-4 bg-green-900/20 border border-green-800 rounded-lg">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
-                                <span className="text-green-400 font-medium">
-                                    Filtered by: {category.subcategories?.find((sub: Subcategory) => sub.name === activeSubCategory)?.name}
+                        <div className="flex items-center justify-between flex-wrap gap-3">
+                            <div className="flex items-center gap-3 flex-wrap">
+                                <span className="text-green-400 font-semibold">
+                                    {category.subcategories?.find((sub: Subcategory) => sub.name === activeSubCategory)?.name}
                                 </span>
-                                <span className="text-xs text-gray-400">
-                                    {products.length} products found
+                                <span className="text-xs bg-green-700/40 text-green-300 px-2 py-0.5 rounded-full font-medium">
+                                    {totalItems} {totalItems === 1 ? 'product' : 'products'} total
                                 </span>
                             </div>
                             <Button
                                 variant="outline"
                                 size="sm"
-                                className="text-black border-gray-600 hover:border-green-500"
+                                className="text-white border-gray-600 hover:border-green-500 hover:text-green-400"
                                 onClick={() => handleSubCategoryChange('')}
                             >
-                                Clear Filter
+                                ✕ Clear Filter
                             </Button>
                         </div>
                     </div>
@@ -152,10 +155,16 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
 
                 {/* Controls Bar */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-gray-900/80 backdrop-blur-sm border border-gray-700 p-4 rounded-lg shadow-lg">
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center gap-3 flex-wrap">
                         <span className="text-sm font-medium text-gray-300">
-                            Showing {products.length} products
+                            {totalItems === 0
+                                ? 'No products'
+                                : <>Showing <span className="text-white font-semibold">{startItem}–{endItem}</span> of <span className="text-green-400 font-semibold">{totalItems}</span> products</>
+                            }
                         </span>
+                        {activeSubCategory && activeSubCategory !== 'all' && (
+                            <span className="text-xs text-green-400/80">in {activeSubCategory}</span>
+                        )}
                     </div>
 
                     <div className="flex items-center space-x-4">
@@ -235,9 +244,11 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
                 {products.length > 0 && (
                     <div className="text-center mt-8 p-4 bg-gray-900/80 backdrop-blur-sm border border-gray-700 rounded-lg shadow-lg">
                         <p className="text-sm text-gray-300">
-                            Page {currentPage} of {totalPages} • Showing {products.length} products
+                            Page <span className="text-white font-medium">{currentPage}</span> of <span className="text-white font-medium">{totalPages}</span>
+                            {' · '}
+                            Showing <span className="text-white font-medium">{startItem}–{endItem}</span> of <span className="text-green-400 font-semibold">{totalItems}</span> products
                             {activeSubCategory && activeSubCategory !== 'all' && (
-                                <span className="ml-2 text-green-400">
+                                <span className="ml-1 text-green-400">
                                     in {category.subcategories?.find((sub: Subcategory) => sub.name === activeSubCategory)?.name}
                                 </span>
                             )}

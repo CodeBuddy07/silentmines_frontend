@@ -5,7 +5,7 @@ import DynamicProductShowCase from '@/components/shared/DynamicProductShowCase';
 import LoadingScreen from '@/components/shared/LoadingScreen';
 import useAxios from '@/hooks/useAxios';
 import { Product, ProductCategory } from '@/types';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
 
@@ -13,6 +13,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 const CategoryPage = () => {
   const params = useParams();
+  const searchParams = useSearchParams();
   const categorySlug = params.slug as string;
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,7 +22,9 @@ const CategoryPage = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<ProductCategory[]>([]);
-  const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
+  const [activeSubCategory, setActiveSubCategory] = useState<string | null>(
+    searchParams.get('subcategory') || null
+  );
 
   const getCategories = async () => {
     const res = await useAxios.get(`/categories`);
@@ -41,6 +44,15 @@ const CategoryPage = () => {
     setTotalItems(res.data.totalItems);
   }
 
+
+  // Sync activeSubCategory when URL search param changes (e.g. nav link click)
+  useEffect(() => {
+    const subFromUrl = searchParams.get('subcategory') || null;
+    if (subFromUrl !== activeSubCategory) {
+      setActiveSubCategory(subFromUrl);
+      setCurrentPage(1);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     getData();
