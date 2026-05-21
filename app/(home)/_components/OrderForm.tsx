@@ -429,19 +429,9 @@ export default function OrderPopup({ children }: OrderPopupProps) {
                 className="bg-emerald-900/20 border-emerald-500/40 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/30 text-xs sm:text-sm"
                 required
               />
-              <div className="mt-3 p-3 sm:p-4 bg-red-950/60 border-2 border-red-500/70 rounded-lg">
-                <p className="text-sm sm:text-base leading-relaxed text-white">
-                  <span className="text-red-500 font-bold">IMPORTANT:</span>{' '}
-                  You MUST download the Signal app (
-                  <Link href="https://signal.org/download/" target="_blank" className="text-blue-400 underline font-medium">
-                    signal.org
-                  </Link>
-                  ) and make sure your Signal app privacy settings allow others to{' '}
-                  <span className="font-semibold text-yellow-300">Find You by Phone Number</span>. This setting can be enabled during Signal app setup or later inside the Signal app&apos;s{' '}
-                  <span className="font-semibold text-yellow-300">Settings &gt; Privacy</span> section. If this setting is turned off, we will be unable to contact you, and you will{' '}
-                  <span className="font-bold text-red-400">NOT</span> receive your order confirmation or parking instructions.
-                </p>
-              </div>
+              <p className="text-xs text-emerald-200/70 mt-1">
+                We'll send your order confirmation and parking instructions via Signal.
+              </p>
             </div>
           </div>
 

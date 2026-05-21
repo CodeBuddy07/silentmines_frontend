@@ -77,16 +77,37 @@ export default function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
         <div className="p-5">
           {/* Prompt step */}
           {step === 'prompt' && (
-            <div className="text-center space-y-5">
-              <div className="w-16 h-16 bg-emerald-600/20 rounded-full flex items-center justify-center mx-auto">
-                <CheckCircle className="w-8 h-8 text-emerald-400" />
+            <div className="space-y-5">
+              <div className="text-center space-y-3">
+                <div className="w-16 h-16 bg-emerald-600/20 rounded-full flex items-center justify-center mx-auto">
+                  <CheckCircle className="w-8 h-8 text-emerald-400" />
+                </div>
+                <div>
+                  <p className="text-white font-medium text-lg mb-1">Your order is on its way!</p>
+                  <p className="text-gray-400 text-sm">
+                    We'll reach out via Signal with your confirmation and parking instructions.
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-white font-medium text-lg mb-1">Your order is on its way!</p>
-                <p className="text-gray-400 text-sm">
-                  Would you like to share your experience and leave a review?
+
+              {/* Signal IMPORTANT notice */}
+              <div className="p-4 bg-red-950/70 border-2 border-red-500/80 rounded-xl">
+                <p className="text-sm leading-relaxed text-white">
+                  <span className="text-red-500 font-bold text-base">⚠ IMPORTANT:</span>
+                  <br />
+                  You MUST download the Signal app (
+                  <a href="https://signal.org/download/" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline font-medium">
+                    signal.org
+                  </a>
+                  ) and make sure your Signal app privacy settings allow others to{' '}
+                  <span className="font-semibold text-yellow-300">Find You by Phone Number</span>.
+                  This setting can be enabled during Signal app setup or later inside the Signal app&apos;s{' '}
+                  <span className="font-semibold text-yellow-300">Settings &gt; Privacy</span> section.
+                  If this setting is turned off, we will be unable to contact you, and you will{' '}
+                  <span className="font-bold text-red-400">NOT</span> receive your order confirmation or parking instructions.
                 </p>
               </div>
+
               <div className="flex gap-3">
                 <Button
                   variant="ghost"

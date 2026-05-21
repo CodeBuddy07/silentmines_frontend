@@ -141,14 +141,12 @@ const DynamicProductShowCase: React.FC<DynamicProductShowCaseProps> = ({
                                     {totalItems} {totalItems === 1 ? 'product' : 'products'} total
                                 </span>
                             </div>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="text-white border-gray-600 hover:border-green-500 hover:text-green-400"
+                            <button
                                 onClick={() => handleSubCategoryChange('')}
+                                className="text-sm text-gray-300 border border-gray-600 bg-transparent hover:border-green-500 hover:text-green-400 px-3 py-1.5 rounded-md transition-colors duration-200"
                             >
                                 ✕ Clear Filter
-                            </Button>
+                            </button>
                         </div>
                     </div>
                 )}
