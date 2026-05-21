@@ -37,10 +37,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
     
     const [isHovered, setIsHovered] = useState(false);
-    const [selectedWeight, setSelectedWeight] = useState<string>(priceOptions[0]?.unit || '');
+
+    const validPriceOptions = priceOptions.filter(p => Number(p.price) > 0);
+    const [selectedWeight, setSelectedWeight] = useState<string>(validPriceOptions[0]?.unit || '');
 
     // Get current price based on selected weight
-    const currentPrice = priceOptions.find(p => p.unit === selectedWeight)?.price || priceOptions[0]?.price || '0';
+    const currentPrice = validPriceOptions.find(p => p.unit === selectedWeight)?.price || validPriceOptions[0]?.price || '0';
 
     console.log("Image Data:  ",image);
 
@@ -64,7 +66,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 </div>
 
                 {discount && discount > 0 && (
-                    <Badge className="absolute top-4 right-4 bg-red-600 hover:bg-red-600 text-white">
+                    <Badge variant="outline" className="absolute top-4 right-4 bg-red-600 border-red-500 hover:bg-red-700 text-white">
                         {discount}% OFF
                     </Badge>
                 )}
@@ -89,19 +91,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     <div className="flex flex-wrap gap-2 text-xs">
 
                         {dealoftheweek && (
-                            <Badge variant="secondary" className="bg-white/10 text-white/80 hover:bg-white/20">
-                                {dealoftheweek ? 'Deal of the Week' : ''}
+                            <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">
+                                Deal of the Week
                             </Badge>
                         )}
 
                         {bestSeller && (
-                            <Badge variant="secondary" className="bg-white/10 text-white/80 hover:bg-white/20">
-                                {bestSeller ? 'Best Seller' : ''}
+                            <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">
+                                Best Seller
                             </Badge>
                         )}
 
                         {type && (
-                            <Badge variant="secondary" className="bg-white/10 text-white/80 hover:bg-white/20">
+                            <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">
                                 {type.charAt(0).toUpperCase() + type.slice(1)}
                             </Badge>
                         )}
@@ -120,7 +122,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
                         {/* Weight Options */}
                         <div className="flex flex-wrap gap-2">
-                            {priceOptions.map((price, index) => (
+                            {validPriceOptions.map((price, index) => (
                                 <button
                                     key={index}
                                     onClick={() => setSelectedWeight(price.unit)}
@@ -171,7 +173,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                             discount: discount ?? 0,
                             category,
                             name,
-                            priceOptions,
+                            priceOptions: validPriceOptions,
                             subcategory: subcategory || '',
                             description: `Premium ${category} - ${name}`, // Generate description
                             videoUrls: [],

@@ -60,7 +60,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     />
                 </div>
                 {discount > 0 && (
-                    <Badge className="absolute top-4 right-4 bg-red-600 hover:bg-red-600 text-white">
+                    <Badge variant="outline" className="absolute top-4 right-4 bg-red-600 border-red-500 hover:bg-red-700 text-white">
                         {discount}% OFF
                     </Badge>
                 )}
@@ -70,8 +70,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 {/* Top Info */}
                 <div className="space-y-3">
                     <div className="flex flex-wrap gap-2 text-xs">
-                        <Badge variant="secondary" className="bg-white/10 text-white/80 hover:bg-white/20">{category}</Badge>
-                        <Badge variant="secondary" className="bg-white/10 text-white/80 hover:bg-white/20">{subcategory}</Badge>
+                        <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">{category}</Badge>
+                        <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">{subcategory}</Badge>
                     </div>
 
                     <h3 className="text-lg font-bold text-white group-hover:text-white/90 transition-colors">
