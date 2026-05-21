@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -39,12 +39,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
     const [isHovered, setIsHovered] = useState(false);
 
     const validPriceOptions = priceOptions.filter(p => Number(p.price) > 0);
-    const [selectedWeight, setSelectedWeight] = useState<string>(validPriceOptions[0]?.unit || '');
+    const [selectedWeight, setSelectedWeight] = useState<string>('');
 
-    // Get current price based on selected weight
-    const currentPrice = validPriceOptions.find(p => p.unit === selectedWeight)?.price || validPriceOptions[0]?.price || '0';
+    // Sync selectedWeight whenever priceOptions load or change
+    useEffect(() => {
+        const firstValid = priceOptions.find(p => Number(p.price) > 0);
+        if (firstValid) setSelectedWeight(firstValid.unit);
+    }, [priceOptions]);
 
-    console.log("Image Data:  ",image);
+    // Use nullish-safe lookup — never fall back to a 0-price option
+    const selectedOption = validPriceOptions.find(p => p.unit === selectedWeight) ?? validPriceOptions[0];
+    const currentPrice = selectedOption?.price ?? 0;
 
     return (
         <Card
@@ -114,41 +119,42 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     </h3>
 
                     {/* Weight Selection */}
-                    <div className="space-y-3">
-                        <div className="flex items-center gap-2 text-sm text-white/80">
-                            <span>Weight:</span>
-                            <span className="text-green-400 font-semibold">{selectedWeight}</span>
-                        </div>
-
-                        {/* Weight Options */}
-                        <div className="flex flex-wrap gap-2">
-                            {validPriceOptions.map((price, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => setSelectedWeight(price.unit)}
-                                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${selectedWeight === price.unit
-                                        ? 'bg-green-500 text-white shadow-lg shadow-green-500/30'
-                                        : 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white'
-                                        }`}
-                                >
-                                    {price.unit}
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* Current Price Display */}
-                        <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/10">
-                            <span className="text-white/80 text-sm">Price for {selectedWeight}</span>
-                            <div className="flex items-center gap-2">
-                                {discount && discount > 0 && (
-                                    <span className="text-white/60 line-through text-sm">
-                                        ${Math.round(Number(currentPrice) / (1 - discount / 100))}
-                                    </span>
-                                )}
-                                <span className="text-green-400 font-bold text-lg">${currentPrice}</span>
+                    {validPriceOptions.length > 0 ? (
+                        <div className="space-y-3">
+                            {/* Weight Options */}
+                            <div className="flex flex-wrap gap-2">
+                                {validPriceOptions.map((price, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => setSelectedWeight(price.unit)}
+                                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${selectedWeight === price.unit
+                                            ? 'bg-green-500 text-white shadow-lg shadow-green-500/30'
+                                            : 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white'
+                                            }`}
+                                    >
+                                        {price.unit}
+                                    </button>
+                                ))}
                             </div>
+
+                            {/* Current Price Display */}
+                            {currentPrice > 0 && (
+                                <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/10">
+                                    <span className="text-white/80 text-sm">Price for {selectedWeight || validPriceOptions[0]?.unit}</span>
+                                    <div className="flex items-center gap-2">
+                                        {discount && discount > 0 && (
+                                            <span className="text-white/60 line-through text-sm">
+                                                ${Math.round(currentPrice / (1 - discount / 100))}
+                                            </span>
+                                        )}
+                                        <span className="text-green-400 font-bold text-lg">${currentPrice}</span>
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                    </div>
+                    ) : (
+                        <p className="text-gray-500 text-sm">No pricing available</p>
+                    )}
                 </div>
 
                 {/* Add to Bag Button */}
