@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import Pagination from "@/components/shared/pagination";
 import axiosSecure from "@/lib/useAxiosSecure";
 import Image from "next/image";
+import { normalizeMediaUrl } from "@/lib/utils";
 import dynamic from "next/dynamic";
 
 const JoditEditor = dynamic(() => import('jodit-react'), { ssr: false });
@@ -557,7 +558,7 @@ const AllProducts = () => {
                                                 {selectedProduct.videoUrls?.map((url: any, index: number) => (
                                                     <div key={index} className="relative aspect-video">
                                                         <video
-                                                            src={url.replace('http://148.230.85.23:5000', 'https://server.greenlove.fun')}
+                                                            src={normalizeMediaUrl(url)}
                                                             controls
                                                             className={`rounded w-full h-full object-cover ${videosToDelete.includes(index) ? 'opacity-50 border-2 border-red-500' : ''}`}
                                                         />
@@ -587,7 +588,7 @@ const AllProducts = () => {
                                                 {videoFiles.map((file, idx) => (
                                                     <div key={idx} className="relative aspect-video">
                                                         <video
-                                                            src={URL.createObjectURL(file).replace('http://148.230.85.23:5000', 'https://server.greenlove.fun')}
+                                                            src={URL.createObjectURL(file)}
                                                             controls
                                                             className="rounded w-full h-full object-cover"
                                                         />

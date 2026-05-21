@@ -35,7 +35,7 @@ const nextConfig: NextConfig = {
       // For IP address access (if needed)
       {
         protocol: "http",
-        hostname: "148.230.85.23",
+        hostname: "72.62.128.216",
         port: "5000",
         pathname: "/uploads/**",
       },
