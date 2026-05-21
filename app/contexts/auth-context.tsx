@@ -4,32 +4,39 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 
 interface AuthContextType {
   isAuthenticated: boolean
-  login: (password: string) => boolean
+  login: (password: string) => Promise<boolean>
   logout: () => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-const CORRECT_PASSWORD = 'vipfam' // Change this!
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
-    // Check if user was previously authenticated
     const authStatus = sessionStorage.getItem('authenticated')
     if (authStatus === 'true') {
       setIsAuthenticated(true)
     }
   }, [])
 
-  const login = (password: string): boolean => {
-    if (password === CORRECT_PASSWORD) {
-      setIsAuthenticated(true)
-      sessionStorage.setItem('authenticated', 'true')
-      return true
+  const login = async (password: string): Promise<boolean> => {
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      })
+
+      if (res.ok) {
+        setIsAuthenticated(true)
+        sessionStorage.setItem('authenticated', 'true')
+        return true
+      }
+      return false
+    } catch {
+      return false
     }
-    return false
   }
 
   const logout = () => {

@@ -63,7 +63,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     />
                 </div>
 
-                {discount && (
+                {discount && discount > 0 && (
                     <Badge className="absolute top-4 right-4 bg-red-600 hover:bg-red-600 text-white">
                         {discount}% OFF
                     </Badge>
@@ -138,7 +138,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                         <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/10">
                             <span className="text-white/80 text-sm">Price for {selectedWeight}</span>
                             <div className="flex items-center gap-2">
-                                {discount && (
+                                {discount && discount > 0 && (
                                     <span className="text-white/60 line-through text-sm">
                                         ${Math.round(Number(currentPrice) / (1 - discount / 100))}
                                     </span>

@@ -18,7 +18,8 @@ import Link from 'next/link';
 import { TimeSlot } from '@/types';
 import useAxios from '@/hooks/useAxios';
 import { toast } from 'sonner';
-import Image from 'next/image'; // Importing Image from Next.js for optimization
+import Image from 'next/image';
+import ReviewModal from '@/components/shared/ReviewModal';
 
 interface OrderFormData {
   pickupDate: 'today' | 'tomorrow';
@@ -34,6 +35,7 @@ interface OrderPopupProps {
 export default function OrderPopup({ children }: OrderPopupProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
   const { cart, updateQuantity, removeFromCart, clearCart, getCartTotal, getCartItemCount } = useCart();
 
   const [formData, setFormData] = useState<OrderFormData>({
@@ -160,7 +162,6 @@ export default function OrderPopup({ children }: OrderPopupProps) {
 
       if (response.ok) {
         setLoading(false);
-        const data = await response.json();
         toast.success(`Order submitted successfully!`);
         setFormData({
           pickupDate: 'today',
@@ -170,6 +171,7 @@ export default function OrderPopup({ children }: OrderPopupProps) {
         });
         clearCart();
         setIsOpen(false);
+        setShowReviewModal(true);
       } else {
         setLoading(false);
         const errorData = await response.json();
@@ -193,6 +195,8 @@ export default function OrderPopup({ children }: OrderPopupProps) {
   const cartTotal = getCartTotal();
 
   return (
+    <>
+    <ReviewModal isOpen={showReviewModal} onClose={() => setShowReviewModal(false)} />
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         {children}
@@ -450,5 +454,6 @@ export default function OrderPopup({ children }: OrderPopupProps) {
         </div>
       </DialogContent>
     </Dialog>
+    </>
   );
 }

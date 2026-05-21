@@ -10,13 +10,16 @@ import { useAuth } from '@/app/contexts/auth-context'
 export default function LoginForm() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const { login } = useAuth()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (login(password)) {
-      setError('')
-    } else {
+    setLoading(true)
+    setError('')
+    const ok = await login(password)
+    setLoading(false)
+    if (!ok) {
       setError('Incorrect password. Please try again.')
     }
   }
@@ -26,7 +29,7 @@ export default function LoginForm() {
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-green-900/70">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px]"></div>
       </div>
-      
+
       <Card className="w-full max-w-md bg-gray-800/50 border-gray-700 backdrop-blur-sm relative z-10">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 bg-gray-700 rounded-full flex items-center justify-center">
@@ -52,11 +55,12 @@ export default function LoginForm() {
                 <p className="text-red-400 text-sm mt-2">{error}</p>
               )}
             </div>
-            <Button 
-              type="submit" 
-              className="w-full bg-green-700 hover:bg-green-600 text-gray-100"
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-green-700 hover:bg-green-600 text-gray-100 disabled:opacity-50"
             >
-              Submit
+              {loading ? 'Checking…' : 'Submit'}
             </Button>
           </form>
         </CardContent>

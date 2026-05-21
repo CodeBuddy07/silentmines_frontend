@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Pencil, Trash2, Search, X } from "lucide-react";
 import ProductCard from "../productCard/productCard";
 import DeleteProductModal from "../deleteProductModal/deleteProductModal";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -39,6 +40,8 @@ const AllProducts = () => {
     const [totalItems, setTotalItems] = useState(0);
     const [loading, setLoading] = useState(false);
     const [type, setType] = useState();
+    const [searchInput, setSearchInput] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
 
     const handleUpdateProduct = async (e: any) => {
         e.preventDefault();
@@ -112,7 +115,12 @@ const AllProducts = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await axiosSecure.get(`/products?page=${currentPage}&limit=6`);
+            const params = new URLSearchParams({
+                page: String(currentPage),
+                limit: '6',
+                ...(searchTerm ? { search: searchTerm } : {}),
+            });
+            const response = await axiosSecure.get(`/products?${params}`);
             setProducts(response.data.data);
             setTotalPages(response.data.totalPages);
             setTotalItems(response.data.totalItems);
@@ -134,10 +142,19 @@ const AllProducts = () => {
         }
     }
 
+    // Debounce search input → searchTerm
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setSearchTerm(searchInput);
+            setCurrentPage(1);
+        }, 400);
+        return () => clearTimeout(timer);
+    }, [searchInput]);
+
     useEffect(() => {
         fetchCategories();
         fetchProducts();
-    }, [editModal, currentPage]);
+    }, [editModal, currentPage, searchTerm]);
 
     const handleDelete = (product: any) => {
         setSelectedProduct(product);
@@ -217,6 +234,32 @@ const AllProducts = () => {
 
     return (
         <>
+            {/* Search bar */}
+            <div className="mb-6 flex items-center gap-2">
+                <div className="relative flex-1 max-w-sm">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+                    <Input
+                        placeholder="Search products…"
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        className="pl-9 bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-green-500"
+                    />
+                    {searchInput && (
+                        <button
+                            onClick={() => setSearchInput('')}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
+                        >
+                            <X className="h-4 w-4" />
+                        </button>
+                    )}
+                </div>
+                {searchTerm && (
+                    <span className="text-sm text-white/60">
+                        {totalItems} result{totalItems !== 1 ? 's' : ''} for &quot;{searchTerm}&quot;
+                    </span>
+                )}
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {products.map((product) => (
                     <div key={product._id} className="relative group">
