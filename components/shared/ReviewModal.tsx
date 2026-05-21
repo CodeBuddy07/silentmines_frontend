@@ -112,7 +112,7 @@ export default function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
                 <Button
                   variant="ghost"
                   onClick={handleClose}
-                  className="flex-1 border border-gray-600 text-gray-300 hover:bg-gray-800"
+                  className="flex-1 border border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-green-600"
                 >
                   Maybe Later
                 </Button>
@@ -191,7 +191,7 @@ export default function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
                   type="button"
                   variant="ghost"
                   onClick={() => setStep('prompt')}
-                  className="flex-1 border border-gray-600 text-gray-300 hover:bg-gray-800"
+                  className="flex-1 border border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-green-600"
                 >
                   Back
                 </Button>
