@@ -90,9 +90,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 </Link>
             </div>
 
-            <CardContent className="p-6 flex flex-col flex-1 ">
+            <CardContent className="pb-6 pt-2 flex flex-col flex-1 ">
                 {/* Top Info */}
-                <div className="">
+                <div className="space-y-6">
                     <div className="flex flex-wrap gap-2 text-xs">
 
                         {dealoftheweek && (
@@ -169,8 +169,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 </div>
 
                 {/* Add to Bag Button */}
-                <div className='w-full flex h-full flex-1 flex-col justify-center items-end content-end gap-2 mt-5'>
-                    <Link href={`/products/${id}`} className="w-full">
+                <div className='w-full flex h-full  flex-col justify-center items-end content-end bottom-0 gap-2 mt-5'>
+                    <Link href={`/products/${id}`} className="w-full flex-1 items-end content-end">
 
                         <Button
 
