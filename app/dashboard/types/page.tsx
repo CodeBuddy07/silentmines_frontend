@@ -57,6 +57,8 @@ export default function Page() {
                 { title: selected.title }
             );
 
+            console.log('Tag: ', selected);
+
             if (response.status === 200) {
                 setTags(prev => prev.map(tag => (tag._id === selected._id ? selected : tag)));
                 setEditModalOpen(false);
