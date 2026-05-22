@@ -93,7 +93,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <CardContent className="p-6 flex flex-col flex-1 justify-between">
                 {/* Top Info */}
                 <div className="space-y-4">
-                    <div className="flex flex-wrap gap-2 text-xs items-start">
+                    <div className="flex flex-wrap gap-2 text-xs border content-start">
 
                         {dealoftheweek && (
                             <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">
