@@ -34,7 +34,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     photoUrls: image,
     discount,
     category,
-    subcategory,
+    type,
     name,
     priceOptions,
 }) => {
@@ -71,7 +71,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 <div className="space-y-3">
                     <div className="flex flex-wrap gap-2 text-xs">
                         <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">{category}</Badge>
-                        <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">{subcategory}</Badge>
+                        <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">{type}</Badge>
                     </div>
 
                     <h3 className="text-lg font-bold text-white group-hover:text-white/90 transition-colors">
