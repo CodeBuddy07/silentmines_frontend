@@ -40,8 +40,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
     priceOptions,
 }) => {
     const [isHovered, setIsHovered] = useState(false);
-    console.log(type,subcategory);
-    
+    console.log(type, subcategory);
+
     // Ensure prices is always an array and exclude zero-price options
     const productPrices = Array.isArray(priceOptions) ? priceOptions.filter(p => p.price > 0) : [];
     return (
@@ -71,8 +71,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 {/* Top Info */}
                 <div className="space-y-3">
                     <div className="flex flex-wrap gap-2 text-xs">
-                        <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">{category}</Badge>
-                        <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">{type}</Badge>
+                        {category && <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">{category}</Badge>}
+                        {type && <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">{type}</Badge>}
+                        {subcategory && <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">{subcategory}</Badge>}
                     </div>
 
                     <h3 className="text-lg font-bold text-white group-hover:text-white/90 transition-colors">
