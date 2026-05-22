@@ -38,6 +38,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
     subcategory,
     name,
     priceOptions,
+    dealoftheweek,
+    bestSeller,
 }) => {
     const [isHovered, setIsHovered] = useState(false);
     console.log(type, subcategory);
@@ -72,8 +74,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 <div className="space-y-3">
                     <div className="flex flex-wrap gap-2 text-xs">
                         {category && <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">{category}</Badge>}
-                        {type && <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">{type}</Badge>}
-                        {subcategory && <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">{subcategory}</Badge>}
+                        {type && <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">{type.charAt(0).toUpperCase() + type.slice(1)}</Badge>}
+                        {subcategory && <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20"> {subcategory.charAt(0).toUpperCase() + subcategory.slice(1)}</Badge>}
+                                            {dealoftheweek && (
+                            <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">
+                                Deal of the Week
+                            </Badge>
+                        )}
+
+                        {bestSeller && (
+                            <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">
+                                Best Seller
+                            </Badge>
+                        )}
                     </div>
 
                     <h3 className="text-lg font-bold text-white group-hover:text-white/90 transition-colors">

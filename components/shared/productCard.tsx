@@ -112,6 +112,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
                                 {type.charAt(0).toUpperCase() + type.slice(1)}
                             </Badge>
                         )}
+
+                        {category && (
+                            <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">
+                                {category.charAt(0).toUpperCase() + category.slice(1)}
+                            </Badge>
+                        )}
+                        {subcategory && (
+                            <Badge variant="outline" className="bg-white/10 text-white/80 border-white/20 hover:bg-white/20">
+                                {subcategory.charAt(0).toUpperCase() + subcategory.slice(1)}
+                            </Badge>
+                        )}
                     </div>
 
                     <h3 className="text-lg font-bold text-white group-hover:text-white/90 transition-colors">
