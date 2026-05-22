@@ -54,7 +54,7 @@ export default function Page() {
         try {
             const response = await axiosSecure.put(
                 `/types/${selected._id}`,
-                { title: selected.title }
+                { name: selected.name }
             );
 
             console.log('Tag: ', selected);
