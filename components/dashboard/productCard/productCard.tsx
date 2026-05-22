@@ -35,11 +35,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
     discount,
     category,
     type,
+    subcategory,
     name,
     priceOptions,
 }) => {
     const [isHovered, setIsHovered] = useState(false);
-    // console.log(subcategory);
+    console.log(type,subcategory);
     
     // Ensure prices is always an array and exclude zero-price options
     const productPrices = Array.isArray(priceOptions) ? priceOptions.filter(p => p.price > 0) : [];
