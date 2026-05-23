@@ -430,7 +430,7 @@ export default function OrderPopup({ children }: OrderPopupProps) {
                 required
               />
               <p className="text-xs text-emerald-200/70 mt-1">
-                We'll send your order confirmation and parking instructions via Signal.
+                We will send your order confirmation and parking instructions via the <a href="https://www.signal.org" target="_blank" rel="noopener noreferrer" className="underline">Signal</a>. Signal app. Allow find by phone number.
               </p>
             </div>
           </div>
