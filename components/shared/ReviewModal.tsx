@@ -176,7 +176,7 @@ export default function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Profile Image <span className="text-gray-500">(optional)</span>
+                  Review Picture <span className="text-gray-500">(optional)</span>
                 </label>
                 <input
                   type="file"
