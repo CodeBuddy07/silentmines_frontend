@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Header from '@/components/dashboard/header/header';
 import {
   Table,
@@ -20,9 +20,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import axiosSecure from '@/lib/useAxiosSecure';
 
 
-type Subcategory = { _id: number; name: string };
+type Subcategory = { _id: string; name: string };
 type Category = {
-  _id: number;
+  _id: string;
   name: string;
   description: string;
   subcategories?: Subcategory[];
@@ -36,34 +36,53 @@ export default function Page() {
   const [isCategoryLoading, setIsCategoryLoading] = useState(true);
   const [newSubcategoryName, setNewSubcategoryName] = useState('');
 
+  const fetchCategories = useCallback(async () => {
+    try {
+      const response = await axiosSecure.get(`/categories`);
+      setCategories(response.data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    } finally {
+      setIsCategoryLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
   const handleEditClick = (category: any) => {
     setSelected(category);
     setEditModalOpen(true);
   };
 
-  const handleSave = () => {
-    setCategories(prev =>
-      prev.map(cat => (cat._id === selected._id ? selected : cat))
-    );
-    setEditModalOpen(false);
+  const handleSave = async () => {
+    if (!selected) return;
+
+    try {
+      const response = await axiosSecure.patch(`/categories/${selected._id}`, {
+        name: selected.name,
+        description: selected.description,
+      });
+
+      if (response.status === 200) {
+        setCategories(prev =>
+          prev.map(cat => (cat._id === selected._id ? { ...cat, name: selected.name, description: selected.description } : cat))
+        );
+        setEditModalOpen(false);
+      }
+    } catch (error) {
+      console.error('Error updating category:', error);
+    }
   };
 
   const confirmDelete = async () => {
-    console.log("inside delete category: ", selected._id);
-
     try {
-      // Making DELETE API call to delete the selected category
       const response = await axiosSecure.delete(`/categories/${selected._id}`);
 
       if (response.status === 200) {
-        // Successfully deleted, update the state by removing the category
         setCategories(prev => prev.filter(cat => cat._id !== selected._id));
-
-        // Close the modal
         setDeleteModalOpen(false);
-        console.log('Category deleted successfully');
-      } else {
-        console.error('Error deleting category:', response.status);
       }
     } catch (error) {
       console.error('Error deleting category:', error);
@@ -74,96 +93,47 @@ export default function Page() {
     if (!newSubcategoryName || !selected) return;
 
     try {
-      // Sending POST request to add a new subcategory
       const response = await axiosSecure.post(
         `/categories/${selected._id}/subcategories`,
         { name: newSubcategoryName }
       );
 
       if (response.status === 201) {
-        // Assuming response.data.subcategory contains the new subcategory object (including _id)
-        const updatedCategories = categories.map((category) => {
-          if (category._id === selected._id) {
-            const updatedCategory = { ...category };
-            if (!updatedCategory.subcategories) {
-              updatedCategory.subcategories = [];
-            }
-            // Push the full subcategory object to subcategories, not just the name
-            updatedCategory.subcategories.push(response.data.subcategory);
-            return updatedCategory;
-          }
-          return category;
-        });
-
-        // Update the selected category with the newly added subcategory
-        setSelected({
-          ...selected,
-          subcategories: [...(response.data.subcategories || [])],
-        });
-
-        // Update categories state with the new subcategory
-        setCategories(updatedCategories);
-        setNewSubcategoryName(''); // Clear the input field after adding
+        const freshSubcategories = response.data.subcategories || [];
+        setSelected((prev: any) => ({ ...prev, subcategories: freshSubcategories }));
+        setCategories(prev =>
+          prev.map(cat =>
+            cat._id === selected._id ? { ...cat, subcategories: freshSubcategories } : cat
+          )
+        );
+        setNewSubcategoryName('');
       }
     } catch (error) {
       console.error('Error adding subcategory:', error);
     }
   };
 
-
-
-  // Handle deleting a subcategory
-  const deleteSubcategory = async (subId: any) => {
+  const deleteSubcategory = async (subId: string) => {
     if (!selected || !subId) return;
 
     try {
-      // Sending request to backend to delete the subcategory
       const response = await axiosSecure.delete(
         `/categories/${selected._id}/subcategories/${subId}`
       );
 
-      console.log('inside delete subcategory');
-
-
       if (response.status === 200) {
-        // Update the categories state by removing the deleted subcategory
-        const updatedCategories = categories.map((category) => {
-          if (category._id === selected._id) {
-            const updatedCategory = { ...category };
-            updatedCategory.subcategories = updatedCategory.subcategories?.filter(sub => sub._id !== Number(subId));
-            return updatedCategory;
-          }
-          return category;
-        });
-
-        setCategories(updatedCategories);
+        const updatedSubs = (selected.subcategories || []).filter((sub: any) => String(sub._id) !== String(subId));
+        setSelected((prev: any) => ({ ...prev, subcategories: updatedSubs }));
+        setCategories(prev =>
+          prev.map(cat =>
+            cat._id === selected._id ? { ...cat, subcategories: updatedSubs } : cat
+          )
+        );
       }
     } catch (error) {
       console.error('Error deleting subcategory:', error);
     }
   };
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-
-        const response = await axiosSecure.get(`/categories`);
-
-        if (response) {
-          setCategories(response.data);
-
-          setIsCategoryLoading(false)
-        } else {
-          setIsCategoryLoading(false)
-        }
-      } catch (error) {
-        setIsCategoryLoading(false);
-        console.error('Error fetching categories:', error);
-      }
-    }
-
-    fetchCategories();
-  }, [newSubcategoryName, selected]);
 
   return (
     <div className="p-6">
@@ -206,7 +176,6 @@ export default function Page() {
                     >
                       <Trash2 className="h-4 w-4 text-red-500" />
                     </Button>
-
                   </TableCell>
                 </TableRow>
               ))
@@ -226,8 +195,6 @@ export default function Page() {
               </TableRow>
             )}
           </TableBody>
-
-
         </Table>
       </div>
 
@@ -250,14 +217,14 @@ export default function Page() {
               <Label>Description</Label>
               <Input
                 className="mt-1 bg-white/10 border border-white/20 text-white"
-                value={selected?.description || ''}  // Safely access selected.description
+                value={selected?.description || ''}
                 onChange={(e) => setSelected({ ...selected, description: e.target.value })}
               />
             </div>
 
             {/* Add Subcategory Section */}
             <div className="mt-6 space-y-4">
-              {selected && (  // Ensure selected is not null
+              {selected && (
                 <div>
                   <Label>Add Subcategory to {selected.name}</Label>
                   <div className="flex gap-2">
@@ -268,30 +235,26 @@ export default function Page() {
                       className="bg-white/10 text-white"
                     />
                     <Button onClick={addSubcategory} className="bg-green-600 hover:bg-green-700">
-                      Add Subcategory
+                      Add
                     </Button>
                   </div>
                 </div>
               )}
             </div>
-  
+
             {/* Display existing subcategories */}
-            <div className="space-y-4">
-              {(selected?.subcategories || []).map((sub: any, index: number) => (
-                <div key={index} className="flex items-center gap-2">
+            <div className="space-y-2">
+              {(selected?.subcategories || []).map((sub: any) => (
+                <div key={sub._id} className="flex items-center gap-2">
                   <Input
                     className="bg-white/10 border cursor-not-allowed border-white/20 text-white"
-                    value={sub?.name} // Display the name of the subcategory
+                    value={sub?.name}
                     readOnly
                   />
                   <Button
                     size="icon"
                     variant="ghost"
-                    onClick={() => {
-                      const updatedSubs = (selected?.subcategories || []).filter((_: any, i: number) => i !== index);
-                      setSelected({ ...selected, subcategories: updatedSubs });
-                      deleteSubcategory(sub._id);
-                    }}
+                    onClick={() => deleteSubcategory(sub._id)}
                   >
                     <Trash2 className="h-4 w-4 text-red-500" />
                   </Button>

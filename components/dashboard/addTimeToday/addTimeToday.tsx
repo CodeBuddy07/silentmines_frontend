@@ -11,34 +11,34 @@ import axiosSecure from "@/lib/useAxiosSecure";
 interface AddTimeModalProps {
     open: boolean;
     setOpen: (open: boolean) => void;
-   
+    onSuccess?: () => void;
 }
 
-const AddTimeModal: React.FC<AddTimeModalProps> = ({ open, setOpen }) => {
-    const [day, setDay] = useState<string>("today");
+const AddTimeModal: React.FC<AddTimeModalProps> = ({ open, setOpen, onSuccess }) => {
+    const [day] = useState<string>("today");
     const [time, setTime] = useState<string>("07:00 AM");
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
 
     const handleSave = async () => {
         try {
-            const response = await axiosSecure.post(`/timeslot/add`, {
-                day,
-                time
-            });
+            setIsLoading(true);
+            const response = await axiosSecure.post(`/timeslot/add`, { day, time });
 
             if (response.status === 201) {
-                setOpen(false)
+                setOpen(false);
+                setTime("07:00 AM");
                 toast.success('Today time slot added successfully!');
+                onSuccess?.();
             } else {
                 toast.error('Failed to add today time slot');
             }
         } catch (err: any) {
             console.log('Error:', err.response || err.message || err);
+            toast.error('Failed to add time slot');
+        } finally {
+            setIsLoading(false);
         }
     };
-
-
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -47,16 +47,12 @@ const AddTimeModal: React.FC<AddTimeModalProps> = ({ open, setOpen }) => {
                     <DialogTitle>Add Time</DialogTitle>
                 </DialogHeader>
 
-                {/* Display error message if any */}
-                {error && <p className="text-red-500">{error}</p>}
-
                 <div className="space-y-3">
                     <Input
                         className="text-white cursor-not-allowed"
                         placeholder="Day"
                         value={day}
                         readOnly
-
                     />
                     <Input
                         className="text-white"
@@ -75,13 +71,12 @@ const AddTimeModal: React.FC<AddTimeModalProps> = ({ open, setOpen }) => {
                         Cancel
                     </Button>
 
-                    {/* Show loading state on save button */}
                     <Button
                         className="bg-[#00A63E] hover:bg-green-400"
                         onClick={handleSave}
-                        disabled={isLoading}  // Disable the button while loading
+                        disabled={isLoading}
                     >
-                        {isLoading ? "Saving..." : "Save"}  {/* Show loading text */}
+                        {isLoading ? "Saving..." : "Save"}
                     </Button>
                 </DialogFooter>
             </DialogContent>

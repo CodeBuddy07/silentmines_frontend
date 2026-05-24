@@ -20,12 +20,10 @@ const Page = () => {
 
     const fetchReviews = async () => {
         try {
-            const response = await fetch(`https://server.greenlove.fun/api/review/allreview?page=${currentPage}&limit=5`);
-            const data = await response.json();
-            setReviews(data.reviews);
-            setTotalPages(data.totalPages);
-            setTotalItems(data.totalReviews);
-            console.log(data);
+            const response = await axiosSecure.get(`/review/allreview?page=${currentPage}&limit=5`);
+            setReviews(response.data.reviews);
+            setTotalPages(response.data.totalPages);
+            setTotalItems(response.data.totalReviews);
         } catch (error) {
             console.error("Error fetching reviews:", error);
         } finally {
@@ -50,8 +48,7 @@ const Page = () => {
 
             fetchReviews();
 
-
-            toast.success("Review deleted successfully");
+            toast.success(newStatus === "approved" ? "Review approved successfully" : "Review rejected successfully");
 
             // If rejected, call the delete function
             // if (newStatus === "rejected") {

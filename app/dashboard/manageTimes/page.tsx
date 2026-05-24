@@ -8,8 +8,8 @@ import Header from "@/components/dashboard/header/header";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import axiosSecure from "@/lib/useAxiosSecure";
-import {  Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Trash2 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 
 
 const Page = () => {
@@ -21,46 +21,47 @@ const Page = () => {
   const [editedTime, setEditedTime] = useState<string>('');
   const [deleteModal, setDeleteModal] = useState(false);
 
+  const fetchTimes = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const [todayResponse, tomorrowResponse] = await Promise.all([
+        axiosSecure.get("/timeslot/today"),
+        axiosSecure.get("/timeslot/tomorrow"),
+      ]);
+      setTodayTimes(todayResponse.data);
+      setTomorrowTimes(tomorrowResponse.data);
+    } catch (error) {
+      console.error("Error fetching time slots:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchTimes();
+  }, [fetchTimes]);
 
   const handleDeleteTime = async (timeSlotId: string) => {
-
     const response = await axiosSecure.delete(`/timeslot/${timeSlotId}`);
 
-    if (response.status === 201) {
-      setTodayTimes(todayTimes.filter((timeSlot: any) => timeSlot._id !== timeSlotId));
-      setTomorrowTimes(tomorrowTimes.filter((timeSlot: any) => timeSlot._id !== timeSlotId));
+    if (response.status === 200) {
+      setTodayTimes((prev) => prev.filter((slot: any) => slot._id !== timeSlotId));
+      setTomorrowTimes((prev) => prev.filter((slot: any) => slot._id !== timeSlotId));
     }
-  }
-  // Fetch the time slots for today and tomorrow
-  useEffect(() => {
-    const fetchTimes = async () => {
-      try {
-        const todayResponse = await axiosSecure.get("/timeslot/today");
-        setTodayTimes(todayResponse.data);
+  };
 
-        const tomorrowResponse = await axiosSecure.get("/timeslot/tomorrow");
-        setTomorrowTimes(tomorrowResponse.data);
-
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching time slots:", error);
-        setIsLoading(false);
-      }
-    };
-
-    fetchTimes();
-  }, [handleDeleteTime]);
-
-  // Handle saving the edited time
   const handleSaveEditedTime = async () => {
     if (!editedTime) return;
 
-    console.log("Edited Time:", editedTime);
-    console.log("Selected Time Slot:", selectedTimeSlot);
-
     try {
       const result = await axiosSecure.put(`/timeslot/${selectedTimeSlot._id}`, { time: editedTime });
-      console.log(result);
+
+      if (result.status === 200) {
+        const updater = (list: any[]) =>
+          list.map((slot) => slot._id === selectedTimeSlot._id ? { ...slot, time: editedTime } : slot);
+        setTodayTimes(updater);
+        setTomorrowTimes(updater);
+      }
 
       setSelectedTimeSlot(null);
       setEditedTime('');
@@ -89,10 +90,11 @@ const Page = () => {
           <AddTimeToday
             open={isAddTimeOpen}
             setOpen={setIsAddTimeOpen}
+            onSuccess={fetchTimes}
           />
 
           {/* Manage tomorrow's time */}
-          <AddTimeTomorrow />
+          <AddTimeTomorrow onSuccess={fetchTimes} />
         </div>
 
         {/* Show Available Times */}
@@ -172,7 +174,6 @@ const Page = () => {
         productName={'this time slot'}
       />
 
-
       {/* Edit Time Modal */}
       {selectedTimeSlot && (
         <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
@@ -198,7 +199,7 @@ const Page = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
 export default Page;
