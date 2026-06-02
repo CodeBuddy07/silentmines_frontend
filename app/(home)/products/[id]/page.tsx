@@ -25,6 +25,7 @@ const Page = ({
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState<Product>({} as Product);
   const [selectedWeight, setSelectedWeight] = useState<string>('');
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
   const getData = async () => {
     const res = await useAxios.get(`/products/${id}`);
@@ -78,7 +79,6 @@ const Page = ({
   ];
 
   const cartItemCount = getCartItemCount();
-  const [showReviewModal, setShowReviewModal] = useState(false);
 
   return (
     <div className="min-h-screen bg-black text-white">
