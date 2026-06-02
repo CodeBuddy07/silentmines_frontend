@@ -30,9 +30,10 @@ interface OrderFormData {
 
 interface OrderPopupProps {
   children: React.ReactNode;
+  onOrderSuccess?: () => void;
 }
 
-export default function OrderPopup({ children }: OrderPopupProps) {
+export default function OrderPopup({ children, onOrderSuccess }: OrderPopupProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -171,7 +172,11 @@ export default function OrderPopup({ children }: OrderPopupProps) {
         });
         clearCart();
         setIsOpen(false);
-        setShowReviewModal(true);
+        if (onOrderSuccess) {
+          onOrderSuccess();
+        } else {
+          setShowReviewModal(true);
+        }
       } else {
         setLoading(false);
         const errorData = await response.json();

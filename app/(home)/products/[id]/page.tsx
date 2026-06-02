@@ -1,6 +1,5 @@
 "use client";
 
-import { ShoppingBag } from 'lucide-react';
 import React, { use, useEffect, useState } from 'react';
 import { PremiumSelectedFlower } from '../../_components/premiumSelectedFlower';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ import useAxios from '@/hooks/useAxios';
 import { Product } from '@/types';
 import LoadingScreen from '@/components/shared/LoadingScreen';
 import parse from 'html-react-parser';
+import ReviewModal from '@/components/shared/ReviewModal';
 
 
 const Page = ({
@@ -78,22 +78,12 @@ const Page = ({
   ];
 
   const cartItemCount = getCartItemCount();
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Floating Cart Button */}
-      {cartItemCount > 0 && (
-        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
-          <OrderPopup>
-            <Button className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-full p-3 sm:p-4 shadow-lg shadow-emerald-500/30 relative">
-              <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6" />
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center text-xs font-bold">
-                {cartItemCount}
-              </span>
-            </Button>
-          </OrderPopup>
-        </div>
-      )}
+      {/* ReviewModal lives at page level so it survives cart clear */}
+      <ReviewModal isOpen={showReviewModal} onClose={() => setShowReviewModal(false)} />
 
       <div className=" max-w-7xl mx-auto px-4 sm:px-6 lg:px-0 pt-16 sm:pt-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
@@ -203,7 +193,7 @@ const Page = ({
                     <p className="text-emerald-300 text-sm">Items in cart: {cartItemCount}</p>
                     <p className="text-white font-semibold">Ready to order?</p>
                   </div>
-                  <OrderPopup>
+                  <OrderPopup onOrderSuccess={() => setShowReviewModal(true)}>
                     <Button className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-lg shadow-lg shadow-emerald-500/30 w-full sm:w-auto">
                       View Cart & Order
                     </Button>
