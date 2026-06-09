@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
@@ -8,22 +8,36 @@ import Header from "@/components/dashboard/header/header";
 import { toast } from "sonner";
 import axiosSecure from "@/lib/useAxiosSecure";
 
+function getEmailFromToken(): string {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) return "";
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.email || payload.sub || "";
+  } catch {
+    return "";
+  }
+}
+
 export default function UpdatePasswordPage() {
   const [form, setForm] = useState({
-    email: "admin@example.com",
+    email: "",
     newPassword: "",
     confirmPassword: "",
   });
 
-  const [errors, setErrors] = useState({});
   const [show, setShow] = useState({
-    old: false,
     new: false,
     confirm: false,
   });
   const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    const email = getEmailFromToken();
+    if (email) {
+      setForm((prev) => ({ ...prev, email }));
+    }
+  }, []);
 
   const handleChange = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -32,39 +46,41 @@ export default function UpdatePasswordPage() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    // Check if the new password and confirm password match
+    if (!form.email) {
+      toast.error("Admin email could not be determined. Please log in again.");
+      return;
+    }
+
     if (form.newPassword !== form.confirmPassword) {
-      // setErrors({ c= onfirmPassword: "Passwords do not match." });
       toast.error("Passwords do not match.");
       return;
     }
 
+    if (form.newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters.");
+      return;
+    }
+
     setLoading(true);
-    setErrorMessage("");
-    setSuccessMessage("");
 
     try {
-      const response = await axiosSecure.post(
-        `/admin/forgot-password`,
-        {
-          email: form.email,
-          newPassword: form.newPassword,
-        }
-      );
+      const response = await axiosSecure.post(`/admin/forgot-password`, {
+        email: form.email,
+        newPassword: form.newPassword,
+      });
 
-      // Check for success response
       if (response.status === 200) {
-        // setSuccessMessage("Password updated successfully.");
         toast.success("Password updated successfully.");
+        setForm((prev) => ({ ...prev, newPassword: "", confirmPassword: "" }));
       } else {
-        // setErrorMessage(response.data.message || "An error occurred while updating the password.");
         toast.error(
           response.data.message || "An error occurred while updating the password."
         );
       }
     } catch (error: any) {
-      // setErrorMessage(error.response?.data?.message || "Failed to connect to the server.");
-      toast.error(error.response?.data?.message || "Failed to connect to the server.");
+      toast.error(
+        error.response?.data?.message || "Failed to connect to the server."
+      );
     } finally {
       setLoading(false);
     }
