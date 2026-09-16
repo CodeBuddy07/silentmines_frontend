@@ -1,48 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SilentMines Storefront
 
-## Getting Started
+Next.js storefront and dashboard for a retail client: product catalog with per-unit price options, announcements, order enquiries by email, and an admin dashboard with a rich-text editor.
 
-First, run the development server:
+Next.js · TypeScript · Tailwind CSS · Radix primitives · Jodit · nodemailer
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Routes
+
+```
+app/
+  (home)/     catalog and product pages
+  dashboard/  products and announcements
+  log-in api/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Getting started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The app runs at `http://localhost:3000`.
 
-## Learn More
+Deployed with Docker via the `deploy.yml` workflow.
 
-To learn more about Next.js, take a look at the following resources:
+## Related
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `silentmines-api`: Express API for products and announcements.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Author
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-
-
-
-
-## Requirements Ignored
-
-1. Add to Bag button existence in product card.[there are many variants of weight and type thats why its need to be only on detail page so that it can be only select specific one.]
-
-2. Swipple media on product card.[Whole card is clickable now so making swipple media can ruin user experience and it will also affect loading time.]
-
-3.
+Ruhul Amin, full stack developer and co-founder at CodeMines. [ruhulcodes.com](https://www.ruhulcodes.com) · [GitHub](https://github.com/CodeBuddy07) · [LinkedIn](https://www.linkedin.com/in/codebuddy07)
